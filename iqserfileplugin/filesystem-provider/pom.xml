@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<project>
+	<parent>
+		<artifactId>iqserfileplugin</artifactId>
+		<groupId>net.sf.iqser.plugin.file</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>net.sf.iqser.plugin.file</groupId>
+	<artifactId>filesystem-provider</artifactId>
+	<name>Filesystem ContentProvider</name>
+	<version>1.0-SNAPSHOT</version>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>file-parser</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+</project>

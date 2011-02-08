@@ -3,8 +3,8 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>net.sf.iqser</groupId>
-	<artifactId>plugin.file</artifactId>
+	<groupId>net.sf.iqser.plugin.file</groupId>
+	<artifactId>iqserfileplugin</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -211,6 +211,21 @@
 					<preparationGoals>clean verify</preparationGoals>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>create</id>
+						<goals>
+							<goal>javadoc</goal>
+							<goal>jar</goal>
+						</goals>
+						<phase>package</phase>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<extensions>
 			<extension>
@@ -256,6 +271,11 @@
 				<configuration>
 					<tags>TODO, @todo, FIXME, DOCUMENT ME</tags>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.7</version>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -321,8 +341,8 @@
 	</dependencies>
 
 	<modules>
-		<module>plugin.file.parser</module>
-		<module>plugin.filesystem</module>
+		<module>file-parser</module>
+		<module>filesystem-provider</module>
 	</modules>
 
 </project>
