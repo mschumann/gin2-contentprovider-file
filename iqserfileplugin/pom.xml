@@ -110,8 +110,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<fork>true</fork>
-					<source>6</source>
-					<target>6</target>
+					<source>5</source>
+					<target>5</target>
 				</configuration>
 			</plugin>
 			<plugin>
