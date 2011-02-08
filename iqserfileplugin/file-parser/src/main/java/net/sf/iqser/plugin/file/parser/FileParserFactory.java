@@ -120,7 +120,7 @@ public class FileParserFactory {
 	private String getMappingName(String fileName) {
 		String[] nameElements = FileParserUtils.getNameElements(fileName);
 		if (nameElements != null) {
-			return MAPPING_PREFIX + nameElements[nameElements.length - 1];
+			return MAPPING_PREFIX + nameElements[nameElements.length - 1].toLowerCase();
 		}
 		return null;
 	}
