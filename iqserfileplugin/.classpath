@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="plugin.file.parser/src/main/java"/>
+	<classpathentry kind="src" path="plugin.file.parser/src/main/resources"/>
+	<classpathentry kind="src" path="plugin.file.parser/src/test/java"/>
+	<classpathentry kind="src" path="plugin.filesystem/src/main/java"/>
+	<classpathentry kind="src" path="plugin.filesystem/src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.iam.jdt.core.mavenClasspathContainer"/>
+	<classpathentry kind="con" path="org.devzuz.q.maven.jdt.core.mavenClasspathContainer"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>
