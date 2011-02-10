@@ -9,7 +9,17 @@
 	<packaging>pom</packaging>
 
 	<name>File ContentProvider for iQser GIN</name>
+	<description>The goal of this project is to provide a reusable library to transform common file formats to content objects and ContentProvider plugins to common file repositories (Filesystem and common DMS) for iQser GIN Semantic Middleware (www.iqser.com).</description>
 	<url>http://iqserfileplugin.sourceforge.net</url>
+
+	<licenses>
+		<license>
+			<name>Apache 2</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+			<comments>A business-friendly OSS license</comments>
+		</license>
+	</licenses>
 
 	<issueManagement>
 		<system>Trac</system>
@@ -18,11 +28,12 @@
 
 	<scm>
 		<connection>
-			http://iqserfileplugin.svn.sourceforge.net/viewvc/iqserfileplugin/
+			scm:svn:http://iqserfileplugin.svn.sourceforge.net/viewvc/iqserfileplugin/trunk
 		</connection>
 		<developerConnection>
-			https://iqserfileplugin.svn.sourceforge.net/svnroot/iqserfileplugin
+			scm:svn:https://iqserfileplugin.svn.sourceforge.net/svnroot/iqserfileplugin/trunk
 		</developerConnection>
+		<url>http://iqserfileplugin.svn.sourceforge.net/viewvc/iqserfileplugin</url>
 	</scm>
 
 	<developers>
@@ -54,6 +65,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<iqser.version>1.2.2.1-SNAPSHOT</iqser.version>
+		<compileSource>1.5</compileSource>
 	</properties>
 
 	<repositories>
@@ -98,20 +110,22 @@
 			<layout>default</layout>
 		</snapshotRepository>
 		<site>
-			<id>file-plugins.web</id>
-			<name>Basic File Plugins</name>
-			<url>file://c:/temp/site/file-plugins</url>
+			<id>iqserfileplugin.web</id>
+			<name>File ContentProvider for iQser GIN</name>
+			<url>file://c:/temp/site/iqserfileplugin</url>
 		</site>
 	</distributionManagement>
 
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
 				<configuration>
 					<fork>true</fork>
-					<source>5</source>
-					<target>5</target>
+					<source>${compileSource}</source>
+					<target>${compileSource}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -140,9 +154,12 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<source>${compileSource}</source>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>process-sources</phase>
+						<phase>verify</phase>
 						<goals>
 							<goal>check</goal>
 							<goal>cpd-check</goal>
@@ -150,22 +167,10 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<version>2.0</version>
-				<executions>
-					<execution>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>checkstyle</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-					<failsOnError>true</failsOnError>
-				</configuration>
-			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-checkstyle-plugin</artifactId> 
+				<version>2.6</version> <executions> <execution> <phase>verify</phase> <goals> 
+				<goal>check</goal> </goals> </execution> </executions> <configuration> <configLocation>checkstyle.xml</configLocation> 
+				<failsOnError>false</failsOnError> </configuration> </plugin> -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
@@ -217,12 +222,11 @@
 				<version>2.7</version>
 				<executions>
 					<execution>
-						<id>create</id>
+						<id>javadoc-jar</id>
+						<phase>package</phase>
 						<goals>
-							<goal>javadoc</goal>
 							<goal>jar</goal>
 						</goals>
-						<phase>package</phase>
 					</execution>
 				</executions>
 			</plugin>
@@ -243,12 +247,6 @@
 				<artifactId>cobertura-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<artifactId>maven-checkstyle-plugin</artifactId>
-				<configuration>
-					<configLocation>checkstyle.xml</configLocation>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-surefire-report-plugin</artifactId>
 			</plugin>
 			<plugin>
@@ -259,10 +257,9 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jdepend-maven-plugin</artifactId>
+				<configuration>
+					<targetJdk>${compileSource}</targetJdk>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -277,6 +274,8 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.7</version>
 			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-checkstyle-plugin</artifactId> 
+				<version>2.6</version> </plugin> -->
 		</plugins>
 	</reporting>
 
@@ -326,7 +325,7 @@
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
-			<artifactId>xerces</artifactId>
+			<artifactId>xercesImpl</artifactId>
 			<version>2.4.0</version>
 			<type>jar</type>
 			<optional>false</optional>
