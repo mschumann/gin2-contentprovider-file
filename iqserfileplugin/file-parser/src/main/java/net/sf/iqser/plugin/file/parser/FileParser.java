@@ -11,7 +11,19 @@ import com.iqser.core.model.Content;
  */
 public interface FileParser {
 
-	public Content getContent(String fileName, InputStream inputStream)
-			throws FileParserException;
+    /**
+     * Parse a inputStream and return a {@link Content} object.
+     * 
+     * @param fileName
+     *            Name of the file
+     * @param inputStream
+     *            {@link InputStream} to parse
+     * @return A {@link Content} object
+     * @throws FileParserException
+     *             Throw this Exception if the {@link InputStream} cannot be
+     *             parsed.
+     */
+    public Content getContent(String fileName, InputStream inputStream)
+	    throws FileParserException;
 
 }

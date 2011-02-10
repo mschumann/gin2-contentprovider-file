@@ -20,68 +20,68 @@ import com.iqser.core.model.Content;
  */
 public class TextFileParser implements FileParser {
 
-	/** Constant from the default content type for text documents. */
-	private static final String TEXT_FILE_CONTENT_TYPE = "Text Document";
-	
-	/**
-	 * Default Logger for this class.
-	 */
-	private static Logger logger = Logger.getLogger(TextFileParser.class);
+    /** Constant from the default content type for text documents. */
+    private static final String TEXT_FILE_CONTENT_TYPE = "Text Document";
 
-	/**
-	 * Method implementation from {@link FileParser} interface.
-	 * 
-	 * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(String,
-	 *      InputStream)
-	 */
-	public Content getContent(String fileName, InputStream inputStream)
-			throws FileParserException {
-		logger.info("Parsing file " + fileName);
+    /**
+     * Default Logger for this class.
+     */
+    private static Logger logger = Logger.getLogger(TextFileParser.class);
 
-		// Create a new Content
-		Content content = new Content();
+    /**
+     * Method implementation from {@link FileParser} interface.
+     * 
+     * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(String,
+     *      InputStream)
+     */
+    public Content getContent(String fileName, InputStream inputStream)
+	    throws FileParserException {
+	logger.info("Parsing file " + fileName);
 
-		// Set the content type for a unknown format (file extention +
-		// 'Document')
-		content.setType(TEXT_FILE_CONTENT_TYPE);
+	// Create a new Content
+	Content content = new Content();
 
-		// Set the file name attribute. This Attribute is no key.
-		content.addAttribute(new Attribute("FILENAME", fileName,
-				Attribute.ATTRIBUTE_TYPE_TEXT, false));
+	// Set the content type for a unknown format (file extention +
+	// 'Document')
+	content.setType(TEXT_FILE_CONTENT_TYPE);
 
-		// Set the title attribute. This Attribute is a key.
-		content.addAttribute(new Attribute("TITLE", FileParserUtils
-				.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
+	// Set the file name attribute. This Attribute is no key.
+	content.addAttribute(new Attribute("FILENAME", fileName,
+		Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
-		// Read content from InputStream and add it as fulltext
-		try {
-			content.setFulltext(parse(inputStream));
-		} catch (IOException e) {
-			logger.error("Failed to read stream for file " + fileName, e);
-			throw new FileParserException("Failed to read stream for file "
-					+ fileName, e);
-		}
+	// Set the title attribute. This Attribute is a key.
+	content.addAttribute(new Attribute("TITLE", FileParserUtils
+		.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
 
-		return content;
+	// Read content from InputStream and add it as fulltext
+	try {
+	    content.setFulltext(parse(inputStream));
+	} catch (IOException e) {
+	    logger.error("Failed to read stream for file " + fileName, e);
+	    throw new FileParserException("Failed to read stream for file "
+		    + fileName, e);
 	}
 
-	/**
-	 * Read the text files content.
-	 * 
-	 * @param inputStream
-	 *            The InputStream.
-	 * 
-	 * @return A String containing the content.
-	 */
-	private String parse(InputStream inputStream) throws IOException {
-		String text = "";
+	return content;
+    }
 
-		if (inputStream != null) {
-			byte[] in = new byte[inputStream.available()];
-			inputStream.read(in);
-			text = new String(in);
-		}
+    /**
+     * Read the text files content.
+     * 
+     * @param inputStream
+     *            The InputStream.
+     * 
+     * @return A String containing the content.
+     */
+    private String parse(InputStream inputStream) throws IOException {
+	String text = "";
 
-		return text;
+	if (inputStream != null) {
+	    byte[] in = new byte[inputStream.available()];
+	    inputStream.read(in);
+	    text = new String(in);
 	}
+
+	return text;
+    }
 }
