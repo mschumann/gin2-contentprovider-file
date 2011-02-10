@@ -110,9 +110,9 @@
 			<layout>default</layout>
 		</snapshotRepository>
 		<site>
-			<id>iqserfileplugin.web</id>
+			<id>iqserfileplugin.sourceforge.net</id>
 			<name>File ContentProvider for iQser GIN</name>
-			<url>file://c:/temp/site/iqserfileplugin</url>
+			<url>scp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs</url>
 		</site>
 	</distributionManagement>
 
