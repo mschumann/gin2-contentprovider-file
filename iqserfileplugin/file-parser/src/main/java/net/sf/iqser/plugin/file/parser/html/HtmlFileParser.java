@@ -163,8 +163,8 @@ public class HtmlFileParser implements FileParser {
 
 	private String filterCommentsAndScript(String nodeValue) {
 		String text = "";
-//		text = filterElements(nodeValue,"<!--", "-->");
-//		text = filterElements(text,"<script", "</script>");
+		// text = filterElements(nodeValue,"<!--", "-->");
+		// text = filterElements(text,"<script", "</script>");
 
 		int begin = nodeValue.indexOf("<!--");
 		int end = nodeValue.indexOf("-->");
@@ -177,25 +177,6 @@ public class HtmlFileParser implements FileParser {
 			}
 		}
 		return text;
-	}
-
-	
-	private String filterElements(String text, String beginTag,
-			String endTag) {
-		String result = null;
-//		result = StringUtils.substringBetween(text, beginTag, endTag);
-		
-		int begin = text.indexOf("<!--");
-		int end = text.indexOf("-->");
-		if (begin == -1 && end == -1) {
-			result = text;
-		} else if (begin > -1) {
-			result = result + text.substring(0, begin);
-			if (end > -1 && (end + 3) <= text.length()) {
-				result = result + text.substring(end + 3);
-			}
-		}
-		return result;
 	}
 
 	/**
