@@ -78,7 +78,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	 * 
 	 * @return A File object or null
 	 */
-	public File getFile(String url) {
+	private File getFile(String url) {
 		File f = new File(url);
 
 		if (f.exists()) {
