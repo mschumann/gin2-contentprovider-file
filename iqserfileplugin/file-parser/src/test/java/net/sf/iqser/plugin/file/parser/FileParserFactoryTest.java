@@ -1,8 +1,8 @@
 package net.sf.iqser.plugin.file.parser;
 
 import junit.framework.TestCase;
-import net.sf.iqser.plugin.file.parser.html.HtmlFileParser;
 import net.sf.iqser.plugin.file.parser.pdf.PdfFileParser;
+import net.sf.iqser.plugin.file.parser.tika.html.TikaHtmlFileParser;
 import net.sf.iqser.plugin.file.parser.txt.TextFileParser;
 
 public class FileParserFactoryTest extends TestCase {
@@ -18,14 +18,14 @@ public class FileParserFactoryTest extends TestCase {
 	FileParserFactory factory = FileParserFactory.getInstance();
 	FileParser parser = factory.getFileParser("sample.htm");
 	assertNotNull(parser);
-	assertTrue(parser instanceof HtmlFileParser);
+	assertTrue(parser instanceof TikaHtmlFileParser);
     }
 
     public void testGetHtmlFileParser() {
 	FileParserFactory factory = FileParserFactory.getInstance();
 	FileParser parser = factory.getFileParser("sample.html");
 	assertNotNull(parser);
-	assertTrue(parser instanceof HtmlFileParser);
+	assertTrue(parser instanceof TikaHtmlFileParser);
     }
 
     public void testGetPdfFileParser() {

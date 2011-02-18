@@ -60,6 +60,7 @@ public class PdfFileParser implements FileParser {
 		.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
 
 	try {
+//		inputStream = new BufferedInputStream(inputStream);
 	    parsePdfDocument(inputStream, content);
 	} catch (IOException e) {
 	    logger.error("Failed to read stream for file " + fileName, e);

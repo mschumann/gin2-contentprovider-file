@@ -14,7 +14,7 @@ public class PdfFileParserTest extends TestCase {
     public void testGetContent() throws Exception {
 	PdfFileParser parser = new PdfFileParser();
 	FileInputStream is = new FileInputStream(new File(System.getProperty(
-		"testdata.dir", "./file-parser/testdata")
+		"testdata.dir", "../file-parser/testdata")
 		+ "/ZimbraCommunity.pdf"));
 	Content content = parser.getContent("ZimbraCommunity.pdf", is);
 
