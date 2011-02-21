@@ -3,7 +3,6 @@ package net.sf.iqser.plugin.filesystem;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -117,55 +116,73 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	@Override
 	public void doSynchonization() {
-		Collection<Content> existingContents = null;
+		/**
+		 * synchronize file system against the object graph
+		 *  - if a file is new INSERT in Object Graph
+		 *  - if a file has been modified ( see file LAST_MODIFIED), UPDATE Object Graph
+		 *  - the Content Object from ObjectGraph that do not have a coresponding file in the file system will be DELETE from the Object Graph
+		 */
 		try {
-			existingContents = getExistingContents();
-		} catch (IQserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// Collection<Content> existingContents = new ArrayList<Content>();
-		Collection<String> newContents = getContentUrls();
-
-		for (Content content : existingContents) {
-			String contentUrl = content.getContentUrl();
-			// if there is a content that does not have a
-			// file associated create a file
-			if (!newContents.contains(contentUrl)) {
-				saveContent(content);
-			} else {
-				// remove the urls from the content urls (file urls)
-				// that are found both on the file system and in contents
-				newContents.remove(contentUrl);
-				File file = getFile(contentUrl);
-				if (file != null) {
-					long lastModified = file.lastModified();
-					Attribute attribute = content
-							.getAttributeByName("LAST_MODIFIED");
-					String value = attribute.getValue();
-					Long contentLastModified = Long.getLong(value);
-					if (lastModified > contentLastModified) {
-						// update content
-					} else {
-						// update file
-					}
-
-				}
-
+			//get the object graph content URLs
+			Collection<Content> existingContents = getExistingContents();
+			if (existingContents == null){
+				existingContents = new ArrayList<Content>();
+			}			
+			//collection of objectGraph URLs
+			Collection<String> objectGraphContentUrls = new ArrayList<String>();
+			for (Content content : existingContents) {
+				objectGraphContentUrls.add(content.getContentUrl());
+			}				
+			// collection of source URLs
+			Collection<String> sourceContentUrls = getContentUrls();
+				
+			//handle new files
+			Collection<String> newSourceContentUrls = new ArrayList<String>();
+			newSourceContentUrls.addAll(sourceContentUrls);
+			newSourceContentUrls.removeAll(objectGraphContentUrls);
+			
+			for (String contentUrl : newSourceContentUrls) {
+				logger.info("Synch - add conntent " + contentUrl);
+				addContent(getContent(contentUrl));
+			}		
+		
+			//handle deleted content - content object that do not have a coresponding file in the file system
+			Collection<String> deletedContentsUrls = new ArrayList<String>();
+			deletedContentsUrls.addAll(objectGraphContentUrls);
+			deletedContentsUrls.removeAll(sourceContentUrls);
+			
+			for (String contentUrl : deletedContentsUrls) {
+				logger.info("Synch - delete conntent " + contentUrl);
+				removeContent(contentUrl);
 			}
-
+		
+			//handle common files - files that are both in file system and in content object
+			Collection<String> commonContentsUrls = new ArrayList<String>();
+			commonContentsUrls.addAll(objectGraphContentUrls);
+			commonContentsUrls.retainAll(sourceContentUrls);
+								
+			for (String contentUrl : commonContentsUrls) {
+				for ( Content content: existingContents){
+					if ( contentUrl.equalsIgnoreCase(content.getContentUrl())){
+						//match file LAST_MODIFIED
+						File file = getFile(contentUrl);
+						long lastModified = file.lastModified();
+					
+						Attribute attribute = content.getAttributeByName("LAST_MODIFIED");
+						String value = attribute.getValue();
+						long contentLastModified = value != null ? Long.parseLong(value) : -1;
+						if (lastModified > contentLastModified) {
+							// TODO update content
+							logger.info("Synch - delete update " + contentUrl);
+							updateContent(content);						
+						}
+					}
+				}
+			}	
+		
+		} catch (IQserException e) {
+			throw new IQserRuntimeException("Error while do synch: " + e.getMessage());
 		}
-		// for the remaining files (that have no content associated
-		// remove them
-		for (String url : newContents) {
-			File file = new File(url);
-			if (file.exists())
-				file.delete();
-		}
-
-		// if NEW insert addContent(content);
-		// if deleted DELETE removeContent(contentUrl)
-		// if modified UPDATE content updateContent(content);
 
 	}
 
@@ -289,12 +306,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	@Override
 	public void init() {
-		Properties properties = new Properties();
-		properties.setProperty("folder", "d:/test/");
-		properties.setProperty("filter-pattern", "txt");
-		properties.setProperty("filter-folder-include", "d:/test/");
-		properties.setProperty("filter-folder-exclude", "d:/test/test1folder/");
-		setInitParams(properties);
+		//TODO
 	}
 
 	@Override
@@ -330,16 +342,10 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		Attribute attribute = arg1.getAttributeByName("BYTES_CONTENT");
 		String value = attribute.getValue();
 		bytes = value.getBytes();
-		OutputStream os = null;
-		try {
-			os = new FileOutputStream(file);
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-
-		try {
+		try {			
+			OutputStream os = new FileOutputStream(file);
 			os.write(bytes);
+			os.flush();
 			os.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
