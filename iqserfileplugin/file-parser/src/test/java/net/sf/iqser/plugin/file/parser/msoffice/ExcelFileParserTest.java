@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 
+import org.apache.log4j.Logger;
+
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 
@@ -15,6 +17,7 @@ import junit.framework.TestCase;
 
 public class ExcelFileParserTest extends TestCase{
 
+	private static Logger log = Logger.getLogger(ExcelFileParserTest.class);
 
 	public void testExcelFileParser() throws FileParserException, FileNotFoundException{
 		
@@ -29,8 +32,7 @@ public class ExcelFileParserTest extends TestCase{
 		for (Attribute attribute : attributes) {
 			String name = attribute.getName();
 			String value = attribute.getValue();
-			System.out.println(name);
-			System.out.println(value);
+			log.debug("Attribute name="+name + " value="+value);
 		}
 	
 	}
