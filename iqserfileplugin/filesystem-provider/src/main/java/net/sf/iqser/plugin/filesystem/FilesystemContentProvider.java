@@ -9,7 +9,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import net.sf.iqser.plugin.file.parser.FileParser;
@@ -17,8 +20,11 @@ import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserFactory;
 import net.sf.iqser.plugin.file.parser.pdf.PdfFileParser;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.iqser.core.event.Event;
 import com.iqser.core.exception.IQserException;
@@ -38,6 +44,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	 * UID.
 	 */
 	private static final long serialVersionUID = 6781181225882526721L;
+
+	private Map<String, String> attributeMappings = new HashMap<String, String>();
 
 	public byte[] getBinaryData(Content content) {
 		logger.debug("getBinaryData( Content content=" + content
@@ -116,73 +124,95 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	@Override
 	public void doSynchonization() {
 		/**
-		 * synchronize file system against the object graph
-		 *  - if a file is new INSERT in Object Graph
-		 *  - if a file has been modified ( see file LAST_MODIFIED), UPDATE Object Graph
-		 *  - the Content Object from ObjectGraph that do not have a coresponding file in the file system will be DELETE from the Object Graph
+		 * synchronize file system against the object graph - if a file is new
+		 * INSERT in Object Graph - if a file has been modified ( see file
+		 * LAST_MODIFIED), UPDATE Object Graph - the Content Object from
+		 * ObjectGraph that do not have a coresponding file in the file system
+		 * will be DELETE from the Object Graph
 		 */
 		try {
-			//get the object graph content URLs
+			// get the object graph content URLs
 			Collection<Content> existingContents = getExistingContents();
-			if (existingContents == null){
+			if (existingContents == null) {
 				existingContents = new ArrayList<Content>();
-			}			
-			//collection of objectGraph URLs
+			}
+			// collection of objectGraph URLs
 			Collection<String> objectGraphContentUrls = new ArrayList<String>();
 			for (Content content : existingContents) {
 				objectGraphContentUrls.add(content.getContentUrl());
-			}				
+			}
 			// collection of source URLs
 			Collection<String> sourceContentUrls = getContentUrls();
-				
-			//handle new files
+
+			// handle new files
 			Collection<String> newSourceContentUrls = new ArrayList<String>();
 			newSourceContentUrls.addAll(sourceContentUrls);
 			newSourceContentUrls.removeAll(objectGraphContentUrls);
-			
+
 			for (String contentUrl : newSourceContentUrls) {
 				logger.info("Synch - add conntent " + contentUrl);
 				addContent(getContent(contentUrl));
-			}		
-		
-			//handle deleted content - content object that do not have a coresponding file in the file system
+			}
+
+			// handle deleted content - content object that do not have a
+			// coresponding file in the file system
 			Collection<String> deletedContentsUrls = new ArrayList<String>();
 			deletedContentsUrls.addAll(objectGraphContentUrls);
 			deletedContentsUrls.removeAll(sourceContentUrls);
-			
+
 			for (String contentUrl : deletedContentsUrls) {
 				logger.info("Synch - delete conntent " + contentUrl);
 				removeContent(contentUrl);
 			}
-		
-			//handle common files - files that are both in file system and in content object
+
+			// handle common files - files that are both in file system and in
+			// content object
 			Collection<String> commonContentsUrls = new ArrayList<String>();
 			commonContentsUrls.addAll(objectGraphContentUrls);
 			commonContentsUrls.retainAll(sourceContentUrls);
-								
+
 			for (String contentUrl : commonContentsUrls) {
-				for ( Content content: existingContents){
-					if ( contentUrl.equalsIgnoreCase(content.getContentUrl())){
-						//match file LAST_MODIFIED
+				for (Content content : existingContents) {
+					if (contentUrl.equalsIgnoreCase(content.getContentUrl())) {
+						// match file LAST_MODIFIED
 						File file = getFile(contentUrl);
 						long lastModified = file.lastModified();
-					
-						Attribute attribute = content.getAttributeByName("LAST_MODIFIED");
-						String value = attribute.getValue();
-						long contentLastModified = value != null ? Long.parseLong(value) : -1;
+						long contentLastModified = content
+								.getModificationDate();
 						if (lastModified > contentLastModified) {
-							// TODO update content
 							logger.info("Synch - delete update " + contentUrl);
-							updateContent(content);						
+							performContentUpdate(content, file);
+							updateContent(content);
 						}
 					}
 				}
-			}	
-		
+			}
+
 		} catch (IQserException e) {
-			throw new IQserRuntimeException("Error while do synch: " + e.getMessage());
+			throw new IQserRuntimeException("Error while do synch: "
+					+ e.getMessage());
 		}
 
+	}
+
+	private void performContentUpdate(Content content, File file) {
+
+		String path = file.getAbsolutePath();
+		Content newContent = getContent(path);
+
+		Collection<Attribute> attributes = newContent.getAttributes();
+
+		for (Attribute attribute : attributes) {
+			String name = attribute.getName();
+			Attribute attributeByName = content.getAttributeByName(name);
+			if (attributeByName != null) {
+				attributeByName.setName(name);
+				attributeByName.setKey(attribute.isKey());
+				attributeByName.setValue(attribute.getValue());
+			}
+		}
+
+		content.setFulltext(newContent.getFulltext());
 	}
 
 	/**
@@ -205,12 +235,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		FileParser parser = parserFactory.getFileParser(contentUrl);
 		Content content = null;
 
-		// byte [] data = null;
+		
 		InputStream inputStream = null;
 		try {
 			inputStream = new FileInputStream(contentUrl);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
@@ -219,24 +248,37 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			content.setContentUrl(contentUrl);
 			Attribute attributeM = new Attribute();
 			attributeM.setName("BYTES_CONTENT");
-			byte[] data = this.getBinaryData(content);			
+			byte[] data = this.getBinaryData(content);
 			attributeM.setValue(encodeBinaryToString(data));
 			content.addAttribute(attributeM);
 
 			File file = getFile(contentUrl);
+
 			if (file != null) {
 				long lastModified = file.lastModified();
-				attributeM = new Attribute();
-				attributeM.setName("LAST_MODIFIED");
-				String lastModifiedDate = String.valueOf(lastModified);
-				attributeM.setValue(lastModifiedDate);
-				content.addAttribute(attributeM);
+				content.setModificationDate(lastModified);
+				updateAttributes(content);
+			
 			}
 		} catch (FileParserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return content;
+	}
+
+	private void updateAttributes(Content content) {
+
+		Collection<Attribute> attributes = content.getAttributes();
+
+		for (Attribute attribute : attributes) {
+			String name = attribute.getName();
+			if (attributeMappings.containsKey(name)) {
+				name = attributeMappings.get(name);
+				attribute.setName(name);
+			}
+
+		}
+
 	}
 
 	@Override
@@ -247,6 +289,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		Content content = null;
 		try {
 
+			//workaround (another solution would be reset the input stream
 			byte[] bytes = IOUtils.toByteArray(inputStream);
 			InputStream is2 = new ByteArrayInputStream(bytes);
 			FileParser parser = parserFactory.getFileParser(is2);
@@ -254,19 +297,23 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			try {
 				content = parser.getContent(null, new ByteArrayInputStream(
 						bytes));
-				
+
 				content.setProvider(this.getId());
-				
+
+				//get the bytes content
 				Attribute attributeM = new Attribute();
-				attributeM.setName("BYTES_CONTENT");				
+				attributeM.setName("BYTES_CONTENT");
 				attributeM.setValue(encodeBinaryToString(bytes));
 				content.addAttribute(attributeM);
+
+				//update the attributes with the ones from the 
+				//initialization parameters
+				updateAttributes(content);
+
 			} catch (FileParserException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return content;
@@ -276,6 +323,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	public Collection getContentUrls() {
 
 		Properties params = getInitParams();
+		//get the filters from the initialization parameters
 		String filter = (String) params.get("filter-pattern");
 		String filterFolderInclude = (String) params
 				.get("filter-folder-include");
@@ -285,7 +333,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 		List<String> folders = new ArrayList<String>();
 		folders.add(folder);
-
+		
+		//create path filter
 		AcceptedPathFilter apf = null;
 		if (filterFolderInclude != null || filterFolderExclude != null) {
 			apf = new AcceptedPathFilter();
@@ -294,12 +343,14 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		}
 		FileScanner fs = new FileScanner(folders, apf);
 
+		//create file filter
 		AcceptFileFilter aff = null;
 		if (filter != null) {
 			aff = new AcceptFileFilter();
 			aff.addAcceptedFiletype(filter);
 		}
 
+		//get all the files that are valid using the filter
 		Collection files = fs.scanFiles(aff);
 
 		return files;
@@ -307,7 +358,31 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	@Override
 	public void init() {
-		//TODO
+
+		//parse the JSON of attribute mappings
+		Properties params = getInitParams();
+		//the name of the parameter is attribute.mappings
+		String mappings = (String) params.get("attribute.mappings");
+		JSONObject json = null;
+		try {
+			json = new JSONObject(mappings);
+		} catch (JSONException e) {
+			e.printStackTrace();
+			throw new IQserRuntimeException("Invalid JSON string");
+		}
+
+		Iterator keys = json.keys();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			try {
+				String value = (String) json.get(key);
+				attributeMappings.put(key, value);
+			} catch (JSONException e) {
+				throw new IQserRuntimeException("Invalid JSON string");
+			}
+
+		}
+
 	}
 
 	@Override
@@ -322,15 +397,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		Collection<String> actions = this.getActions(arg1);
 		if (actions.contains(arg0)) {
 			if (arg0.equalsIgnoreCase("delete")) {
-				deleteContent(arg1);
+				performDeleteAction(arg1);
 			} else if (arg0.equalsIgnoreCase("save")) {
-				saveContent(arg1);
+				performSaveAction(arg1);
 			}
 		}
 
 	}
 
-	private void saveContent(Content arg1) {
+	private void performSaveAction(Content arg1) {
 
 		String contentUrl = arg1.getContentUrl();
 
@@ -339,14 +414,14 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 					+ " does not have url");
 
 		File file = new File(contentUrl);
-		
-		Attribute attribute = arg1.getAttributeByName("BYTES_CONTENT");		
+
+		//get the binary content of the object from the content graph
+		Attribute attribute = arg1.getAttributeByName("BYTES_CONTENT");
 		byte[] bytes = decodeStringToBinary(attribute.getValue());
-		if (bytes!=null){
+		if (bytes != null) {
 			try {
 				IOUtils.write(bytes, new FileOutputStream(file));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -354,9 +429,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
-	private void deleteContent(Content arg1) {
+	private void performDeleteAction(Content arg1) {
 
-		
 		String contentUrl = arg1.getContentUrl();
 
 		if (contentUrl == null || contentUrl.trim().length() == 0)
@@ -368,31 +442,32 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			file.delete();
 
 		try {
-			this.removeContent(contentUrl);
+			removeContent(contentUrl);
 		} catch (IQserException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
-	
-	private String encodeBinaryToString(byte[] byteContent){
+
+	private String encodeBinaryToString(byte[] byteContent) {
 		char[] charContent = new char[byteContent.length];
 		for (int i = 0; i < charContent.length; i++) {
-			charContent[i] = (char)byteContent[i];
+			charContent[i] = (char) byteContent[i];
 		}
 		return new String(charContent);
 	}
-	
-	private byte[] decodeStringToBinary(String s){
-		if (s == null) return null;
-		
-		char[] charContent = s.toCharArray();		
-		byte[] byteContent = new byte[charContent.length];		
+
+	private byte[] decodeStringToBinary(String s) {
+		if (s == null)
+			return null;
+
+		char[] charContent = s.toCharArray();
+		byte[] byteContent = new byte[charContent.length];
 		for (int i = 0; i < charContent.length; i++) {
-			byteContent[i] = (byte)charContent[i];
+			byteContent[i] = (byte) charContent[i];
 		}
-		
+
 		return byteContent;
 	}
 

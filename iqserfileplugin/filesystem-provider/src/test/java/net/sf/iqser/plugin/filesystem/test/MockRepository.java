@@ -341,8 +341,8 @@ public class MockRepository implements Repository {
 		while (iter.hasNext()) {
 			Content oldc = (Content)iter.next();
 			
-			if (oldc.getContentUrl().matches(newc.getContentUrl()) && 
-					oldc.getProvider().matches(newc.getProvider())) {
+			if (oldc.getContentUrl().equalsIgnoreCase(newc.getContentUrl()) && 
+					oldc.getProvider().equalsIgnoreCase(newc.getProvider())) {
 				int index = cl.indexOf(oldc);
 				cl.set(index, newc);
 				updated = true;
