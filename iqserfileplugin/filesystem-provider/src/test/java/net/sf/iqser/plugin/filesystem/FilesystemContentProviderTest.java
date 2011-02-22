@@ -14,7 +14,6 @@ import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
 import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.iqser.core.config.Configuration;
@@ -66,11 +65,11 @@ public class FilesystemContentProviderTest extends TestCase {
 	}
 
 	public void testDestroy() {
-		//nothing to do
+		fscp.destroy(); //nothing to do
     }
 
     public void testInit() {
-    	//nothing to do
+    	fscp.init(); //nothing to do
     }
 
     public void testDoSynchronization() throws IQserTechnicalException {	    	
@@ -92,20 +91,15 @@ public class FilesystemContentProviderTest extends TestCase {
     	assertTrue(contents.size() == 2);
     	
     	fscp.doSynchonization();    	
-    	    	    	    	
-    	//TODO - the content do not have @provider set. 
-    	//Collection contents = repository.getContentByProvider(fscp.getId());    	
-    	//assertTrue(contents.size() > 0);
-    	
-    	contents = repository.getAllContentItem(-1);
-    	System.out.println(contents.size());
-    	assertTrue(contents.size() == 3);    	
-    	
+    	    	    	    	 
+    	contents = repository.getContentByProvider(fscp.getId());    	
+    	assertTrue(contents.size() == 3);
+    	    	
     }       
 
     
     public void testDoHousekeeping() {
-    	//nothing to do
+    	fscp.doHousekeeping(); //nothing to do
     }
 
     public void testGetBinaryData() {
@@ -113,7 +107,7 @@ public class FilesystemContentProviderTest extends TestCase {
     }
 
     public void testGetFile() {
-	fail("Not yet implemented");
+	fail("Not yet implemented");	
     }
 
     public void testGetActionsContent() {
@@ -212,7 +206,6 @@ public class FilesystemContentProviderTest extends TestCase {
     	File f = new File(testDataDir + "/output");
     	f.mkdirs();
     	
-    	//pdf
     	contentURL = testDataDir + "/ZimbraCommunity.pdf";
     	newContentURL = testDataDir + "/output/testpdf.pdf";
     	performSaveAction(contentURL, newContentURL);
@@ -234,7 +227,6 @@ public class FilesystemContentProviderTest extends TestCase {
 		Content newContent = fscp.getContent(newContentURL);
 		String newFulltext = newContent.getFulltext();
 		
-		//TODO PDF FAILS THIS TEST
 		assertEquals(fulltext, newFulltext);
     }        
 

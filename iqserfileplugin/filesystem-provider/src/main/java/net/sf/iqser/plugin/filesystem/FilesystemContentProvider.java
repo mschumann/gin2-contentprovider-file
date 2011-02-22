@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -216,12 +215,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		}
 		try {
 			content = parser.getContent(contentUrl, inputStream);
+			content.setProvider(this.getId());
 			content.setContentUrl(contentUrl);
 			Attribute attributeM = new Attribute();
 			attributeM.setName("BYTES_CONTENT");
-			byte[] data = this.getBinaryData(content);
-			String bytesString = new String(data);
-			attributeM.setValue(bytesString);
+			byte[] data = this.getBinaryData(content);			
+			attributeM.setValue(encodeBinaryToString(data));
 			content.addAttribute(attributeM);
 
 			File file = getFile(contentUrl);
@@ -255,10 +254,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			try {
 				content = parser.getContent(null, new ByteArrayInputStream(
 						bytes));
+				
+				content.setProvider(this.getId());
+				
 				Attribute attributeM = new Attribute();
-				attributeM.setName("BYTES_CONTENT");
-				String bytesString = new String(bytes);
-				attributeM.setValue(bytesString);
+				attributeM.setName("BYTES_CONTENT");				
+				attributeM.setValue(encodeBinaryToString(bytes));
 				content.addAttribute(attributeM);
 			} catch (FileParserException e) {
 				// TODO Auto-generated catch block
@@ -338,20 +339,17 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 					+ " does not have url");
 
 		File file = new File(contentUrl);
-		byte[] bytes = null;
-		Attribute attribute = arg1.getAttributeByName("BYTES_CONTENT");
-		String value = attribute.getValue();
-		bytes = value.getBytes();
-		try {			
-			OutputStream os = new FileOutputStream(file);
-			os.write(bytes);
-			os.flush();
-			os.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
+		Attribute attribute = arg1.getAttributeByName("BYTES_CONTENT");		
+		byte[] bytes = decodeStringToBinary(attribute.getValue());
+		if (bytes!=null){
+			try {
+				IOUtils.write(bytes, new FileOutputStream(file));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 		addContent(arg1);
 
 	}
@@ -376,6 +374,26 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private String encodeBinaryToString(byte[] byteContent){
+		char[] charContent = new char[byteContent.length];
+		for (int i = 0; i < charContent.length; i++) {
+			charContent[i] = (char)byteContent[i];
+		}
+		return new String(charContent);
+	}
+	
+	private byte[] decodeStringToBinary(String s){
+		if (s == null) return null;
+		
+		char[] charContent = s.toCharArray();		
+		byte[] byteContent = new byte[charContent.length];		
+		for (int i = 0; i < charContent.length; i++) {
+			byteContent[i] = (byte)charContent[i];
+		}
+		
+		return byteContent;
 	}
 
 }
