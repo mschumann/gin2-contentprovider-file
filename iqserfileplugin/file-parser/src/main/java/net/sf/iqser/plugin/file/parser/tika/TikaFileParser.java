@@ -26,8 +26,8 @@ public abstract class TikaFileParser implements FileParser {
 			Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		// Set the title attribute. This Attribute is a key.
-		content.addAttribute(new Attribute("TITLE", FileParserUtils
-			.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
+//		content.addAttribute(new Attribute("TITLE", FileParserUtils
+//			.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
 
 		// Set the content type for a unknown format (file extention +
 		// 'Document')
