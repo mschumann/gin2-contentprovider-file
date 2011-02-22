@@ -94,6 +94,8 @@ public class PdfFileParser implements FileParser {
 	    getDocumentInformation(doc, content);
 	    content.setFulltext(extractText(cosdoc));
 	}
+	cosdoc.close();
+	doc.close();
     }
 
     /**
