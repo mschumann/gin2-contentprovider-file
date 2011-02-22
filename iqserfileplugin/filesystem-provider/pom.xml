@@ -10,6 +10,7 @@
 	<artifactId>filesystem-provider</artifactId>
 	<name>Filesystem ContentProvider</name>
 	<version>1.0-SNAPSHOT</version>
+	<description>This module contains a ContentProvider implementation to connect filesystems to the iQser GIN Platform.</description>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
