@@ -38,14 +38,13 @@
 
 	<developers>
 		<developer>
-			<id>cmagnus</id>
+			<id>cmagnus71</id>
 			<name>Christian Magnus</name>
 			<email>christian.magnus@iqser.net</email>
 			<organization>IQser AG</organization>
 			<organizationUrl>http://www.iqser.com</organizationUrl>
 			<roles>
-				<role>project lead</role>
-				<role>developer</role>
+				<role>Project Lead</role>
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
@@ -56,7 +55,38 @@
 			<organization>IQser AG</organization>
 			<organizationUrl>http://www.iqser.com</organizationUrl>
 			<roles>
-				<role>developer</role>
+				<role>Requirement Engineer</role>
+			</roles>
+			<timezone>+1</timezone>
+		</developer>
+		<developer>
+			<id>robertbaban</id>
+			<name>Robert Baban</name>
+			<organization>Recognos Romania</organization>
+			<organizationUrl>http://www.recognos.ro</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+2</timezone>
+		</developer>
+		<developer>
+			<id>agalos</id>
+			<name>Alexandru Adrian Galos</name>
+			<organization>Recognos Romania</organization>
+			<organizationUrl>http://www.recognos.ro</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+			<timezone>+2</timezone>
+		</developer>
+		<developer>
+			<id>budisantoso-de</id>
+			<name>Kresnadi Budisantoso</name>
+			<email>Kresnadi.Budisantoso@haerter.com</email>
+			<organization>Haerter Group</organization>
+			<organizationUrl>http://www.haerter.com</organizationUrl>
+			<roles>
+				<role>Requirement Engineer</role>
 			</roles>
 			<timezone>+1</timezone>
 		</developer>
