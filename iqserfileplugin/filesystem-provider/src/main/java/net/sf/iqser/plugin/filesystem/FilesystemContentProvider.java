@@ -419,7 +419,9 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		byte[] bytes = decodeStringToBinary(attribute.getValue());
 		if (bytes != null) {
 			try {
-				IOUtils.write(bytes, new FileOutputStream(file));
+				FileOutputStream out = new FileOutputStream(file);
+				IOUtils.write(bytes, out);
+				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -437,8 +439,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 					+ " does not have url");
 
 		File file = new File(contentUrl);
-		if (file.exists() && !file.isDirectory())
-			file.delete();
+		if (file.exists() && !file.isDirectory()){
+			boolean isDeleted = file.delete();
+			if (!isDeleted){
+				logger.warn(" File not deleted from filesystem " + arg1.getContentUrl());
+			}
+		}
 
 		try {
 			removeContent(contentUrl);

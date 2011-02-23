@@ -11,8 +11,6 @@ import javax.swing.text.rtf.RTFEditorKit;
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserUtils;
-import net.sf.iqser.plugin.file.parser.pdf.PdfFileParser;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -33,7 +31,7 @@ public class RtfFileParser implements FileParser {
     /**
      * Default Logger for this class.
      */
-    private static Logger logger = Logger.getLogger(PdfFileParser.class);
+    private static Logger logger = Logger.getLogger(RtfFileParser.class);
 
     /**
      * Parse RTF document and create a {@link Content} object.
@@ -81,6 +79,8 @@ public class RtfFileParser implements FileParser {
 	if (!StringUtils.isEmpty(fulltext)) {
 	    content.setFulltext(fulltext);
 	}
+	//close input stream
+	inputStream.close();
     }
 
 }

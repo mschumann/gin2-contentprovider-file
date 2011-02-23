@@ -70,11 +70,22 @@ public class FilesystemContentProviderTest extends TestCase {
 
 		sl.setRepository(rep);
 		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
+		
+		//delete testdata/output
+		File file = new File(testDataDir + "/output");
+		if (file.exists()){
+			file.delete();
+		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		fscp.destroy();
+		//delete testdata/output
+		File file = new File(testDataDir + "/output");
+		if (file.exists()){
+			file.delete();
+		}
 		super.tearDown();
 	}
 
@@ -256,9 +267,13 @@ public class FilesystemContentProviderTest extends TestCase {
 
 	public void testGetContentUrls() {
 		Collection urls = fscp.getContentUrls();
-		for (Object url : urls) {
-			System.out.println(url);
-		}
+		
+		assertTrue(urls.size() == 3);
+				
+		File file = new File(testDataDir + "/testSynch/file1.txt");
+		String contentUrl = file.getAbsolutePath();
+		
+		assertTrue( urls.contains(contentUrl));
 	}
 
 	public void testOnChangeEventEvent() {
@@ -327,10 +342,14 @@ public class FilesystemContentProviderTest extends TestCase {
 		}
 		
 		assertTrue(contents.size()==0);
+		
+		//check if folder is empty
+		File outputFolder = new File(testDataDir + "/output");
+		assertTrue(outputFolder.list().length == 0);
 
 	}
 
-	public void testPerformActionStringContentPDF() throws IOException {
+	public void testPerformActionStringContentPDF() throws IOException, IQserTechnicalException {
 
 		String contentURL, newContentURL;
 
@@ -340,6 +359,17 @@ public class FilesystemContentProviderTest extends TestCase {
 		contentURL = testDataDir + "/ZimbraCommunity.pdf";
 		newContentURL = testDataDir + "/output/testpdf.pdf";
 		performSaveAction(contentURL, newContentURL);
+						
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
+
+		Collection contents = repository.getAllContentItem(-1);		
+		assertTrue(contents.size()==1);
+		
+		for (Content content : (Collection<Content>)contents) {
+			performDeleteAction(content);
+		}
+		contents = repository.getAllContentItem(-1);		
+		assertTrue(contents.size()==0);
 
 	}
 
