@@ -30,8 +30,6 @@ public class ODFFileParserTest extends TestCase{
 		assertFalse(content.getAttributeByName("FILENAME").isKey());
 		
 		assertNotNull(content.getAttributeByName("TITLE"));
-		assertEquals("ODFDataTest", content.getAttributeByName("TITLE")
-			.getValue());
 		assertTrue(content.getAttributeByName("TITLE").isKey());
 		
 		assertNotNull(content.getFulltext());

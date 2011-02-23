@@ -30,8 +30,6 @@ public class WordFileParserTest extends TestCase {
 		assertFalse(content.getAttributeByName("FILENAME").isKey());
 		
 		assertNotNull(content.getAttributeByName("TITLE"));
-		assertEquals("WordDataTest", content.getAttributeByName("TITLE")
-			.getValue());
 		assertTrue(content.getAttributeByName("TITLE").isKey());
 		
 		assertNotNull(content.getFulltext());
