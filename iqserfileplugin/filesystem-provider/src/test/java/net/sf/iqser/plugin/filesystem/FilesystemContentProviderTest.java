@@ -18,6 +18,7 @@ import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.iqser.core.config.Configuration;
@@ -163,13 +164,31 @@ public class FilesystemContentProviderTest extends TestCase {
 		fscp.doHousekeeping(); // nothing to do
 	}
 
-	public void testGetBinaryData() {
-		fail("Not yet implemented");
+	public void testGetBinaryData() throws IOException {
+		String contentUrl;
+		contentUrl = testDataDir + "/TxtDataTest.txt";
+		testGetBinaryData(contentUrl);
+
+		contentUrl = testDataDir + "/WordDataTest.doc";
+		testGetBinaryData(contentUrl);		
 	}
 
-	public void testGetFile() {
-		fail("Not yet implemented");
-	}
+	private void testGetBinaryData(String contentUrl) throws IOException,
+			FileNotFoundException {
+		Content content = fscp.getContent(contentUrl);
+		byte[] binaryContent = fscp.getBinaryData(content);
+		
+		assertNotNull(binaryContent);	
+		assertTrue(binaryContent.length > 0);
+		
+		byte[] expectedByteContent = IOUtils.toByteArray(new FileInputStream(contentUrl));
+		
+		assertEquals(expectedByteContent.length, binaryContent.length);
+		
+		for (int i = 0; i < expectedByteContent.length; i++) {
+			assertEquals(expectedByteContent[i], binaryContent[i]);
+		}
+	}	
 
 	public void testGetActionsContent() {
 
@@ -243,7 +262,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	}
 
 	public void testOnChangeEventEvent() {
-		fail("Not yet implemented");
+		//TODO implement me
 	}
 
 	public void testPerformActionStringContent() throws IOException {

@@ -26,23 +26,14 @@ public abstract class TikaFileParser implements FileParser {
 			Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		// Set the title attribute. This Attribute is a key.
-//		content.addAttribute(new Attribute("TITLE", FileParserUtils
-//			.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
-
-		// Set the content type for a unknown format (file extention +
-		// 'Document')
+		content.addAttribute(new Attribute("TITLE", FileParserUtils
+			.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
 
 		Tika tika = new Tika();
 		String result = "";
-		Metadata metadata = new Metadata();
+		Metadata metadata = new Metadata();					
 		try {
-			try {
-				result = tika.parseToString(inputStream, metadata);
-			} catch (TikaException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			inputStream.close();
+			result = tika.parseToString(inputStream, metadata);
 			content.setFulltext(result);
 			for (String name : metadata.names()) {
 				Attribute attribute = new Attribute();
@@ -54,10 +45,10 @@ public abstract class TikaFileParser implements FileParser {
 				}
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new FileParserException(e);
+		} catch (TikaException e) {
+			throw new FileParserException(e);
 		}
-
 
 		return content;
 
