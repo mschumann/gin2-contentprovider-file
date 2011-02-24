@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -36,7 +37,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	protected void setUp() throws Exception {
 
 		testDataDir = System.getProperty("testdata.dir", "testdata");
-		//testDataDir = System.getProperty("testdata.dir", "D:/testdata");
+		// testDataDir = System.getProperty("testdata.dir", "D:/testdata");
 
 		PropertyConfigurator.configure("src/test/resources/log4j.properties");
 
@@ -50,9 +51,10 @@ public class FilesystemContentProviderTest extends TestCase {
 		initParams.setProperty("filter-folder-exclude", testDataDir
 				+ "/testSynch/exclude/");
 		initParams
-				.setProperty("attribute.mappings",
-						"{AUTHOR:Autor, Last-Author:Autor, Author:Autor, title:Bezeichnung}");
-
+				.setProperty(
+						"attribute.mappings",
+						"{AUTHOR:Autor, Last-Author:Autor, Author:Autor, title:Bezeichnung,TITLE:Bezeichnung}");
+		initParams.setProperty("key-attributes", "[Autor][Bezeichnung]");
 		fscp = new FilesystemContentProvider();
 		fscp.setInitParams(initParams);
 		fscp.setType("HTML Page");
@@ -70,10 +72,10 @@ public class FilesystemContentProviderTest extends TestCase {
 
 		sl.setRepository(rep);
 		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
-		
-		//delete testdata/output
+
+		// delete testdata/output
 		File file = new File(testDataDir + "/output");
-		if (file.exists()){
+		if (file.exists()) {
 			file.delete();
 		}
 	}
@@ -81,9 +83,9 @@ public class FilesystemContentProviderTest extends TestCase {
 	@Override
 	protected void tearDown() throws Exception {
 		fscp.destroy();
-		//delete testdata/output
+		// delete testdata/output
 		File file = new File(testDataDir + "/output");
-		if (file.exists()){
+		if (file.exists()) {
 			file.delete();
 		}
 		super.tearDown();
@@ -91,6 +93,37 @@ public class FilesystemContentProviderTest extends TestCase {
 
 	public void testDestroy() {
 		fscp.destroy(); // nothing to do
+	}
+
+	public void testKeyParameters() {
+		Field field = null;
+		try {
+			field = fscp.getClass().getDeclaredField("keyAttributesList");
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		field.setAccessible(true);
+		List<String> keyAttributes = null;
+		try {
+			keyAttributes = (List<String>) field.get(fscp);
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		assertNotNull(keyAttributes);
+		assertTrue(keyAttributes.size() > 0);
+		String value = keyAttributes.get(0);
+		assertEquals("Autor", value);
+		value = keyAttributes.get(1);
+		assertEquals("Bezeichnung", value);
+
 	}
 
 	public void testInit() {
@@ -157,14 +190,13 @@ public class FilesystemContentProviderTest extends TestCase {
 		fscp.doSynchonization();
 
 		contents = repository.getContentByProvider(fscp.getId());
-		for (Content content : (Collection<Content>)contents) {
-			if (content.getContentUrl().equalsIgnoreCase(c.getContentUrl())){
-				assertTrue(content.getFulltext().trim().equals("testing synchronization"));
+		for (Content content : (Collection<Content>) contents) {
+			if (content.getContentUrl().equalsIgnoreCase(c.getContentUrl())) {
+				assertTrue(content.getFulltext().trim()
+						.equals("testing synchronization"));
 			}
 		}
 		assertTrue(contents.size() == 3);
-
-		
 
 		fw = new FileWriter(f);
 		fw.write("testing synchronization initial");
@@ -181,25 +213,26 @@ public class FilesystemContentProviderTest extends TestCase {
 		testGetBinaryData(contentUrl);
 
 		contentUrl = testDataDir + "/WordDataTest.doc";
-		testGetBinaryData(contentUrl);		
+		testGetBinaryData(contentUrl);
 	}
 
 	private void testGetBinaryData(String contentUrl) throws IOException,
 			FileNotFoundException {
 		Content content = fscp.getContent(contentUrl);
 		byte[] binaryContent = fscp.getBinaryData(content);
-		
-		assertNotNull(binaryContent);	
+
+		assertNotNull(binaryContent);
 		assertTrue(binaryContent.length > 0);
-		
-		byte[] expectedByteContent = IOUtils.toByteArray(new FileInputStream(contentUrl));
-		
+
+		byte[] expectedByteContent = IOUtils.toByteArray(new FileInputStream(
+				contentUrl));
+
 		assertEquals(expectedByteContent.length, binaryContent.length);
-		
+
 		for (int i = 0; i < expectedByteContent.length; i++) {
 			assertEquals(expectedByteContent[i], binaryContent[i]);
 		}
-	}	
+	}
 
 	public void testGetActionsContent() {
 
@@ -213,12 +246,12 @@ public class FilesystemContentProviderTest extends TestCase {
 
 	public void testGetContentString() {
 
-		try {
-			testPerformActionStringContent();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		// try {
+		// testPerformActionStringContent();
+		// } catch (IOException e1) {
+		// // TODO Auto-generated catch block
+		// e1.printStackTrace();
+		// }
 		File root = new File(testDataDir);
 		StringBuffer sb = new StringBuffer();
 		for (File file : root.listFiles()) {
@@ -232,8 +265,8 @@ public class FilesystemContentProviderTest extends TestCase {
 				for (Attribute attribute : attributes) {
 					String name = attribute.getName();
 					String value = attribute.getValue();
-
-					sb.append(name).append("\r\n");
+					boolean key = attribute.isKey();
+					sb.append(name).append("\t").append(key).append("\r\n");
 				}
 				String fulltext = content.getFulltext();
 				sb.append("\r\n").append("\r\n").append("\r\n");
@@ -267,17 +300,17 @@ public class FilesystemContentProviderTest extends TestCase {
 
 	public void testGetContentUrls() {
 		Collection urls = fscp.getContentUrls();
-		
+
 		assertTrue(urls.size() == 3);
-				
+
 		File file = new File(testDataDir + "/testSynch/file1.txt");
 		String contentUrl = file.getAbsolutePath();
-		
-		assertTrue( urls.contains(contentUrl));
+
+		assertTrue(urls.contains(contentUrl));
 	}
 
 	public void testOnChangeEventEvent() {
-		//TODO implement me
+		// TODO implement me
 	}
 
 	public void testPerformActionStringContent() throws IOException {
@@ -316,11 +349,10 @@ public class FilesystemContentProviderTest extends TestCase {
 		contentURL = testDataDir + "/TestDocument.rtf";
 		newContentURL = testDataDir + "/output/testrtf.rtf";
 		performSaveAction(contentURL, newContentURL);
-		
 
 		Repository repository = Configuration.getConfiguration()
 				.getServiceLocator().getRepository();
-		
+
 		Collection contents = null;
 		try {
 			contents = repository.getAllContentItem(-1);
@@ -328,10 +360,10 @@ public class FilesystemContentProviderTest extends TestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		assertTrue(contents.size()==6);
-		
-		for (Content content : (Collection<Content>)contents) {
+
+		assertTrue(contents.size() == 6);
+
+		for (Content content : (Collection<Content>) contents) {
 			performDeleteAction(content);
 		}
 		try {
@@ -340,16 +372,17 @@ public class FilesystemContentProviderTest extends TestCase {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		assertTrue(contents.size()==0);
-		
-		//check if folder is empty
+
+		assertTrue(contents.size() == 0);
+
+		// check if folder is empty
 		File outputFolder = new File(testDataDir + "/output");
 		assertTrue(outputFolder.list().length == 0);
 
 	}
 
-	public void testPerformActionStringContentPDF() throws IOException, IQserTechnicalException {
+	public void testPerformActionStringContentPDF() throws IOException,
+			IQserTechnicalException {
 
 		String contentURL, newContentURL;
 
@@ -359,17 +392,18 @@ public class FilesystemContentProviderTest extends TestCase {
 		contentURL = testDataDir + "/ZimbraCommunity.pdf";
 		newContentURL = testDataDir + "/output/testpdf.pdf";
 		performSaveAction(contentURL, newContentURL);
-						
-		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
-		Collection contents = repository.getAllContentItem(-1);		
-		assertTrue(contents.size()==1);
-		
-		for (Content content : (Collection<Content>)contents) {
+		Repository repository = Configuration.getConfiguration()
+				.getServiceLocator().getRepository();
+
+		Collection contents = repository.getAllContentItem(-1);
+		assertTrue(contents.size() == 1);
+
+		for (Content content : (Collection<Content>) contents) {
 			performDeleteAction(content);
 		}
-		contents = repository.getAllContentItem(-1);		
-		assertTrue(contents.size()==0);
+		contents = repository.getAllContentItem(-1);
+		assertTrue(contents.size() == 0);
 
 	}
 
@@ -386,14 +420,16 @@ public class FilesystemContentProviderTest extends TestCase {
 		fscp.performAction("save", content);
 
 		// read new content
-		Content newContent = fscp.getContent(newContentURL);
-		String newFulltext = newContent.getFulltext();
+		if (content.getType().equalsIgnoreCase("Text Document")) {
+			Content newContent = fscp.getContent(newContentURL);
+			String newFulltext = newContent.getFulltext();
 
-		assertEquals(fulltext, newFulltext);
+			assertEquals(fulltext, newFulltext);
+		}
 	}
 
-	private void performDeleteAction(Content content){
+	private void performDeleteAction(Content content) {
 		fscp.performAction("delete", content);
 	}
-	
+
 }

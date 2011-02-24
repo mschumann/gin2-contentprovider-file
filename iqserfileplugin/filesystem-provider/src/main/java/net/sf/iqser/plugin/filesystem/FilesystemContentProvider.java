@@ -45,6 +45,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	private static final long serialVersionUID = 6781181225882526721L;
 
 	private Map<String, String> attributeMappings = new HashMap<String, String>();
+	
+	private Collection<String> keyAttributesList = new ArrayList<String>();
 
 	public byte[] getBinaryData(Content content) {
 		logger.debug("getBinaryData( Content content=" + content
@@ -230,6 +232,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	@Override
 	public Content getContent(String contentUrl) {
 
+		if (new File(contentUrl).exists()){
 		FileParserFactory parserFactory = FileParserFactory.getInstance();
 		FileParser parser = parserFactory.getFileParser(contentUrl);
 		Content content = null;
@@ -245,24 +248,23 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			content = parser.getContent(contentUrl, inputStream);
 			content.setProvider(this.getId());
 			content.setContentUrl(contentUrl);
-			Attribute attributeM = new Attribute();
-			attributeM.setName("BYTES_CONTENT");
-			byte[] data = this.getBinaryData(content);
-			attributeM.setValue(encodeBinaryToString(data));
-			content.addAttribute(attributeM);
+			
 
 			File file = getFile(contentUrl);
 
 			if (file != null) {
 				long lastModified = file.lastModified();
 				content.setModificationDate(lastModified);
-				updateAttributes(content);
-			
 			}
+			updateAttributes(content);
+			updateKeyAttributes(content);
 		} catch (FileParserException e) {
 			e.printStackTrace();
 		}
+		
 		return content;
+		}else
+			throw new IQserRuntimeException("The content does not have url");
 	}
 
 	private void updateAttributes(Content content) {
@@ -283,9 +285,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	@Override
 	public Content getContent(InputStream inputStream) {
 
+//		if (inputStream instanceof FileInputStream)
+//			((FileInputStream)inputStream).getChannel().
 		FileParserFactory parserFactory = FileParserFactory.getInstance();
 
 		Content content = null;
+		
 		try {
 
 			//workaround (another solution would be reset the input stream
@@ -299,15 +304,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 				content.setProvider(this.getId());
 
-				//get the bytes content
-				Attribute attributeM = new Attribute();
-				attributeM.setName("BYTES_CONTENT");
-				attributeM.setValue(encodeBinaryToString(bytes));
-				content.addAttribute(attributeM);
 
 				//update the attributes with the ones from the 
 				//initialization parameters
 				updateAttributes(content);
+				updateKeyAttributes(content);
 
 			} catch (FileParserException e) {
 				e.printStackTrace();
@@ -316,6 +317,26 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			e.printStackTrace();
 		}
 		return content;
+	}
+
+	private void updateKeyAttributes(Content content) {
+		
+		Collection<Attribute> attributes = content.getAttributes();
+		
+		for (Attribute attribute : attributes) {
+			
+			String name = attribute.getName();
+		
+			boolean contains = keyAttributesList.contains(name);
+			if (contains){
+				attribute.setKey(true);
+			}else
+				attribute.setKey(false);
+			
+			
+		}
+	
+		
 	}
 
 	@Override
@@ -381,6 +402,17 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			}
 
 		}
+		
+		String keyAttributes = (String) params.get("key-attributes");
+		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
+		
+		String[] keyAttrs = keyAttributes.trim().split(regex);
+		
+		for (String key : keyAttrs) {
+			if (key.trim().length()>0)
+				keyAttributesList.add(key);
+		}
+		
 
 	}
 
@@ -415,12 +447,10 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		File file = new File(contentUrl);
 
 		//get the binary content of the object from the content graph
-		Attribute attribute = arg1.getAttributeByName("BYTES_CONTENT");
-		byte[] bytes = decodeStringToBinary(attribute.getValue());
-		if (bytes != null) {
+		if (arg1.getType().equalsIgnoreCase("Text Document")){
 			try {
 				FileOutputStream out = new FileOutputStream(file);
-				IOUtils.write(bytes, out);
+				IOUtils.write(arg1.getFulltext(), out);
 				out.close();
 			} catch (IOException e) {
 				e.printStackTrace();

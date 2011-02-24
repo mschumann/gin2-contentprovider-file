@@ -1,134 +1,126 @@
 EXCEL Document
 
-FILENAME
-CONTENT
-Category
-Comments
-Bezeichnung
-Autor
-Manager
-subject
-Autor
-Company
-Content-Type
-Keywords
-Last-Save-Date
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+CONTENT	false
+Category	false
+Comments	false
+Autor	true
+Manager	false
+subject	false
+Autor	true
+Company	false
+Content-Type	false
+Keywords	false
+Last-Save-Date	false
 
 
 
 ODF Document
 
-FILENAME
-CONTENT
-editing-cycles
-subject
-nbTab
-date
-Edit-Time
-nbObject
-Creation-Date
-Bezeichnung
-nbPara
-nbImg
-generator
-nbWord
-Content-Type
-nbPage
-Keywords
-nbCharacter
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+CONTENT	false
+editing-cycles	false
+subject	false
+nbTab	false
+date	false
+Edit-Time	false
+nbObject	false
+Creation-Date	false
+nbPara	false
+nbImg	false
+generator	false
+nbWord	false
+Content-Type	false
+nbPage	false
+Keywords	false
+nbCharacter	false
 
 
 
 PPT Document
 
-FILENAME
-CONTENT
-Revision-Number
-Last-Printed
-Comments
-Slide-Count
-Autor
-subject
-Autor
-xmpTPg:NPages
-Edit-Time
-Word-Count
-Creation-Date
-Category
-Bezeichnung
-Manager
-Company
-Content-Type
-Keywords
-Last-Save-Date
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+CONTENT	false
+Revision-Number	false
+Last-Printed	false
+Comments	false
+Slide-Count	false
+Autor	true
+subject	false
+Autor	true
+xmpTPg:NPages	false
+Edit-Time	false
+Word-Count	false
+Creation-Date	false
+Category	false
+Manager	false
+Company	false
+Content-Type	false
+Keywords	false
+Last-Save-Date	false
 
 
 
 TMP Document
 
-FILENAME
-TITLE
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
 
 
 
 RTF Document
 
-FILENAME
-TITLE
-CONTENT
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+CONTENT	false
 
 
 
 Text Document
 
-FILENAME
-TITLE
-CONTENT
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+CONTENT	false
 
 
 
 DOC Document
 
-FILENAME
-CONTENT
-Last-Printed
-Revision-Number
-Comments
-Autor
-Template
-Page-Count
-subject
-Application-Name
-Autor
-Word-Count
-xmpTPg:NPages
-Edit-Time
-Creation-Date
-Category
-Bezeichnung
-Manager
-Character Count
-Company
-Content-Type
-Keywords
-Last-Save-Date
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+CONTENT	false
+Last-Printed	false
+Revision-Number	false
+Comments	false
+Autor	true
+Template	false
+Page-Count	false
+subject	false
+Application-Name	false
+Autor	true
+Word-Count	false
+xmpTPg:NPages	false
+Edit-Time	false
+Creation-Date	false
+Category	false
+Manager	false
+Character Count	false
+Company	false
+Content-Type	false
+Keywords	false
+Last-Save-Date	false
 
 
 
 PDF Document
 
-FILENAME
-TITLE
-Autor
-CONTENT
-BYTES_CONTENT
+FILENAME	false
+Bezeichnung	true
+Autor	true
+CONTENT	false
 
 
 
