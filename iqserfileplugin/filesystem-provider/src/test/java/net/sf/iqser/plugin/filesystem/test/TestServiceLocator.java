@@ -29,7 +29,7 @@ public class TestServiceLocator implements ServiceLocator {
 	/** AnalyzerTaskStarter mpckup for testing */
 	private AnalyzerTaskStarter ats = null;
 
-	@Override
+	
 	public AdminFacade getAdminFacade() {
 		// TODO Auto-generated method stub
 		return null;
@@ -39,54 +39,54 @@ public class TestServiceLocator implements ServiceLocator {
 		ats = arg0;
 	}
 
-	@Override
+	
 	public AnalyzerTaskStarter getAnalyzerTaskStarter() {
 		return ats;
 	}
 
-	@Override
+	
 	public CategoryBuilder getCategoryBuilder() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public CategoryManager getCategoryManager() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public ClientFacade getClientFacade() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public ContentAnalyzer getContentAnalyzer() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public ContentProvider getContentProvider(String arg0) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public EventPublisher getEventPublisher() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public Index getIndex() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public PluginManager getPluginManager() {
 		// TODO Auto-generated method stub
 		return null;
@@ -96,18 +96,18 @@ public class TestServiceLocator implements ServiceLocator {
 		rep = mockup;
 	}
 
-	@Override
+	
 	public Repository getRepository() {
 		return rep;
 	}
 
-	@Override
+	
 	public SecurityManager getSecurityManager() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
+	
 	public Tracker getTracker() {
 		// TODO Auto-generated method stub
 		return null;

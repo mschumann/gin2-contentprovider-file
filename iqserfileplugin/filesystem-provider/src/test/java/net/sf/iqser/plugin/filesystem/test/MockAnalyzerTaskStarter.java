@@ -16,8 +16,7 @@ import com.iqser.core.exception.IQserTechnicalException;
 public class MockAnalyzerTaskStarter implements AnalyzerTaskStarter {
 	
 	private static Logger logger = Logger.getLogger( MockAnalyzerTaskStarter.class );
-
-	@Override
+	
 	public void startTask(ContentAnalyzerJob job) {
 		logger.debug("startTask() startet for " + job.getContent().getContentUrl() + " and type " + job.getJobType());
 
