@@ -65,6 +65,8 @@ public class FilesystemContentProviderTest extends TestCase {
 		Configuration
 				.configure(new File("src/test/resources/iqser-config.xml"));
 
+		// fscp =
+		// FileSystemContentProviderCreator.getFilesystemContentProvider(testDataDir);
 		TestServiceLocator sl = (TestServiceLocator) Configuration
 				.getConfiguration().getServiceLocator();
 		MockRepository rep = new MockRepository();
@@ -196,15 +198,37 @@ public class FilesystemContentProviderTest extends TestCase {
 						.equals("testing synchronization"));
 			}
 		}
-		assertTrue(contents.size() == 3);
+		assertEquals(4,contents.size());
 
 		fw = new FileWriter(f);
 		fw.write("testing synchronization initial");
 		fw.close();
 	}
 
-	public void testDoHousekeeping() {
-		fscp.doHousekeeping(); // nothing to do
+	public void testDoHousekeeping() throws IQserTechnicalException {
+		
+		Repository repository = Configuration.getConfiguration()
+				.getServiceLocator().getRepository();
+
+		// add dummy contents
+		File f = new File(testDataDir + "/testSynch/file2.txt");
+		Content c = fscp.getContent(f.getAbsolutePath());
+		c.setProvider(fscp.getId());
+		repository.addContent(c);
+		 f = new File(testDataDir + "/TxtDataTest.txt");
+		c = fscp.getContent(f.getAbsolutePath());
+		c.setProvider(fscp.getId());
+		repository.addContent(c);
+		
+		Collection contents = repository.getContentByProvider(fscp.getId());
+		assertEquals(2,contents.size());
+		
+		fscp.doHousekeeping();
+		contents = repository.getContentByProvider(fscp.getId());
+		
+		assertEquals(1,contents.size());
+		
+
 	}
 
 	public void testGetBinaryData() throws IOException {
@@ -246,12 +270,6 @@ public class FilesystemContentProviderTest extends TestCase {
 
 	public void testGetContentString() {
 
-		// try {
-		// testPerformActionStringContent();
-		// } catch (IOException e1) {
-		// // TODO Auto-generated catch block
-		// e1.printStackTrace();
-		// }
 		File root = new File(testDataDir);
 		StringBuffer sb = new StringBuffer();
 		for (File file : root.listFiles()) {

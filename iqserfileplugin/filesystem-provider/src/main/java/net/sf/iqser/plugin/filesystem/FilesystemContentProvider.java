@@ -19,6 +19,7 @@ import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserFactory;
 import net.sf.iqser.plugin.file.parser.pdf.PdfFileParser;
+import net.sf.iqser.plugin.filesystem.utils.ContentUpdate;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
@@ -45,7 +46,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	private static final long serialVersionUID = 6781181225882526721L;
 
 	private Map<String, String> attributeMappings = new HashMap<String, String>();
-	
+
 	private Collection<String> keyAttributesList = new ArrayList<String>();
 
 	public byte[] getBinaryData(Content content) {
@@ -85,8 +86,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			is.close();
 			return bytes;
 		} catch (IOException ioe) {
-			throw new IQserRuntimeException("Error while reading file data: "
-					+ ioe.getMessage());
+			throw new IQserRuntimeException(ioe);
 		}
 	}
 
@@ -119,11 +119,34 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	@Override
 	public void doHousekeeping() {
-		// TODO Auto-generated method stub
+		// collection of source URLs
+		Collection<String> sourceContentUrls = getContentUrls();
+		Collection<Content> existingContents;
+		try {
+			existingContents = getExistingContents();
+		} catch (IQserException e) {
+			throw new IQserRuntimeException(e);
+		}
+
+		Collection<Content> contentsToDelete = new ArrayList<Content>();
+
+		if (existingContents != null) {
+			try {
+				for (Content content : existingContents) {
+					String contentUrl = content.getContentUrl();
+					if (!sourceContentUrls.contains(contentUrl))
+						removeContent(content.getContentUrl());
+				}
+			} catch (IQserException e) {
+				throw new IQserRuntimeException(e);
+			}
+
+		}
 	}
 
 	@Override
 	public void doSynchonization() {
+
 		/**
 		 * synchronize file system against the object graph - if a file is new
 		 * INSERT in Object Graph - if a file has been modified ( see file
@@ -153,17 +176,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			for (String contentUrl : newSourceContentUrls) {
 				logger.info("Synch - add conntent " + contentUrl);
 				addContent(getContent(contentUrl));
-			}
-
-			// handle deleted content - content object that do not have a
-			// coresponding file in the file system
-			Collection<String> deletedContentsUrls = new ArrayList<String>();
-			deletedContentsUrls.addAll(objectGraphContentUrls);
-			deletedContentsUrls.removeAll(sourceContentUrls);
-
-			for (String contentUrl : deletedContentsUrls) {
-				logger.info("Synch - delete conntent " + contentUrl);
-				removeContent(contentUrl);
 			}
 
 			// handle common files - files that are both in file system and in
@@ -232,118 +244,82 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	@Override
 	public Content getContent(String contentUrl) {
 
-		if (new File(contentUrl).exists()){
-		FileParserFactory parserFactory = FileParserFactory.getInstance();
-		FileParser parser = parserFactory.getFileParser(contentUrl);
-		Content content = null;
+		if (new File(contentUrl).exists()) {
+			FileParserFactory parserFactory = FileParserFactory.getInstance();
+			FileParser parser = parserFactory.getFileParser(contentUrl);
+			Content content = null;
 
-		
-		InputStream inputStream = null;
-		try {
-			inputStream = new FileInputStream(contentUrl);
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		try {
-			content = parser.getContent(contentUrl, inputStream);
-			content.setProvider(this.getId());
-			content.setContentUrl(contentUrl);
-			
-
-			File file = getFile(contentUrl);
-
-			if (file != null) {
-				long lastModified = file.lastModified();
-				content.setModificationDate(lastModified);
+			ContentUpdate cu = new ContentUpdate();
+			InputStream inputStream = null;
+			try {
+				inputStream = new FileInputStream(contentUrl);
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-			updateAttributes(content);
-			updateKeyAttributes(content);
-		} catch (FileParserException e) {
-			e.printStackTrace();
-		}
-		
-		return content;
-		}else
+			try {
+				content = parser.getContent(contentUrl, inputStream);
+				content.setProvider(this.getId());
+				content.setContentUrl(contentUrl);
+
+				File file = getFile(contentUrl);
+
+				if (file != null) {
+					long lastModified = file.lastModified();
+					content.setModificationDate(lastModified);
+				}
+				cu.updateAttributes(content, attributeMappings);
+				cu.updateKeyAttributes(content, keyAttributesList);
+			} catch (FileParserException e) {
+				throw new IQserRuntimeException(e);
+			}
+
+			return content;
+		} else
 			throw new IQserRuntimeException("The content does not have url");
-	}
-
-	private void updateAttributes(Content content) {
-
-		Collection<Attribute> attributes = content.getAttributes();
-
-		for (Attribute attribute : attributes) {
-			String name = attribute.getName();
-			if (attributeMappings.containsKey(name)) {
-				name = attributeMappings.get(name);
-				attribute.setName(name);
-			}
-
-		}
-
 	}
 
 	@Override
 	public Content getContent(InputStream inputStream) {
 
-//		if (inputStream instanceof FileInputStream)
-//			((FileInputStream)inputStream).getChannel().
 		FileParserFactory parserFactory = FileParserFactory.getInstance();
 
+		ContentUpdate cu = new ContentUpdate();
 		Content content = null;
-		
+
 		try {
 
-			//workaround (another solution would be reset the input stream
+			// workaround (another solution would be reset the input stream
 			byte[] bytes = IOUtils.toByteArray(inputStream);
 			InputStream is2 = new ByteArrayInputStream(bytes);
 			FileParser parser = parserFactory.getFileParser(is2);
 
 			try {
-				content = parser.getContent(null, new ByteArrayInputStream(
-						bytes));
+				if (parser != null) {
+					content = parser.getContent(null, new ByteArrayInputStream(
+							bytes));
 
-				content.setProvider(this.getId());
+					content.setProvider(this.getId());
 
-
-				//update the attributes with the ones from the 
-				//initialization parameters
-				updateAttributes(content);
-				updateKeyAttributes(content);
+					// update the attributes with the ones from the
+					// initialization parameters
+					cu.updateAttributes(content, attributeMappings);
+					cu.updateKeyAttributes(content, keyAttributesList);
+				}
 
 			} catch (FileParserException e) {
-				e.printStackTrace();
+				throw new IQserRuntimeException(e);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new IQserRuntimeException(e);
 		}
 		return content;
-	}
-
-	private void updateKeyAttributes(Content content) {
-		
-		Collection<Attribute> attributes = content.getAttributes();
-		
-		for (Attribute attribute : attributes) {
-			
-			String name = attribute.getName();
-		
-			boolean contains = keyAttributesList.contains(name);
-			if (contains){
-				attribute.setKey(true);
-			}else
-				attribute.setKey(false);
-			
-			
-		}
-	
-		
 	}
 
 	@Override
 	public Collection getContentUrls() {
 
 		Properties params = getInitParams();
-		//get the filters from the initialization parameters
+		// get the filters from the initialization parameters
 		String filter = (String) params.get("filter-pattern");
 		String filterFolderInclude = (String) params
 				.get("filter-folder-include");
@@ -353,24 +329,25 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 		List<String> folders = new ArrayList<String>();
 		folders.add(folder);
-		
-		//create path filter
+
+		// create path filter
 		AcceptedPathFilter apf = null;
 		if (filterFolderInclude != null || filterFolderExclude != null) {
 			apf = new AcceptedPathFilter();
 			apf.addAcceptedPath(filterFolderInclude);
 			apf.addDeniedPath(filterFolderExclude);
 		}
+
 		FileScanner fs = new FileScanner(folders, apf);
 
-		//create file filter
+		// create file filter
 		AcceptFileFilter aff = null;
 		if (filter != null) {
 			aff = new AcceptFileFilter();
 			aff.addAcceptedFiletype(filter);
 		}
 
-		//get all the files that are valid using the filter
+		// get all the files that are valid using the filter
 		Collection files = fs.scanFiles(aff);
 
 		return files;
@@ -379,16 +356,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	@Override
 	public void init() {
 
-		//parse the JSON of attribute mappings
+		// parse the JSON of attribute mappings
 		Properties params = getInitParams();
-		//the name of the parameter is attribute.mappings
+		// the name of the parameter is attribute.mappings
 		String mappings = (String) params.get("attribute.mappings");
 		JSONObject json = null;
 		try {
 			json = new JSONObject(mappings);
 		} catch (JSONException e) {
-			e.printStackTrace();
-			throw new IQserRuntimeException("Invalid JSON string");
+			throw new IQserRuntimeException(e);
 		}
 
 		Iterator keys = json.keys();
@@ -398,22 +374,20 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 				String value = (String) json.get(key);
 				attributeMappings.put(key, value);
 			} catch (JSONException e) {
-				throw new IQserRuntimeException("Invalid JSON string");
+				throw new IQserRuntimeException(e);
 			}
 
 		}
-		
+
 		String keyAttributes = (String) params.get("key-attributes");
 		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
-		
+
 		String[] keyAttrs = keyAttributes.trim().split(regex);
-		
+
 		for (String key : keyAttrs) {
-			if (key.trim().length()>0)
+			if (key.trim().length() > 0)
 				keyAttributesList.add(key);
 		}
-		
-
 	}
 
 	@Override
@@ -446,17 +420,26 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 		File file = new File(contentUrl);
 
-		//get the binary content of the object from the content graph
-		if (arg1.getType().equalsIgnoreCase("Text Document")){
+		// get the binary content of the object from the content graph
+		if (arg1.getType().equalsIgnoreCase("Text Document")) {
 			try {
 				FileOutputStream out = new FileOutputStream(file);
 				IOUtils.write(arg1.getFulltext(), out);
 				out.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				throw new IQserRuntimeException(e);
 			}
 		}
-		addContent(arg1);
+		try {
+			Collection existingContents = getExistingContents();
+			if (isExistingContent(contentUrl))
+				updateContent(arg1);
+			else
+				addContent(arg1);
+		} catch (IQserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 
@@ -469,41 +452,20 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 					+ " does not have url");
 
 		File file = new File(contentUrl);
-		if (file.exists() && !file.isDirectory()){
+		if (file.exists() && !file.isDirectory()) {
 			boolean isDeleted = file.delete();
-			if (!isDeleted){
-				logger.warn(" File not deleted from filesystem " + arg1.getContentUrl());
+			if (!isDeleted) {
+				logger.warn(" File not deleted from filesystem "
+						+ arg1.getContentUrl());
 			}
 		}
 
 		try {
 			removeContent(contentUrl);
 		} catch (IQserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IQserRuntimeException(e);
 		}
 
-	}
-
-	private String encodeBinaryToString(byte[] byteContent) {
-		char[] charContent = new char[byteContent.length];
-		for (int i = 0; i < charContent.length; i++) {
-			charContent[i] = (char) byteContent[i];
-		}
-		return new String(charContent);
-	}
-
-	private byte[] decodeStringToBinary(String s) {
-		if (s == null)
-			return null;
-
-		char[] charContent = s.toCharArray();
-		byte[] byteContent = new byte[charContent.length];
-		for (int i = 0; i < charContent.length; i++) {
-			byteContent[i] = (byte) charContent[i];
-		}
-
-		return byteContent;
 	}
 
 }
