@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <iqser>
 	<plugin>
-		<id>com.iqser.plugin.web.html</id>
+		<id>net.sf.iqser.plugin.mail</id>
 		<!-- Modify the type in your iqser configuration, if necessary -->
 		<type>Mail-Server</type>
 		<name>Mail Web Plugin</name>
@@ -52,7 +52,7 @@
 			<param-value><!-- [attr1][attr2] --></param-value>
 		</init-param>
 			<init-param>
-			<!-- the folders that are taken from the email server--by default it 
+			<!-- the folders that are taken from the email server by default it 
 			is taken only the INBOX -->
 			<param-name>EMAIL-FOLDER</param-name>
 			<param-value><!-- [folder1][folder2] --></param-value>
