@@ -40,7 +40,7 @@
 		<developer>
 			<id>cmagnus71</id>
 			<name>Christian Magnus</name>
-			<email>christian.magnus@iqser.net</email>
+			<email>christian.magnus (at) iqser.net</email>
 			<organization>IQser AG</organization>
 			<organizationUrl>http://www.iqser.com</organizationUrl>
 			<roles>
@@ -51,7 +51,7 @@
 		<developer>
 			<id>jwurzer</id>
 			<name>Jörg Wurzer</name>
-			<email>joerg.wurzer@iqser.net</email>
+			<email>joerg.wurzer (at) iqser.net</email>
 			<organization>IQser AG</organization>
 			<organizationUrl>http://www.iqser.com</organizationUrl>
 			<roles>
@@ -82,7 +82,7 @@
 		<developer>
 			<id>budisantoso-de</id>
 			<name>Kresnadi Budisantoso</name>
-			<email>Kresnadi.Budisantoso@haerter.com</email>
+			<email>Kresnadi.Budisantoso (at) haerter.com</email>
 			<organization>Haerter Group</organization>
 			<organizationUrl>http://www.haerter.com</organizationUrl>
 			<roles>
@@ -94,7 +94,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<iqser.version>1.2.2.1-SNAPSHOT</iqser.version>
+		<iqser.version>1.2.2.1</iqser.version>
 		<compileSource>1.5</compileSource>
 	</properties>
 
@@ -102,7 +102,7 @@
 		<repository>
 			<id>iqser_release</id>
 			<name>Artifactory Mirror</name>
-			<url>http://88.198.17.108:8081/artifactory/repo</url>
+			<url>http://repo.iqser.com/artifactory/repo</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -115,7 +115,7 @@
 	<pluginRepositories>
 		<pluginRepository>
 			<id>iqser_release</id>
-			<url>http://88.198.17.108:8081/artifactory/repo</url>
+			<url>http://repo.iqser.com/artifactory/repo</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -125,24 +125,26 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<!-- TODO: Change to Maven Central Repository -->
 	<distributionManagement>
 		<repository>
-			<id>iqser_release</id>
-			<url>dav:http://88.198.17.108:8081/artifactory/release</url>
-			<layout>default</layout>
+			<id>iqserfileplugin-repo</id>
+			<name>iQserFileContentProvider-Repository</name>
+			<url>
+				sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2
+			</url>
 		</repository>
 		<snapshotRepository>
-			<id>iqser_snapshot</id>
+			<id>iqserfileplugin-repo-snap</id>
+			<name>iQserFileContentProvider-Snapshot-Repository</name>
 			<url>
-				dav:http://88.198.17.108:8081/artifactory/snapshot
+				sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2-snap
 			</url>
-			<layout>default</layout>
+			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 		<site>
 			<id>iqserfileplugin.sourceforge.net</id>
 			<name>File ContentProvider for iQser GIN</name>
-			<url>scp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs</url>
+			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs</url>
 		</site>
 	</distributionManagement>
 
@@ -256,6 +258,20 @@
 						<phase>package</phase>
 						<goals>
 							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1.2</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>jar-no-fork</goal>
 						</goals>
 					</execution>
 				</executions>
