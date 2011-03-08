@@ -317,7 +317,7 @@ public class MailContentCreator {
 
 			InputStream inputStream = ((Part) messageContent).getInputStream();
 
-			Content attachmentContent = createAttachmentContent(inputStream);;//fscp.getContent(inputStream);
+			Content attachmentContent = createAttachmentContent(inputStream);//fscp.getContent(inputStream);
 			if (attachmentContent != null) {
 				attachmentContent.setContentUrl(content.getContentUrl()
 						+ fileName);

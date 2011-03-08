@@ -256,11 +256,8 @@ public class MailServerContentProvider extends AbstractContentProvider {
 
 		MailContentCreator mailContentCreator = getMailContentCreator();
 
-		if (actions.contains(action.toLowerCase())) {
-
-			// perform delete on content and mail
-			// connect to mail server
-			if (action.toLowerCase().equals("delete"))
+		if (actions.contains(action.toLowerCase()) &&
+			action.toLowerCase().equals("delete")){
 				performDeleteAction(content,  mailContentCreator);
 		}
 

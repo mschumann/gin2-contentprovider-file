@@ -128,8 +128,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			throw new IQserRuntimeException(e);
 		}
 
-		Collection<Content> contentsToDelete = new ArrayList<Content>();
-
 		if (existingContents != null) {
 			try {
 				for (Content content : existingContents) {
@@ -431,7 +429,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			}
 		}
 		try {
-			Collection existingContents = getExistingContents();
 			if (isExistingContent(contentUrl))
 				updateContent(arg1);
 			else
