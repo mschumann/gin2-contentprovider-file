@@ -257,7 +257,7 @@
 						<id>javadoc-jar</id>
 						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>aggregate-jar</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -388,7 +388,7 @@
 	<modules>
 		<module>file-parser</module>
 		<module>filesystem-provider</module>
-		<module>mail-content-provider</module>
+		<!-- module>mail-content-provider</module-->
 	</modules>
 
 </project>
