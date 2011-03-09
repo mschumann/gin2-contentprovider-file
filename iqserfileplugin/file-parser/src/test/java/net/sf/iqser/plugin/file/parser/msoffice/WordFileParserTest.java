@@ -35,4 +35,26 @@ public class WordFileParserTest extends TestCase {
 		assertNotNull(content.getFulltext());
 		
 	}
+	
+	public void testWordFileParserODT() throws IOException, FileParserException{		
+		
+		FileParser parser = new WordFileParser();
+		FileInputStream is = new FileInputStream(new File(System.getProperty(
+				"testdata.dir", "../file-parser/testdata")
+				+ "/ODFDataTest.odt"));
+		Content content = parser.getContent("ODFDataTest.odt", is);
+
+		assertNotNull(content);
+		assertEquals("DOC Document", content.getType());
+
+		assertNotNull(content.getAttributeByName("FILENAME"));
+		assertEquals("ODFDataTest.odt",
+			content.getAttributeByName("FILENAME").getValue());
+		assertFalse(content.getAttributeByName("FILENAME").isKey());
+		
+		assertNotNull(content.getAttributeByName("TITLE"));
+		assertTrue(content.getAttributeByName("TITLE").isKey());
+		
+		assertNotNull(content.getFulltext());
+	}
 }

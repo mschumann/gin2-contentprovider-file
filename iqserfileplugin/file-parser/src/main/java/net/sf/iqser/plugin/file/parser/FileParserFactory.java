@@ -2,8 +2,10 @@ package net.sf.iqser.plugin.file.parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
+import java.io.Reader;
 import java.util.Properties;
+
+import net.sf.iqser.plugin.file.parser.tika.TikaFileParser;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +33,8 @@ public class FileParserFactory {
 	/**
 	 * Constant for mapping prefix.
 	 */
-	private static final String MAPPING_PREFIX = "filetype.";
+	private static final String FILE_TYPE_PREFIX = "filetype.";
+	private static final String MIME_TYPE_PREFIX = "mimetype.";
 
 	/**
 	 * The FileParserFactory instance.
@@ -117,39 +120,34 @@ public class FileParserFactory {
 
 	public FileParser getFileParser(InputStream is) {
 
-		String[] tikaContentTypes = new String[] {
-				"application/vnd.ms-powerpoint", "application/msword",
-				"application/pdf", "application/vnd.ms-excel",
-				"application/vnd.oasis.opendocument.text",
-				"application/rtf","text/plain"};
-
 		FileParser parser = null;
-
-		Tika tika = new Tika();
-		Metadata metadata = new Metadata();
-
+		String mappingClassname = null;
 		try {
-
-			tika.parse(is, metadata);
-			String content_type = metadata.get(Metadata.CONTENT_TYPE);
-			boolean contains = Arrays.asList(tikaContentTypes).contains(
-					content_type.toLowerCase());
-			if (contains) {
-				
-				String mappingClassname = mappings
-						.getProperty(getPropMappingName(content_type));
+			
+			//detect mime type from input stream
+			Tika tika = new Tika();				
+			Metadata metadata = new Metadata();
+			Reader r = tika.parse(is, metadata);
+			r.close();		
+			String content_type = metadata.get("Content-Type");
+			logger.info("content-type=" + content_type);
+			
+			mappingClassname = mappings.getProperty(getPropMappingName(content_type));
+			if (mappingClassname != null){
 				parser = createFileParserInstance(mappingClassname);
+			}else{
+				logger.warn("No parser defined for mimetype " + content_type);
+				parser = new TikaFileParser();				
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.warn("Error reading input stream. Using TikaFileParser as fallback.");
+			parser = new TikaFileParser();
+		} catch (Exception e) {
+			logger.warn("Instance creation faild for class "
+					+ mappingClassname
+					+ ". Using TikaFileParser as fallback.");
+			parser = new TikaFileParser();
 		}
-
 		return parser;
 
 	}
@@ -160,22 +158,14 @@ public class FileParserFactory {
 		return (FileParser) Class.forName(className).newInstance();
 	}
 
-	private String getPropMappingName(String type) {
-		String[] types = type.split("/");
-		if (types != null){
-			if (types[types.length-1].compareTo("plain")==0)
-				return MAPPING_PREFIX+"txt";
-			return MAPPING_PREFIX + types[types.length - 1].toLowerCase();
-		}
-		else
-			return null;
+	private String getPropMappingName(String mimeType) {		
+		return MIME_TYPE_PREFIX + mimeType;
 	}
 
 	private String getMappingName(String fileName) {
 		String[] nameElements = FileParserUtils.getNameElements(fileName);
 		if (nameElements != null) {
-			return MAPPING_PREFIX
-					+ nameElements[nameElements.length - 1].toLowerCase();
+			return FILE_TYPE_PREFIX + nameElements[nameElements.length - 1].toLowerCase();
 		}
 		return null;
 	}

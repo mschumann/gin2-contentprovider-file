@@ -14,7 +14,7 @@ import org.apache.tika.metadata.Metadata;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 
-public abstract class TikaFileParser implements FileParser {
+public class TikaFileParser implements FileParser {
 
 	public Content getContent(String fileName, InputStream inputStream)
 			throws FileParserException {
