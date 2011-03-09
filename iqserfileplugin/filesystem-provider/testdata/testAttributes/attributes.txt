@@ -3,16 +3,16 @@ EXCEL Document
 FILENAME	false
 Bezeichnung	true
 CONTENT	false
-Category	false
-Comments	false
-Autor	true
+Last-Save-Date	false
 Manager	false
+Comments	false
+Keywords	false
+Autor	true
+Category	false
+Content-Type	false
+Company	false
 subject	false
 Autor	true
-Company	false
-Content-Type	false
-Keywords	false
-Last-Save-Date	false
 
 
 
@@ -21,21 +21,21 @@ ODF Document
 FILENAME	false
 Bezeichnung	true
 CONTENT	false
-editing-cycles	false
-subject	false
-nbTab	false
-date	false
-Edit-Time	false
-nbObject	false
-Creation-Date	false
 nbPara	false
-nbImg	false
-generator	false
-nbWord	false
-Content-Type	false
-nbPage	false
 Keywords	false
+Content-Type	false
+date	false
+nbImg	false
+nbObject	false
+nbTab	false
+Creation-Date	false
+nbWord	false
+subject	false
+Edit-Time	false
+generator	false
+nbPage	false
 nbCharacter	false
+editing-cycles	false
 
 
 
@@ -44,23 +44,23 @@ PPT Document
 FILENAME	false
 Bezeichnung	true
 CONTENT	false
-Revision-Number	false
-Last-Printed	false
-Comments	false
-Slide-Count	false
-Autor	true
-subject	false
-Autor	true
-xmpTPg:NPages	false
-Edit-Time	false
 Word-Count	false
+xmpTPg:NPages	false
+Manager	false
+Revision-Number	false
+Autor	true
+Keywords	false
+Content-Type	false
+Autor	true
+Last-Printed	false
+Slide-Count	false
+Last-Save-Date	false
+Comments	false
 Creation-Date	false
 Category	false
-Manager	false
 Company	false
-Content-Type	false
-Keywords	false
-Last-Save-Date	false
+subject	false
+Edit-Time	false
 
 
 
@@ -79,6 +79,13 @@ CONTENT	false
 
 
 
+ZIP Document
+
+FILENAME	false
+Bezeichnung	true
+
+
+
 Text Document
 
 FILENAME	false
@@ -92,26 +99,26 @@ DOC Document
 FILENAME	false
 Bezeichnung	true
 CONTENT	false
-Last-Printed	false
-Revision-Number	false
-Comments	false
-Autor	true
-Template	false
-Page-Count	false
-subject	false
-Application-Name	false
-Autor	true
 Word-Count	false
 xmpTPg:NPages	false
-Edit-Time	false
+Manager	false
+Template	false
+Revision-Number	false
+Autor	true
+Keywords	false
+Content-Type	false
+Autor	true
+Character Count	false
+Page-Count	false
+Last-Printed	false
+Last-Save-Date	false
+Comments	false
 Creation-Date	false
 Category	false
-Manager	false
-Character Count	false
 Company	false
-Content-Type	false
-Keywords	false
-Last-Save-Date	false
+subject	false
+Application-Name	false
+Edit-Time	false
 
 
 

@@ -1,13 +1,20 @@
 package net.sf.iqser.plugin.filesystem;
 
-import org.apache.log4j.Logger;
-
 import java.io.File;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
+
+import org.apache.log4j.Logger;
+
+import com.iqser.core.exception.IQserRuntimeException;
 
 /**
  * File Scanner.
@@ -82,13 +89,24 @@ public class FileScanner
 
             if ( folder.exists() )
             {
+            	
                 File[] subs = folder.listFiles( filter );
 
                 if ( subs != null )
                 {
                     for ( int i = 0; i < subs.length; i++ )
                     {
-                        list.add( subs[i].getAbsolutePath() );
+                    	if (subs[i].getName().toLowerCase().endsWith(".zip")) {
+							try {
+								List zipContent = listZipContent(subs[i], filter);
+								list.addAll(zipContent);
+							} catch (ZipException e) {
+								throw new IQserRuntimeException(e);
+							} catch (IOException e) {
+								throw new IQserRuntimeException(e);
+							}
+						}else
+							list.add( subs[i].getAbsolutePath() );
                     }
                 }
             }
@@ -97,7 +115,36 @@ public class FileScanner
         return list;
     }
 
-    /**
+    private List listZipContent(File folder, FileFilter filter) throws ZipException, IOException {
+		
+    	ZipFile zipFile = new ZipFile(folder);
+    
+    	Enumeration<? extends ZipEntry> entries = zipFile.entries();
+    	
+    	List zipContent = new ArrayList();
+    	
+    	while (entries.hasMoreElements()){
+    		
+    		ZipEntry zipEntry = entries.nextElement();
+    		String name = zipEntry.getName();
+    		
+    		if (!zipEntry.isDirectory()){
+    		
+    			String path = "zip://"+folder+"!\\"+name;
+    			File file = new File(path);
+    			if (filter.accept(file)){
+    				zipContent.add(path);
+    			}
+    			
+    		}
+    		
+    		
+    	}
+    	
+		return zipContent;
+	}
+
+	/**
      * Scan a Folder for accepted Sub-Folders.
      * 
      * @param parent

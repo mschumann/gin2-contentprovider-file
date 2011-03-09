@@ -3,22 +3,30 @@ package net.sf.iqser.plugin.filesystem;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserFactory;
 import net.sf.iqser.plugin.file.parser.pdf.PdfFileParser;
+import net.sf.iqser.plugin.file.parser.zip.ZipFileModel;
 import net.sf.iqser.plugin.filesystem.utils.ContentUpdate;
 
 import org.apache.commons.io.IOUtils;
@@ -49,45 +57,66 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	private Collection<String> keyAttributesList = new ArrayList<String>();
 
+	private static long currentTime;
+
 	public byte[] getBinaryData(Content content) {
 		logger.debug("getBinaryData( Content content=" + content
 				+ ") - end - return value=" + null);
 
 		try {
-			File f = getFile(content.getContentUrl());
-			InputStream is = new FileInputStream(f);
-
-			// Get the size of the file
-			long length = f.length();
-
-			// if file is larger than Integer.MAX_VALUE, we are boned... :-/
-			if (length > Integer.MAX_VALUE) {
-				logger.error("File too large to handle...");
-				return null;
-			}
-
-			byte[] bytes = new byte[(int) length];
-
-			// Read in the bytes
-			int offset = 0;
-			int numRead = 0;
-			while ((offset < bytes.length)
-					&& ((numRead = is
-							.read(bytes, offset, bytes.length - offset)) >= 0)) {
-				offset += numRead;
-			}
-
-			// Ensure all the bytes have been read in
-			if (offset < bytes.length) {
-				throw new IQserRuntimeException(
-						"Could not completely read file " + f.getName());
-			}
-
-			is.close();
-			return bytes;
+			String contentURL = content.getContentUrl();
+			if (contentURL.startsWith("zip://"))
+				return extractBinaryPackedFiles(content);
+			else if (getFile(contentURL) != null)
+				return extractBinaryUnpackedFiles(content);
 		} catch (IOException ioe) {
 			throw new IQserRuntimeException(ioe);
 		}
+		// else throw exception
+		throw new IQserRuntimeException("No files for content found");
+	}
+
+	private byte[] extractBinaryPackedFiles(Content content) throws IOException {
+		ZipFileModel zfm = getZipFileModel(content.getContentUrl());
+		ZipFile zipFile = zfm.getZipFile();
+		ZipEntry zipEntry = zfm.getZipEntry();
+		InputStream inputStream = zipFile.getInputStream(zipEntry);
+
+		return IOUtils.toByteArray(inputStream);
+	}
+
+	private byte[] extractBinaryUnpackedFiles(Content content)
+			throws FileNotFoundException, IOException {
+		File f = getFile(content.getContentUrl());
+		InputStream is = new FileInputStream(f);
+
+		// Get the size of the file
+		long length = f.length();
+
+		// if file is larger than Integer.MAX_VALUE, we are boned... :-/
+		if (length > Integer.MAX_VALUE) {
+			logger.error("File too large to handle...");
+			return null;
+		}
+
+		byte[] bytes = new byte[(int) length];
+
+		// Read in the bytes
+		int offset = 0;
+		int numRead = 0;
+		while ((offset < bytes.length)
+				&& ((numRead = is.read(bytes, offset, bytes.length - offset)) >= 0)) {
+			offset += numRead;
+		}
+
+		// Ensure all the bytes have been read in
+		if (offset < bytes.length) {
+			throw new IQserRuntimeException("Could not completely read file "
+					+ f.getName());
+		}
+
+		is.close();
+		return bytes;
 	}
 
 	/**
@@ -152,6 +181,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		 * ObjectGraph that do not have a coresponding file in the file system
 		 * will be DELETE from the Object Graph
 		 */
+
 		try {
 			// get the object graph content URLs
 			Collection<Content> existingContents = getExistingContents();
@@ -167,13 +197,13 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			Collection<String> sourceContentUrls = getContentUrls();
 
 			// handle new files
-			Collection<String> newSourceContentUrls = new ArrayList<String>();
+			Collection newSourceContentUrls = new ArrayList();
 			newSourceContentUrls.addAll(sourceContentUrls);
 			newSourceContentUrls.removeAll(objectGraphContentUrls);
 
-			for (String contentUrl : newSourceContentUrls) {
+			for (Object contentUrl : newSourceContentUrls) {
 				logger.info("Synch - add conntent " + contentUrl);
-				addContent(getContent(contentUrl));
+				addContent(getContent((String) contentUrl));
 			}
 
 			// handle common files - files that are both in file system and in
@@ -187,43 +217,37 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 					if (contentUrl.equalsIgnoreCase(content.getContentUrl())) {
 						// match file LAST_MODIFIED
 						File file = getFile(contentUrl);
-						long lastModified = file.lastModified();
-						long contentLastModified = content
-								.getModificationDate();
-						if (lastModified > contentLastModified) {
-							logger.info("Synch - delete update " + contentUrl);
-							performContentUpdate(content, file);
-							updateContent(content);
+						if (file != null) {
+							long lastModified = file.lastModified();
+							long contentLastModified = content
+									.getModificationDate();
+							if (lastModified > contentLastModified) {
+								logger.info("Synch - delete update "
+										+ contentUrl);
+
+								updateContent(getContent(file.getAbsolutePath()));
+							}
+						} else {
+							ZipFileModel zfm = getZipFileModel(contentUrl);
+							boolean isModified = zfm.getZipEntry().getTime() > content
+									.getModificationDate();
+							if (isModified)
+								updateContent(getContent(contentUrl));
+
 						}
 					}
 				}
 			}
 
 		} catch (IQserException e) {
+			e.printStackTrace();
+			throw new IQserRuntimeException("Error while do synch: "
+					+ e.getMessage());
+		} catch (IOException e) {
 			throw new IQserRuntimeException("Error while do synch: "
 					+ e.getMessage());
 		}
 
-	}
-
-	private void performContentUpdate(Content content, File file) {
-
-		String path = file.getAbsolutePath();
-		Content newContent = getContent(path);
-
-		Collection<Attribute> attributes = newContent.getAttributes();
-
-		for (Attribute attribute : attributes) {
-			String name = attribute.getName();
-			Attribute attributeByName = content.getAttributeByName(name);
-			if (attributeByName != null) {
-				attributeByName.setName(name);
-				attributeByName.setKey(attribute.isKey());
-				attributeByName.setValue(attribute.getValue());
-			}
-		}
-
-		content.setFulltext(newContent.getFulltext());
 	}
 
 	/**
@@ -239,22 +263,70 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return Arrays.asList(actions);
 	}
 
+	private InputStream getInputStreamForZipContent(String zipFileName) {
+
+		InputStream is = null;
+
+		try {
+
+			ZipFileModel zfm = getZipFileModel(zipFileName);
+			is = zfm.getZipFile().getInputStream(zfm.getZipEntry());
+
+		} catch (IOException e) {
+
+			throw new IQserRuntimeException(e);
+		}
+
+		return is;
+	}
+
+	public ZipFileModel getZipFileModel(String zipFileName) throws IOException {
+
+		int index = zipFileName.indexOf(".zip!");
+	
+		if (index != -1) {
+			ZipFileModel zfm = new ZipFileModel();
+			index += ".zip".length();
+			String fileName = zipFileName.substring(index + 2);
+			String zipFilePath = zipFileName
+					.substring("zip://".length(), index);
+			ZipFile zipFile = new ZipFile(zipFilePath);
+			zfm.setZipFile(zipFile);
+
+			ZipEntry entry = zipFile.getEntry(fileName);
+			zfm.setZipEntry(entry);
+
+			return zfm;
+		} else
+			throw new IQserRuntimeException("Invalid zip url");
+	}
+
 	@Override
 	public Content getContent(String contentUrl) {
 
-		if (new File(contentUrl).exists()) {
-			FileParserFactory parserFactory = FileParserFactory.getInstance();
-			FileParser parser = parserFactory.getFileParser(contentUrl);
-			Content content = null;
+		Content content = null;
 
-			ContentUpdate cu = new ContentUpdate();
-			InputStream inputStream = null;
+		FileParserFactory parserFactory = FileParserFactory.getInstance();
+
+		ContentUpdate cu = new ContentUpdate();
+
+		InputStream inputStream = null;
+
+		if (contentUrl.contains(".zip") && !contentUrl.endsWith(".zip"))
+			inputStream = getInputStreamForZipContent(contentUrl);
+		else if (new File(contentUrl).exists()) {
 			try {
 				inputStream = new FileInputStream(contentUrl);
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				throw new IQserRuntimeException(e1);
 			}
-			try {
+		} else {
+			throw new IQserRuntimeException("The content does not have url");
+		}
+		try {
+			if (inputStream != null) {
+				FileParser parser = parserFactory.getFileParser(contentUrl);
+
 				content = parser.getContent(contentUrl, inputStream);
 				content.setProvider(this.getId());
 				content.setContentUrl(contentUrl);
@@ -267,13 +339,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 				}
 				cu.updateAttributes(content, attributeMappings);
 				cu.updateKeyAttributes(content, keyAttributesList);
-			} catch (FileParserException e) {
-				throw new IQserRuntimeException(e);
-			}
+			} else
+				throw new IQserRuntimeException("Input stream from file "
+						+ contentUrl + " is null");
+		} catch (FileParserException e) {
+			throw new IQserRuntimeException(e);
+		}
 
-			return content;
-		} else
-			throw new IQserRuntimeException("The content does not have url");
+		return content;
+
 	}
 
 	@Override
@@ -289,7 +363,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			// workaround (another solution would be reset the input stream
 			byte[] bytes = IOUtils.toByteArray(inputStream);
 			InputStream is2 = new ByteArrayInputStream(bytes);
-			FileParser parser = parserFactory.getFileParser(is2);
+			FileParser parser;
+			parser = parserFactory.getFileParser(is2);
 
 			try {
 				if (parser != null) {
@@ -302,7 +377,9 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 					// initialization parameters
 					cu.updateAttributes(content, attributeMappings);
 					cu.updateKeyAttributes(content, keyAttributesList);
-				}
+				} else
+					throw new IQserRuntimeException(
+							"There are no parsers for zip archives.");
 
 			} catch (FileParserException e) {
 				throw new IQserRuntimeException(e);
@@ -319,30 +396,37 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		Properties params = getInitParams();
 		// get the filters from the initialization parameters
 		String filter = (String) params.get("filter-pattern");
+		Collection filterFileTypes = extractConfigAttributes(filter);
+
 		String filterFolderInclude = (String) params
 				.get("filter-folder-include");
+		Collection includedFolders = extractConfigAttributes(filterFolderInclude);
+
 		String filterFolderExclude = (String) params
 				.get("filter-folder-exclude");
-		String folder = (String) params.get("folder");
+		Collection excludedFolders = extractConfigAttributes(filterFolderExclude);
 
-		List<String> folders = new ArrayList<String>();
-		folders.add(folder);
+		String folder = (String) params.get("folder");
+		Collection folders = extractConfigAttributes(folder);
 
 		// create path filter
-		AcceptedPathFilter apf = null;
-		if (filterFolderInclude != null || filterFolderExclude != null) {
-			apf = new AcceptedPathFilter();
-			apf.addAcceptedPath(filterFolderInclude);
-			apf.addDeniedPath(filterFolderExclude);
+		AcceptedPathFilter apf = new AcceptedPathFilter();
+
+		for (Object includedFolder : includedFolders) {
+			apf.addAcceptedPath((String) includedFolder);
+		}
+
+		for (Object excludedFolder : excludedFolders) {
+			apf.addDeniedPath((String) excludedFolder);
 		}
 
 		FileScanner fs = new FileScanner(folders, apf);
 
 		// create file filter
-		AcceptFileFilter aff = null;
-		if (filter != null) {
-			aff = new AcceptFileFilter();
-			aff.addAcceptedFiletype(filter);
+		AcceptFileFilter aff = new AcceptFileFilter();
+		;
+		for (Object fileType : filterFileTypes) {
+			aff.addAcceptedFiletype((String) fileType);
 		}
 
 		// get all the files that are valid using the filter
@@ -378,14 +462,23 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		}
 
 		String keyAttributes = (String) params.get("key-attributes");
-		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
 
+		keyAttributesList = extractConfigAttributes(keyAttributes);
+
+	}
+
+	private Collection extractConfigAttributes(String keyAttributes) {
+
+		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
 		String[] keyAttrs = keyAttributes.trim().split(regex);
 
+		List<String> keyAttributesList = new ArrayList<String>();
 		for (String key : keyAttrs) {
 			if (key.trim().length() > 0)
 				keyAttributesList.add(key);
 		}
+
+		return keyAttributesList;
 	}
 
 	@Override
@@ -408,34 +501,45 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
-	private void performSaveAction(Content arg1) {
+	private void performSaveAction(Content content) {
 
-		String contentUrl = arg1.getContentUrl();
+		String contentUrl = content.getContentUrl();
 
 		if (contentUrl == null || contentUrl.trim().length() == 0)
-			throw new IQserRuntimeException("Content " + arg1.getContentId()
+			throw new IQserRuntimeException("Content " + content.getContentId()
 					+ " does not have url");
+		if (content.getType().equalsIgnoreCase("Text Document")) {
+			if (contentUrl.startsWith("zip://")) {
+				int zipFileIndexEnd = contentUrl.indexOf(".zip") + 4;
+				String zipPath = contentUrl.substring("zip://".length(),
+						zipFileIndexEnd);
+				String zipEntry = contentUrl.substring(zipFileIndexEnd + 2);
+				String text = content.getFulltext();
 
-		File file = new File(contentUrl);
+				updateZipEntry(zipPath, zipEntry, text.getBytes());
 
-		// get the binary content of the object from the content graph
-		if (arg1.getType().equalsIgnoreCase("Text Document")) {
-			try {
-				FileOutputStream out = new FileOutputStream(file);
-				IOUtils.write(arg1.getFulltext(), out);
-				out.close();
-			} catch (IOException e) {
-				throw new IQserRuntimeException(e);
+			} else {
+
+				File file = new File(contentUrl);
+
+				// get the binary content of the object from the content graph
+
+				try {
+					FileOutputStream out = new FileOutputStream(file);
+					IOUtils.write(content.getFulltext(), out);
+					out.close();
+				} catch (IOException e) {
+					throw new IQserRuntimeException(e);
+				}
 			}
 		}
 		try {
 			if (isExistingContent(contentUrl))
-				updateContent(arg1);
+				updateContent(content);
 			else
-				addContent(arg1);
+				addContent(content);
 		} catch (IQserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new IQserRuntimeException(e);
 		}
 
 	}
@@ -463,6 +567,57 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			throw new IQserRuntimeException(e);
 		}
 
+	}
+
+	void updateZipEntry(String zipPath, String entryName, byte[] content) {
+		try {
+			// read war.zip and write to append.zip
+			ZipFile war = new ZipFile(zipPath);
+			// create a temp file
+			ZipOutputStream append = new ZipOutputStream(new FileOutputStream(
+					"append.zip"));
+
+			// first, copy contents from existing war
+			Enumeration<? extends ZipEntry> entries = war.entries();
+			while (entries.hasMoreElements()) {
+				ZipEntry e = entries.nextElement();
+				if (!e.isDirectory()) {
+					if (e.getName().equalsIgnoreCase(entryName)) {
+						// replace
+						System.out.println("replace: " + e.getName());
+						ZipEntry newEntry = new ZipEntry(entryName);
+						append.putNextEntry(newEntry);
+						append.write(content);
+					} else {
+						// copy
+						append.putNextEntry(new ZipEntry(e.getName()));
+						System.out.println("copy: " + e.getName());
+						copy(war.getInputStream(e), append);
+					}
+				}
+				append.closeEntry();
+			}
+			// close
+			war.close();
+			append.close();
+
+			// TODO replace zip file
+			new File(zipPath).delete();
+			new File("append.zip").renameTo(new File(zipPath));
+
+		} catch (Exception e) {
+			throw new IQserRuntimeException(e);
+		}
+
+	}
+
+	private void copy(InputStream input, OutputStream output)
+			throws IOException {
+		byte[] BUFFER = new byte[4096 * 1024];
+		int bytesRead;
+		while ((bytesRead = input.read(BUFFER)) != -1) {
+			output.write(BUFFER, 0, bytesRead);
+		}
 	}
 
 }

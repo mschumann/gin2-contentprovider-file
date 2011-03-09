@@ -1,10 +1,6 @@
 package net.sf.iqser.plugin.file.parser.html;
 
-import java.net.URL;
-
 import junit.framework.TestCase;
-
-import com.iqser.core.model.Content;
 
 public class HtmlFileParserTest extends TestCase {
 

@@ -1,6 +1,7 @@
 package net.sf.iqser.plugin.file.parser.txt;
 
 import java.io.InputStream;
+
 import java.io.StringBufferInputStream;
 
 import junit.framework.TestCase;
