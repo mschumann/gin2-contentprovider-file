@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iqser>
+	<plugin>
+			<id>net.sf.iqser.plugin.filesystem</id>
+			<type>Document</type>
+			<name>Filesystem Content Provider</name>
+			<vendor>IQser Technologies</vendor>
+			<provider-class>net.sf.iqser.plugin.filesystem.FilesystemContentProvider</provider-class>
+			<!-- Use a Cron formatted string to define the synchronisation schedule. -->
+			<scheduler> 
+				<syncjob>0 5 * * * ?</syncjob> 
+				<housekeeperjob>0 0 23 * * ?</housekeeperjob> 
+			</scheduler>
+		 
+		<init-param>
+			<init-param>
+			<!-- folder from where the files are read -->
+			<param-name>folder</param-name>
+			<param-value></param-value>
+		</init-param>
+			<!-- file filter pattern -->
+			<param-name>filter-pattern</param-name>
+			<param-value><!-- [txt][zip] --></param-value>
+		</init-param>
+		<init-param>
+			<!-- folders that are taken in consideration -->
+			<param-name>filter-folder-include</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<!-- folder that are not taken in consideration -->
+			<param-name>filter-folder-exclude</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<!-- the attributes of a content that are keys -->
+			<param-name>key-attributes</param-name>
+			<param-value><!-- [attr1][attr2][attr3][attr4] --></param-value>
+		</init-param>
+			<init-param>
+			<!-- attribute mappings for certain parameters extracted by the
+			mail api in json format -->
+			<param-name>attribute.mappings</param-name>
+			<param-value><!--{attr1:new_attr1,attr2:new_attr2}  --></param-value>
+	
+		
+		
+	</plugin>
+</iqser>
