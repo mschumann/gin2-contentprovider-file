@@ -388,7 +388,6 @@
 	<modules>
 		<module>file-parser</module>
 		<module>filesystem-provider</module>
-		<!-- module>mail-content-provider</module-->
 	</modules>
 
 </project>

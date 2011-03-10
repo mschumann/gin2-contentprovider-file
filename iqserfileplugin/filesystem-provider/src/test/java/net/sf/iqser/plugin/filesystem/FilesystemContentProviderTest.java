@@ -275,41 +275,29 @@ public class FilesystemContentProviderTest extends TestCase {
 	public void testGetContentString() {
 
 		File root = new File(testDataDir);
-		StringBuffer sb = new StringBuffer();
 		
 		for (File file : root.listFiles()) {
 			
 			if (file.isFile()) {
-
 				String absolutePath = file.getAbsolutePath();
 				Content content = fscp.getContent(absolutePath);
 				assertNotNull(content);
+				
 				Collection<Attribute> attributes = content.getAttributes();
 				String type = content.getType();
-				
-				sb.append(type).append("\r\n").append("\r\n");
+				assertNotNull(type);
 				
 				for (Attribute attribute : attributes) {
-					
 					String name = attribute.getName();
-//					String value = attribute.getValue();
-					boolean key = attribute.isKey();
-					sb.append(name).append("\t").append(key).append("\r\n");
-					
+					String value = attribute.getValue();
+					assertNotNull(name);
+					assertNotNull(value);
 				}
 				
 				String fulltext = content.getFulltext();
-				sb.append("\r\n").append("\r\n").append("\r\n");
-				
 				assertNotNull(fulltext);
 				
 			}
-		}
-		try {
-			FileUtils.writeStringToFile(new File(testDataDir
-					+ "/testAttributes/attributes.out"), sb.toString());
-		} catch (IOException e) {
-			throw new IQserRuntimeException(e);
 		}
 	}
 
