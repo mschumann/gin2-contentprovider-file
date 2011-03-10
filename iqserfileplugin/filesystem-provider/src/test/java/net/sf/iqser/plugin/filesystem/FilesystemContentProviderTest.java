@@ -18,12 +18,10 @@ import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
 import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
 
 import com.iqser.core.config.Configuration;
-import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.exception.IQserTechnicalException;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
@@ -46,7 +44,7 @@ public class FilesystemContentProviderTest extends TestCase {
 
 		Properties initParams = new Properties();
 		initParams.setProperty("folder", "["+testDataDir + "/testSynch]");
-		initParams.setProperty("filter-pattern", "[txt][zip][pdf][xls]");
+		initParams.setProperty("filter-pattern", "[txt][pdf][xls]");
 		initParams.setProperty("filter-folder-include", "["+testDataDir
 				+ "/testSynch]["+testDataDir+"/testAttributes/]");
 		initParams.setProperty("filter-folder-exclude", "["+testDataDir
@@ -206,7 +204,7 @@ public class FilesystemContentProviderTest extends TestCase {
 		fw.write("testing synchronization initial");
 		fw.close();
 		
-		assertEquals(9,contents.size());
+		assertEquals(4,contents.size());
 	}
 
 	public void testDoHousekeeping() throws IQserTechnicalException {
@@ -319,7 +317,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	public void testGetContentUrls() {
 		Collection urls = fscp.getContentUrls();
 
-		assertEquals(8,urls.size());
+		assertEquals(3,urls.size());
 
 		File file = new File(testDataDir + "/testSynch/file1.txt");
 		String contentUrl = file.getAbsolutePath();
@@ -370,14 +368,7 @@ public class FilesystemContentProviderTest extends TestCase {
 		// rtf
 		contentURL = testDataDir + "/TestDocument.rtf";
 		newContentURL = testDataDir + "/output/testrtf.rtf";
-		performSaveAction(contentURL, newContentURL);
-		
-		//zip
-		contentURL = "zip://"+testDataDir+"/testSynch/testzipfiles.zip!\\testzipfiles/doc1.txt";
-//		Content contentZip = fscp.getContent(contentURL);
-		//repository.addContent(contentZip);
-//		contentZip.setFulltext("new text");
-		performSaveAction(contentURL, contentURL);
+		performSaveAction(contentURL, newContentURL);		
 
 		Repository repository = Configuration.getConfiguration()
 				.getServiceLocator().getRepository();
@@ -390,7 +381,7 @@ public class FilesystemContentProviderTest extends TestCase {
 			e.printStackTrace();
 		}
 
-		assertTrue(contents.size() == 7);
+		assertTrue(contents.size() == 6);
 
 		for (Content content : (Collection<Content>) contents) {
 			performDeleteAction(content);
@@ -441,8 +432,6 @@ public class FilesystemContentProviderTest extends TestCase {
 
 		Content content = fscp.getContent(contentURL);
 		assertNotNull(content);
-		if (contentURL.startsWith("zip"))
-			content.setFulltext("new text");
 		String fulltext = content.getFulltext();
 		assertNotNull(fulltext);
 		

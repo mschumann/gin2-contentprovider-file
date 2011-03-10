@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import net.sf.iqser.plugin.file.parser.FileParser;
@@ -37,7 +36,6 @@ import org.json.JSONObject;
 import com.iqser.core.event.Event;
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
-import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 import com.iqser.core.plugin.AbstractContentProvider;
 
@@ -56,8 +54,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	private Map<String, String> attributeMappings = new HashMap<String, String>();
 
 	private Collection<String> keyAttributesList = new ArrayList<String>();
-
-	private static long currentTime;
 
 	public byte[] getBinaryData(Content content) {
 		logger.debug("getBinaryData( Content content=" + content
@@ -424,7 +420,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 		// create file filter
 		AcceptFileFilter aff = new AcceptFileFilter();
-		;
 		for (Object fileType : filterFileTypes) {
 			aff.addAcceptedFiletype((String) fileType);
 		}
@@ -488,14 +483,14 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	}
 
 	@Override
-	public void performAction(String arg0, Content arg1) {
+	public void performAction(String action, Content content) {
 
-		Collection<String> actions = this.getActions(arg1);
-		if (actions.contains(arg0)) {
-			if (arg0.equalsIgnoreCase("delete")) {
-				performDeleteAction(arg1);
-			} else if (arg0.equalsIgnoreCase("save")) {
-				performSaveAction(arg1);
+		Collection<String> actions = this.getActions(content);
+		if (actions.contains(action)) {
+			if (action.equalsIgnoreCase("delete")) {
+				performDeleteAction(content);
+			} else if (action.equalsIgnoreCase("save")) {
+				performSaveAction(content);
 			}
 		}
 
@@ -515,8 +510,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 						zipFileIndexEnd);
 				String zipEntry = contentUrl.substring(zipFileIndexEnd + 2);
 				String text = content.getFulltext();
-
-				updateZipEntry(zipPath, zipEntry, text.getBytes());
+				// update zip entry
+				updateZipEntry(zipPath, zipEntry, text.getBytes(), true);
 
 			} else {
 
@@ -544,23 +539,34 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
-	private void performDeleteAction(Content arg1) {
+	private void performDeleteAction(Content content) {
 
-		String contentUrl = arg1.getContentUrl();
+		String contentUrl = content.getContentUrl();
 
 		if (contentUrl == null || contentUrl.trim().length() == 0)
-			throw new IQserRuntimeException("Content " + arg1.getContentId()
+			throw new IQserRuntimeException("Content " + content.getContentId()
 					+ " does not have url");
+		//if zip file
+		if (contentUrl.startsWith("zip://")) {
+			int zipFileIndexEnd = contentUrl.indexOf(".zip") + 4;
+			String zipPath = contentUrl.substring("zip://".length(),
+					zipFileIndexEnd);
+			String zipEntry = contentUrl.substring(zipFileIndexEnd + 2);
+			String text = content.getFulltext();
+			//delete zip entry
+			updateZipEntry(zipPath, zipEntry, text.getBytes(), false);
 
-		File file = new File(contentUrl);
-		if (file.exists() && !file.isDirectory()) {
-			boolean isDeleted = file.delete();
-			if (!isDeleted) {
-				logger.warn(" File not deleted from filesystem "
-						+ arg1.getContentUrl());
+		} else {
+			File file = new File(contentUrl);
+			if (file.exists() && !file.isDirectory()) {
+				boolean isDeleted = file.delete();
+				if (!isDeleted) {
+					logger.warn(" File not deleted from filesystem "
+							+ content.getContentUrl());
+				}
 			}
 		}
-
+		
 		try {
 			removeContent(contentUrl);
 		} catch (IQserException e) {
@@ -569,13 +575,13 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
-	void updateZipEntry(String zipPath, String entryName, byte[] content) {
+	void updateZipEntry(String zipPath, String entryName, byte[] content, boolean replaceOrDelete) {
 		try {
 			// read war.zip and write to append.zip
 			ZipFile war = new ZipFile(zipPath);
 			// create a temp file
-			ZipOutputStream append = new ZipOutputStream(new FileOutputStream(
-					"append.zip"));
+			File tempFile = File.createTempFile("FileSystemContentProvider", "updateZip");
+			ZipOutputStream append = new ZipOutputStream(new FileOutputStream(tempFile));
 
 			// first, copy contents from existing war
 			Enumeration<? extends ZipEntry> entries = war.entries();
@@ -583,15 +589,19 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 				ZipEntry e = entries.nextElement();
 				if (!e.isDirectory()) {
 					if (e.getName().equalsIgnoreCase(entryName)) {
-						// replace
-						System.out.println("replace: " + e.getName());
-						ZipEntry newEntry = new ZipEntry(entryName);
-						append.putNextEntry(newEntry);
-						append.write(content);
+						if (replaceOrDelete){
+							// replace
+							logger.debug("replace: " + e.getName());
+							ZipEntry newEntry = new ZipEntry(entryName);
+							append.putNextEntry(newEntry);
+							append.write(content);
+						}else{
+							//delete
+							logger.debug("deleting: "+ e.getName());
+						}
 					} else {
-						// copy
+						// copy others
 						append.putNextEntry(new ZipEntry(e.getName()));
-						System.out.println("copy: " + e.getName());
 						copy(war.getInputStream(e), append);
 					}
 				}
@@ -603,13 +613,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 			// TODO replace zip file
 			new File(zipPath).delete();
-			new File("append.zip").renameTo(new File(zipPath));
+			tempFile.renameTo(new File(zipPath));			
 
 		} catch (Exception e) {
 			throw new IQserRuntimeException(e);
 		}
 
 	}
+	
+	
 
 	private void copy(InputStream input, OutputStream output)
 			throws IOException {

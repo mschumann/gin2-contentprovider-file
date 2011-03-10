@@ -3,6 +3,7 @@ package net.sf.iqser.plugin.filesystem;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
@@ -20,7 +21,6 @@ import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
 import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -391,7 +391,7 @@ public class FileSystemContentProviderTestZip extends TestCase {
 		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
-		f.mkdirs();
+		f.mkdirs();				
 
 		// Repository repository = Configuration.getConfiguration()
 		// .getServiceLocator().getRepository();
@@ -427,11 +427,17 @@ public class FileSystemContentProviderTestZip extends TestCase {
 		performSaveAction(contentURL, newContentURL);
 
 		// zip
+		//copy zip file to output
+		File origZip = new File(testDataDir+ "/testSynch/testzipfiles.zip");
+		File testZip = new File(testDataDir+ "/output/testzipfiles.zip");
+		FileInputStream in = new FileInputStream(origZip);
+		FileOutputStream out = new FileOutputStream(testZip);
+		IOUtils.copy(in, out);
+		IOUtils.closeQuietly(in);
+		IOUtils.closeQuietly(out);
+		
 		contentURL = "zip://" + testDataDir
-				+ "/testSynch/testzipfiles.zip!\\testzipfiles/doc1.txt";
-		// Content contentZip = fscp.getContent(contentURL);
-		// repository.addContent(contentZip);
-		// contentZip.setFulltext("new text");
+				+ "/output/testzipfiles.zip!\\testzipfiles/doc1.txt";
 		performSaveAction(contentURL, contentURL);
 
 		Repository repository = Configuration.getConfiguration()
@@ -460,7 +466,11 @@ public class FileSystemContentProviderTestZip extends TestCase {
 		assertTrue(contents.size() == 0);
 
 		// check if folder is empty
-		File outputFolder = new File(testDataDir + "/output");
+		//delete zip file
+		testZip.delete();
+		
+		File outputFolder = new File(testDataDir + "/output");		
+		// the zip file is not deleted
 		assertTrue(outputFolder.list().length == 0);
 
 	}
