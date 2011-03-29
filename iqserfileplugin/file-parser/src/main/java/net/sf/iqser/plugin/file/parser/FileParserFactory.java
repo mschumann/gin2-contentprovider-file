@@ -118,6 +118,11 @@ public class FileParserFactory {
 		return parser;
 	}
 
+	/**
+	 * method that returns a file parser from an input stream.
+	 * @param is inputstream of the file.
+	 * @return parser the selected file parser.
+	 */
 	public FileParser getFileParser(InputStream is) {
 
 		FileParser parser = null;
@@ -129,14 +134,14 @@ public class FileParserFactory {
 			Metadata metadata = new Metadata();
 			Reader r = tika.parse(is, metadata);
 			r.close();		
-			String content_type = metadata.get("Content-Type");
-			logger.info("content-type=" + content_type);
+			String contentType = metadata.get("Content-Type");
+			logger.info("content-type=" + contentType);
 			
-			mappingClassname = mappings.getProperty(getPropMappingName(content_type));
+			mappingClassname = mappings.getProperty(getPropMappingName(contentType));
 			if (mappingClassname != null){
 				parser = createFileParserInstance(mappingClassname);
 			}else{
-				logger.warn("No parser defined for mimetype " + content_type);
+				logger.warn("No parser defined for mimetype " + contentType);
 				parser = new TikaFileParser();				
 			}
 		} catch (IOException e) {

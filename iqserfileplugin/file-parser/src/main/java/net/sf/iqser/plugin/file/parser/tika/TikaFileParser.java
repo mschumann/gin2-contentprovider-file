@@ -14,24 +14,42 @@ import org.apache.tika.metadata.Metadata;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 
+/**
+ * parser for different tika formats.
+ * 
+ * @author Alexandru Galos
+ * 
+ */
 public class TikaFileParser implements FileParser {
 
+	/**
+	 * creates content for different tika formats.
+	 * 
+	 * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(java.lang.String,
+	 *      java.io.InputStream).
+	 * @param fileName
+	 *            the url of the file for which the content is created.
+	 * @param inputStream
+	 *            the input stream of the file for which the content is created.
+	 * @return content the content that is created
+	 * @throws FileParserException exception
+	 */
 	public Content getContent(String fileName, InputStream inputStream)
 			throws FileParserException {
 
 		Content content = new Content();
-		
+
 		// Set the file name attribute. This Attribute is no key.
 		content.addAttribute(new Attribute("FILENAME", fileName,
-			Attribute.ATTRIBUTE_TYPE_TEXT, false));
+				Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		// Set the title attribute. This Attribute is a key.
 		content.addAttribute(new Attribute("TITLE", FileParserUtils
-			.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
+				.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
 
 		Tika tika = new Tika();
 		String result = "";
-		Metadata metadata = new Metadata();					
+		Metadata metadata = new Metadata();
 		try {
 			result = tika.parseToString(inputStream, metadata);
 			content.setFulltext(result);

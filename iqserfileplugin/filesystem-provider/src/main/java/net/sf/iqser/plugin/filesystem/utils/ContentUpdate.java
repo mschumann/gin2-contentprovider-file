@@ -6,8 +6,19 @@ import java.util.Map;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 
+/**
+ * updates content attributes and keys attr.
+ * @author alexandru.galos
+ *
+ */
 public class ContentUpdate {
 
+
+	/**
+	 * updates the key attrs of the content.
+	 * @param content the content that is updated
+	 * @param keyAttributesList the new key attributes
+	 */
 	public void updateKeyAttributes(Content content, Collection keyAttributesList) {
 
 		Collection attributes = content.getAttributes();
@@ -26,6 +37,11 @@ public class ContentUpdate {
 
 	}
 	
+	/**
+	 * update the content attribute names.
+	 * @param content the content that is updated
+	 * @param attributeMappings a map of the old names and the new names
+	 */
 	public  void updateAttributes(Content content, Map attributeMappings) {
 
 		Collection attributes = content.getAttributes();

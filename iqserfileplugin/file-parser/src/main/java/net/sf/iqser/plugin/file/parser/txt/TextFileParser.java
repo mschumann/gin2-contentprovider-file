@@ -33,6 +33,10 @@ public class TextFileParser implements FileParser {
      * 
      * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(String,
      *      InputStream)
+     * @param fileName the url of the file
+     * @param inputStream the input stream of the file
+     * @return content the content that is created
+     * @throws FileParserException exception
      */
     public Content getContent(String fileName, InputStream inputStream)
 	    throws FileParserException {
@@ -71,6 +75,7 @@ public class TextFileParser implements FileParser {
      * @param inputStream
      *            The InputStream.
      * 
+     * @param inputStream
      * @return A String containing the content.
      */
     private String parse(InputStream inputStream) throws IOException {

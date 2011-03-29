@@ -9,44 +9,44 @@ package net.sf.iqser.plugin.file.parser;
  */
 public class FileParserException extends Exception {
 
-    /**
-     * Default constructor.
-     */
-    public FileParserException() {
-	super();
-    }
+	/**
+	 * Default constructor.
+	 */
+	public FileParserException() {
+		super();
+	}
 
-    /**
-     * Default constructor.
-     * 
-     * @param message
-     * @param cause
-     */
-    public FileParserException(String message, Throwable cause) {
-	super(message, cause);
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param message the message of the exception
+	 * @param cause the cause of the exception
+	 */
+	public FileParserException(String message, Throwable cause) {
+		super(message, cause);
+	}
 
-    /**
-     * Default constructor.
-     * 
-     * @param message
-     */
-    public FileParserException(String message) {
-	super(message);
-    }
+	/**
+	 *  Constructor.
+	 * 
+	 * @param message the message of the exception
+	 */
+	public FileParserException(String message) {
+		super(message);
+	}
 
-    /**
-     * Default constructor.
-     * 
-     * @param cause
-     */
-    public FileParserException(Throwable cause) {
-	super(cause);
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param cause the cause of the exception
+	 */
+	public FileParserException(Throwable cause) {
+		super(cause);
+	}
 
-    /**
-     * UID.
-     */
-    private static final long serialVersionUID = 1963111488229957217L;
+	/**
+	 * UID.
+	 */
+	private static final long serialVersionUID = 1963111488229957217L;
 
 }

@@ -5,13 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 
-import org.apache.log4j.Logger;
-
 import junit.framework.TestCase;
-
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
-import net.sf.iqser.plugin.file.parser.tika.msoffice.ExcelFileParser;
+import net.sf.iqser.plugin.file.parser.tika.msoffice.PowerPointFileParser;
+
+import org.apache.log4j.Logger;
 
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
@@ -21,7 +20,7 @@ public class PowerPointFileParserTest extends TestCase{
 	private static Logger log = Logger.getLogger(PowerPointFileParserTest.class); 
 
 	public void testPowerPointFileParser() throws FileNotFoundException, FileParserException{
-		FileParser parser = new ExcelFileParser();
+		FileParser parser = new PowerPointFileParser();
 		FileInputStream is = new FileInputStream(new File(System.getProperty(
 				"testdata.dir", "../file-parser/testdata")
 				+ "/PowerPointTestData.ppt"));

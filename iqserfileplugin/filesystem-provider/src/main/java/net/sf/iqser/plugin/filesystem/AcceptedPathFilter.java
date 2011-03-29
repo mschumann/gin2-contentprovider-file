@@ -9,6 +9,12 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+/**
+ * 
+ * the accepted paths filter.
+ * @author alexandru.galos
+ *
+ */
 public class AcceptedPathFilter implements FileFilter {
 	/** Logger for this class. */
 	private static Logger logger = Logger.getLogger(AcceptedPathFilter.class);

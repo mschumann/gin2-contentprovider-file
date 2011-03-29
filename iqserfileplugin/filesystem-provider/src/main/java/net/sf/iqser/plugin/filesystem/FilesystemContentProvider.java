@@ -39,6 +39,12 @@ import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Content;
 import com.iqser.core.plugin.AbstractContentProvider;
 
+/**
+ * file system content provider.
+ * 
+ * @author alexandru.galos
+ * 
+ */
 public class FilesystemContentProvider extends AbstractContentProvider {
 
 	/**
@@ -51,10 +57,23 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	 */
 	private static final long serialVersionUID = 6781181225882526721L;
 
+	/**
+	 * map for new attribute---for replacing the name of the attributes.
+	 */
 	private Map<String, String> attributeMappings = new HashMap<String, String>();
 
+	/**
+	 * a collection of new key attributes.
+	 */
 	private Collection<String> keyAttributesList = new ArrayList<String>();
 
+	/**
+	 * get the binary data from a content.
+	 * 
+	 * @param content
+	 *            the content for which to extract the binary data
+	 * @return an array of bytes
+	 */
 	public byte[] getBinaryData(Content content) {
 		logger.debug("getBinaryData( Content content=" + content
 				+ ") - end - return value=" + null);
@@ -72,6 +91,13 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		throw new IQserRuntimeException("No files for content found");
 	}
 
+	/**
+	 * extract the binary data from a content that contains a zip entry.
+	 * 
+	 * @param content
+	 * @return an array of bytes representing the content data
+	 * @throws IOException
+	 */
 	private byte[] extractBinaryPackedFiles(Content content) throws IOException {
 		ZipFileModel zfm = getZipFileModel(content.getContentUrl());
 		ZipFile zipFile = zfm.getZipFile();
@@ -81,6 +107,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return IOUtils.toByteArray(inputStream);
 	}
 
+	/**
+	 * extract the binary data from the content that is unpacked.
+	 * 
+	 * @param content
+	 *            the unpacked content for which to extract binary content
+	 * @return an array of bytes representing the content data
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private byte[] extractBinaryUnpackedFiles(Content content)
 			throws FileNotFoundException, IOException {
 		File f = getFile(content.getContentUrl());
@@ -142,6 +177,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		// Nothing to do
 	}
 
+	
+	/**
+	 * erases the content objects from the object graph if the corresponding
+	 * files are no longer on the file system.
+	 */
 	@Override
 	public void doHousekeeping() {
 		// collection of source URLs
@@ -167,6 +207,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		}
 	}
 
+	
+	/**
+	 * adds or updates the content of the object graph when a file
+	 * is added or modified.
+	 */
 	@Override
 	public void doSynchonization() {
 
@@ -247,7 +292,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Return "save" and "delete"
+	 * Return "save" and "delete".
 	 * 
 	 * @param content
 	 *            A Content
@@ -259,6 +304,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return Arrays.asList(actions);
 	}
 
+	/**
+	 * extracts the zip data from a zip content.
+	 * 
+	 * @param zipFileName
+	 * @return the inputstream of the content
+	 */
 	private InputStream getInputStreamForZipContent(String zipFileName) {
 
 		InputStream is = null;
@@ -276,10 +327,19 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return is;
 	}
 
+	/**
+	 * get the zip file model that contains a zipfile and an entry.
+	 * 
+	 * @param zipFileName
+	 *            the name of the zip file
+	 * @return the zip file model
+	 * @throws IOException
+	 *             the exception
+	 */
 	public ZipFileModel getZipFileModel(String zipFileName) throws IOException {
 
 		int index = zipFileName.indexOf(".zip!");
-	
+
 		if (index != -1) {
 			ZipFileModel zfm = new ZipFileModel();
 			index += ".zip".length();
@@ -297,6 +357,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			throw new IQserRuntimeException("Invalid zip url");
 	}
 
+	
+	/**
+	 * creates a content from an url.
+	 * @param contentUrl the content url
+	 * @return the created content
+	 */
 	@Override
 	public Content getContent(String contentUrl) {
 
@@ -346,6 +412,12 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
+	
+	/**
+	 * creates a content from an inputstream.
+	 * @param inputStream the inputstream of the file
+	 * @return content the created content
+	 */
 	@Override
 	public Content getContent(InputStream inputStream) {
 
@@ -386,6 +458,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return content;
 	}
 
+	
+	/**
+	 * extracts the urls that are available for creating contents.
+	 * @return a collection of string representing the urls of the files
+	 */
 	@Override
 	public Collection getContentUrls() {
 
@@ -430,6 +507,10 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return files;
 	}
 
+	
+	/**
+	 * initializes the parameters of the content object.
+	 */
 	@Override
 	public void init() {
 
@@ -462,6 +543,13 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
+	/**
+	 * extracts the configuration attributes for key attributes.
+	 * 
+	 * @param keyAttributes
+	 *            a string of the form [keyAttr1][keyAttr2]
+	 * @return a collection of the new key attributes
+	 */
 	private Collection extractConfigAttributes(String keyAttributes) {
 
 		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
@@ -476,12 +564,26 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return keyAttributesList;
 	}
 
+	
+	/**
+	 * nothing to do here.
+	 * @param arg0   the event
+	 */
 	@Override
 	public void onChangeEvent(Event arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
+	/**
+	 * perform save or delete action on the object graph and also on the file
+	 * system.
+	 * 
+	 * @param action
+	 *            the type of action which can be delete of save
+	 * @param content
+	 *            the content that is deleted or saved
+	 */
 	@Override
 	public void performAction(String action, Content content) {
 
@@ -496,6 +598,14 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
+	/**
+	 * perform save action on a content object a save action saves the file on
+	 * the file system if it is a text document or a text document in a zip
+	 * file.
+	 * 
+	 * @param content
+	 *            the content that is saved
+	 */
 	private void performSaveAction(Content content) {
 
 		String contentUrl = content.getContentUrl();
@@ -539,6 +649,13 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
+	/**
+	 * deletes a content object from the object graph and also from the file
+	 * system.
+	 * 
+	 * @param content
+	 *            the content that is deleted
+	 */
 	private void performDeleteAction(Content content) {
 
 		String contentUrl = content.getContentUrl();
@@ -546,14 +663,14 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		if (contentUrl == null || contentUrl.trim().length() == 0)
 			throw new IQserRuntimeException("Content " + content.getContentId()
 					+ " does not have url");
-		//if zip file
+		// if zip file
 		if (contentUrl.startsWith("zip://")) {
 			int zipFileIndexEnd = contentUrl.indexOf(".zip") + 4;
 			String zipPath = contentUrl.substring("zip://".length(),
 					zipFileIndexEnd);
 			String zipEntry = contentUrl.substring(zipFileIndexEnd + 2);
 			String text = content.getFulltext();
-			//delete zip entry
+			// delete zip entry
 			updateZipEntry(zipPath, zipEntry, text.getBytes(), false);
 
 		} else {
@@ -566,7 +683,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 				}
 			}
 		}
-		
+
 		try {
 			removeContent(contentUrl);
 		} catch (IQserException e) {
@@ -575,13 +692,28 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
-	void updateZipEntry(String zipPath, String entryName, byte[] content, boolean replaceOrDelete) {
+	/**
+	 * updates the zip entry of a zip file.
+	 * 
+	 * @param zipPath
+	 *            the path of the zip file
+	 * @param entryName
+	 *            the entry name from the zip file
+	 * @param content
+	 *            the content that is updates
+	 * @param replaceOrDelete
+	 *            the operation that is performed
+	 */
+	private void updateZipEntry(String zipPath, String entryName,
+			byte[] content, boolean replaceOrDelete) {
 		try {
 			// read war.zip and write to append.zip
 			ZipFile war = new ZipFile(zipPath);
 			// create a temp file
-			File tempFile = File.createTempFile("FileSystemContentProvider", "updateZip");
-			ZipOutputStream append = new ZipOutputStream(new FileOutputStream(tempFile));
+			File tempFile = File.createTempFile("FileSystemContentProvider",
+					"updateZip");
+			ZipOutputStream append = new ZipOutputStream(new FileOutputStream(
+					tempFile));
 
 			// first, copy contents from existing war
 			Enumeration<? extends ZipEntry> entries = war.entries();
@@ -589,15 +721,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 				ZipEntry e = entries.nextElement();
 				if (!e.isDirectory()) {
 					if (e.getName().equalsIgnoreCase(entryName)) {
-						if (replaceOrDelete){
+						if (replaceOrDelete) {
 							// replace
 							logger.debug("replace: " + e.getName());
 							ZipEntry newEntry = new ZipEntry(entryName);
 							append.putNextEntry(newEntry);
 							append.write(content);
-						}else{
-							//delete
-							logger.debug("deleting: "+ e.getName());
+						} else {
+							// delete
+							logger.debug("deleting: " + e.getName());
 						}
 					} else {
 						// copy others
@@ -613,22 +745,29 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 			// TODO replace zip file
 			new File(zipPath).delete();
-			tempFile.renameTo(new File(zipPath));			
+			tempFile.renameTo(new File(zipPath));
 
 		} catch (Exception e) {
 			throw new IQserRuntimeException(e);
 		}
 
 	}
-	
-	
 
+	/**
+	 * copies the input stream in output stream.
+	 * 
+	 * @param input
+	 *            the input stream
+	 * @param output
+	 *            the outputstream
+	 * @throws IOException exception
+	 */
 	private void copy(InputStream input, OutputStream output)
 			throws IOException {
-		byte[] BUFFER = new byte[4096 * 1024];
+		byte[] buffer = new byte[4096 * 1024];
 		int bytesRead;
-		while ((bytesRead = input.read(BUFFER)) != -1) {
-			output.write(BUFFER, 0, bytesRead);
+		while ((bytesRead = input.read(buffer)) != -1) {
+			output.write(buffer, 0, bytesRead);
 		}
 	}
 

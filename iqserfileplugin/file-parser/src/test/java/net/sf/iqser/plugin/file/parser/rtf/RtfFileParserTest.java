@@ -5,13 +5,12 @@ import java.io.FileInputStream;
 
 import junit.framework.TestCase;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.iqser.core.model.Content;
 
 public class RtfFileParserTest extends TestCase {
 
     public void testGetContent() throws Exception {
+   
 	RtfFileParser parser = new RtfFileParser();
 	FileInputStream is = new FileInputStream(
 		new File(System.getProperty("testdata.dir",

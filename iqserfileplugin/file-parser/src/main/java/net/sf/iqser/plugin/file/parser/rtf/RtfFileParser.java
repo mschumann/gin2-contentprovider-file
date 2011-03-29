@@ -25,62 +25,75 @@ import com.iqser.core.model.Content;
  */
 public class RtfFileParser implements FileParser {
 
-    /** Constant from the default content type for text documents. */
-    private static final String RTF_FILE_CONTENT_TYPE = "RTF Document";
+	/** Constant from the default content type for text documents. */
+	private static final String RTF_FILE_CONTENT_TYPE = "RTF Document";
 
-    /**
-     * Default Logger for this class.
-     */
-    private static Logger logger = Logger.getLogger(RtfFileParser.class);
+	/**
+	 * Default Logger for this class.
+	 */
+	private static Logger logger = Logger.getLogger(RtfFileParser.class);
 
-    /**
-     * Parse RTF document and create a {@link Content} object.
-     * 
-     * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(java.lang.String,
-     *      java.io.InputStream)
-     */
-    public Content getContent(String fileName, InputStream inputStream)
-	    throws FileParserException {
-	logger.info("Parsing file " + fileName);
+	/**
+	 * Parse RTF document and create a {@link Content} object.
+	 * 
+	 * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(java.lang.String,
+	 *      java.io.InputStream)
+	 * @param fileName
+	 *              the name of the file for which the content is created
+	 * @param inputStream
+	 *              the input stream of the file for which the content is created
+	 * @return content
+	 *              the content object  
+	 * @throws FileParserException exception
+	 */
+	public Content getContent(String fileName, InputStream inputStream)
+			throws FileParserException {
+		logger.info("Parsing file " + fileName);
 
-	// Create a new Content
-	Content content = new Content();
+		// Create a new Content
+		Content content = new Content();
 
-	// Set the content type for a unknown format (file extention +
-	// 'Document')
-	content.setType(RTF_FILE_CONTENT_TYPE);
+		// Set the content type for a unknown format (file extention +
+		// 'Document')
+		content.setType(RTF_FILE_CONTENT_TYPE);
 
-	// Set the file name attribute. This Attribute is no key.
-	content.addAttribute(new Attribute("FILENAME", fileName,
-		Attribute.ATTRIBUTE_TYPE_TEXT, false));
+		// Set the file name attribute. This Attribute is no key.
+		content.addAttribute(new Attribute("FILENAME", fileName,
+				Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
-	// Set the title attribute. This Attribute is a key.
-	content.addAttribute(new Attribute("TITLE", FileParserUtils
-		.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
+		// Set the title attribute. This Attribute is a key.
+		content.addAttribute(new Attribute("TITLE", FileParserUtils
+				.getFileTitle(fileName), Attribute.ATTRIBUTE_TYPE_TEXT, true));
 
-	try {
-	    parseDocument(inputStream, content);
-	} catch (Exception e) {
-	    logger.error("Failed to read stream for file " + fileName, e);
-	    throw new FileParserException("Failed to read stream for file "
-		    + fileName, e);
+		try {
+			parseDocument(inputStream, content);
+		} catch (Exception e) {
+			logger.error("Failed to read stream for file " + fileName, e);
+			throw new FileParserException("Failed to read stream for file "
+					+ fileName, e);
+		}
+
+		return content;
 	}
 
-	return content;
-    }
+	/**
+	 * document parser.
+	 * @param inputStream
+	 * @param content
+	 * @throws Exception
+	 */
+	private void parseDocument(InputStream inputStream, Content content)
+			throws Exception {
+		DefaultStyledDocument document = new DefaultStyledDocument();
+		RTFEditorKit kit = new RTFEditorKit();
+		kit.read(inputStream, document, 0);
+		String fulltext = document.getText(0, document.getLength());
 
-    private void parseDocument(InputStream inputStream, Content content)
-	    throws Exception {
-	DefaultStyledDocument document = new DefaultStyledDocument();
-	RTFEditorKit kit = new RTFEditorKit();
-	kit.read(inputStream, document, 0);
-	String fulltext = document.getText(0, document.getLength());
-
-	if (!StringUtils.isEmpty(fulltext)) {
-	    content.setFulltext(fulltext);
+		if (!StringUtils.isEmpty(fulltext)) {
+			content.setFulltext(fulltext);
+		}
+		// close input stream
+		inputStream.close();
 	}
-	//close input stream
-	inputStream.close();
-    }
 
 }

@@ -39,6 +39,13 @@ public class PdfFileParser implements FileParser {
      * 
      * @see net.sf.iqser.plugin.file.parser.FileParser#getContent(String,
      *      InputStream)
+     * @param fileName
+     *              the url of the file
+     * @param inputStream
+     *              the input stream of the file
+     * @return content
+     *              the content that is created for the file
+     * @throws FileParserException exception
      */
     public Content getContent(String fileName, InputStream inputStream)
 	    throws FileParserException {
@@ -75,9 +82,10 @@ public class PdfFileParser implements FileParser {
      * Extract Attributes from PDF Document.
      * 
      * @param is
-     *            A InputStream
+     *            An InputStream
      * @param content
      * @return A Collection of Attribute objects
+     * @throws IOException exception
      */
     private void parsePdfDocument(InputStream is, Content content)
 	    throws IOException {
