@@ -44,6 +44,8 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		testDataDir = System.getProperty("testdata.dir", "testdata");
 		// testDataDir = System.getProperty("testdata.dir", "D:/testdata");
 
+		System.out.println("testDataDir:" + testDataDir);
+		
 		PropertyConfigurator.configure("src/test/resources/log4j.properties");
 
 		super.setUp();
