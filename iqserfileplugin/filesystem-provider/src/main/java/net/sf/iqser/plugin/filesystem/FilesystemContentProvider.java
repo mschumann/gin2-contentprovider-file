@@ -177,7 +177,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		// Nothing to do
 	}
 
-	
 	/**
 	 * erases the content objects from the object graph if the corresponding
 	 * files are no longer on the file system.
@@ -207,10 +206,9 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		}
 	}
 
-	
 	/**
-	 * adds or updates the content of the object graph when a file
-	 * is added or modified.
+	 * adds or updates the content of the object graph when a file is added or
+	 * modified.
 	 */
 	@Override
 	public void doSynchonization() {
@@ -223,76 +221,74 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		 * will be DELETE from the Object Graph
 		 */
 
-		
-			// get the object graph content URLs
-			Collection<Content> existingContents = null;
-			try {
-				existingContents = getExistingContents();
-			} catch (IQserException e) {
-				logger.fatal("Error while synchronizing: "+e.getMessage());
-			}
-			
-			if (existingContents == null) {
-				existingContents = new ArrayList<Content>();
-			}
-			// collection of objectGraph URLs
-			Collection<String> objectGraphContentUrls = new ArrayList<String>();
+		// get the object graph content URLs
+		Collection<Content> existingContents = null;
+		try {
+			existingContents = getExistingContents();
+		} catch (IQserException e) {
+			logger.fatal("Error while synchronizing: " + e.getMessage());
+		}
+
+		if (existingContents == null) {
+			existingContents = new ArrayList<Content>();
+		}
+		// collection of objectGraph URLs
+		Collection<String> objectGraphContentUrls = new ArrayList<String>();
+		for (Content content : existingContents) {
+			objectGraphContentUrls.add(content.getContentUrl());
+		}
+		// collection of source URLs
+		Collection<String> sourceContentUrls = getContentUrls();
+
+		// handle new files
+		Collection newSourceContentUrls = new ArrayList();
+		newSourceContentUrls.addAll(sourceContentUrls);
+		newSourceContentUrls.removeAll(objectGraphContentUrls);
+
+		for (Object contentUrl : newSourceContentUrls) {
+			logger.info("Synch - add conntent " + contentUrl);
+			addContent(getContent((String) contentUrl));
+		}
+
+		// handle common files - files that are both in file system and in
+		// content object
+		Collection<String> commonContentsUrls = new ArrayList<String>();
+		commonContentsUrls.addAll(objectGraphContentUrls);
+		commonContentsUrls.retainAll(sourceContentUrls);
+
+		for (String contentUrl : commonContentsUrls) {
 			for (Content content : existingContents) {
-				objectGraphContentUrls.add(content.getContentUrl());
-			}
-			// collection of source URLs
-			Collection<String> sourceContentUrls = getContentUrls();
+				if (contentUrl.equalsIgnoreCase(content.getContentUrl())) {
+					// match file LAST_MODIFIED
+					File file = getFile(contentUrl);
+					if (file != null) {
+						long lastModified = file.lastModified();
+						long contentLastModified = content
+								.getModificationDate();
+						if (lastModified > contentLastModified) {
+							logger.info("Synch - delete update " + contentUrl);
 
-			// handle new files
-			Collection newSourceContentUrls = new ArrayList();
-			newSourceContentUrls.addAll(sourceContentUrls);
-			newSourceContentUrls.removeAll(objectGraphContentUrls);
+							updateContent(getContent(file.getAbsolutePath()));
+						}
+					} else {
+						ZipFileModel zfm = null;
+						try {
+							zfm = getZipFileModel(contentUrl);
 
-			for (Object contentUrl : newSourceContentUrls) {
-				logger.info("Synch - add conntent " + contentUrl);
-				addContent(getContent((String) contentUrl));
-			}
-
-			// handle common files - files that are both in file system and in
-			// content object
-			Collection<String> commonContentsUrls = new ArrayList<String>();
-			commonContentsUrls.addAll(objectGraphContentUrls);
-			commonContentsUrls.retainAll(sourceContentUrls);
-
-			for (String contentUrl : commonContentsUrls) {
-				for (Content content : existingContents) {
-					if (contentUrl.equalsIgnoreCase(content.getContentUrl())) {
-						// match file LAST_MODIFIED
-						File file = getFile(contentUrl);
-						if (file != null) {
-							long lastModified = file.lastModified();
-							long contentLastModified = content
-									.getModificationDate();
-							if (lastModified > contentLastModified) {
-								logger.info("Synch - delete update "
-										+ contentUrl);
-
-								updateContent(getContent(file.getAbsolutePath()));
-							}
-						} else {
-							ZipFileModel zfm = null;
-							try {
-								zfm = getZipFileModel(contentUrl);
-							} catch (IOException e) {
-								logger.fatal("Error while reading the zip file: "+e.getMessage());
-								
-							}
 							boolean isModified = zfm.getZipEntry().getTime() > content
 									.getModificationDate();
 							if (isModified)
 								updateContent(getContent(contentUrl));
+						} catch (IOException e) {
+							logger.fatal("Error while reading the zip file: "
+									+ e.getMessage());
 
 						}
 					}
 				}
 			}
+		}
 
-	
 	}
 
 	/**
@@ -361,10 +357,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 			throw new IQserRuntimeException("Invalid zip url");
 	}
 
-	
 	/**
 	 * creates a content from an url.
-	 * @param contentUrl the content url
+	 * 
+	 * @param contentUrl
+	 *            the content url
 	 * @return the created content
 	 */
 	@Override
@@ -416,10 +413,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 	}
 
-	
 	/**
 	 * creates a content from an inputstream.
-	 * @param inputStream the inputstream of the file
+	 * 
+	 * @param inputStream
+	 *            the inputstream of the file
 	 * @return content the created content
 	 */
 	@Override
@@ -462,9 +460,9 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return content;
 	}
 
-	
 	/**
 	 * extracts the urls that are available for creating contents.
+	 * 
 	 * @return a collection of string representing the urls of the files
 	 */
 	@Override
@@ -511,7 +509,6 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return files;
 	}
 
-	
 	/**
 	 * initializes the parameters of the content object.
 	 */
@@ -568,10 +565,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		return keyAttributesList;
 	}
 
-	
 	/**
 	 * nothing to do here.
-	 * @param arg0   the event
+	 * 
+	 * @param arg0
+	 *            the event
 	 */
 	@Override
 	public void onChangeEvent(Event arg0) {
@@ -764,7 +762,8 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 	 *            the input stream
 	 * @param output
 	 *            the outputstream
-	 * @throws IOException exception
+	 * @throws IOException
+	 *             exception
 	 */
 	private void copy(InputStream input, OutputStream output)
 			throws IOException {
