@@ -193,16 +193,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		}
 
 		if (existingContents != null) {
-			try {
-				for (Content content : existingContents) {
+			for (Content content : existingContents) {
+				try {
 					String contentUrl = content.getContentUrl();
 					if (!sourceContentUrls.contains(contentUrl))
 						removeContent(content.getContentUrl());
+				} catch (IQserException e) {
+					logger.error("Error while doing Housekeeping: ", e);
 				}
-			} catch (IQserException e) {
-				throw new IQserRuntimeException(e);
 			}
-
 		}
 	}
 
@@ -226,7 +225,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		try {
 			existingContents = getExistingContents();
 		} catch (IQserException e) {
-			logger.fatal("Error while synchronizing: " + e.getMessage());
+			throw new IQserRuntimeException(e);
 		}
 
 		if (existingContents == null) {
@@ -247,7 +246,11 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 		for (Object contentUrl : newSourceContentUrls) {
 			logger.info("Synch - add conntent " + contentUrl);
-			addContent(getContent((String) contentUrl));
+			try{
+				addContent(getContent((String) contentUrl));
+			}catch(IQserRuntimeException ire){
+				logger.error("Could not add content.", ire);
+			}
 		}
 
 		// handle common files - files that are both in file system and in
@@ -258,34 +261,35 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 
 		for (String contentUrl : commonContentsUrls) {
 			for (Content content : existingContents) {
+
 				if (contentUrl.equalsIgnoreCase(content.getContentUrl())) {
 					// match file LAST_MODIFIED
-					File file = getFile(contentUrl);
-					if (file != null) {
-						long lastModified = file.lastModified();
-						long contentLastModified = content
-								.getModificationDate();
-						if (lastModified > contentLastModified) {
-							logger.info("Synch - delete update " + contentUrl);
+					try {
+						File file = getFile(contentUrl);
+						if (file != null) {
+							long lastModified = file.lastModified();
+							long contentLastModified = content
+									.getModificationDate();
+							if (lastModified > contentLastModified) {
+								logger.info("Synch - delete update "
+										+ contentUrl);
 
-							updateContent(getContent(file.getAbsolutePath()));
-						}
-					} else {
-						ZipFileModel zfm = null;
-						try {
-							zfm = getZipFileModel(contentUrl);
+								updateContent(getContent(file.getAbsolutePath()));
+							}
+						} else {
+							ZipFileModel zfm = getZipFileModel(contentUrl);
 
 							boolean isModified = zfm.getZipEntry().getTime() > content
 									.getModificationDate();
 							if (isModified)
 								updateContent(getContent(contentUrl));
-						} catch (IOException e) {
-							logger.fatal("Error while reading the zip file: "
-									+ e.getMessage());
 
 						}
+					} catch (Exception e) {
+						logger.error("Error while performing synch: ", e);
 					}
 				}
+
 			}
 		}
 
