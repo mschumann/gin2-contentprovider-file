@@ -122,7 +122,7 @@ public class FileScanner {
 
 			if (!zipEntry.isDirectory()) {
 
-				String path = "zip://" + folder + "!\\" + name;
+				String path = "zip://" + folder + "!/" + name;
 				File file = new File(path);
 				if (filter.accept(file)) {
 					zipContent.add(path);

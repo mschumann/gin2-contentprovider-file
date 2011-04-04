@@ -108,7 +108,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://"
 				+ partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/files/WordDataTest.doc";
+				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 
 		Method declaredMethod = fscp.getClass().getDeclaredMethod(
 				"getInputStreamForZipContent", String.class);
@@ -134,7 +134,10 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://"
 				+ partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/files/WordDataTest.doc";
+				+ File.separator
+				+ "testSynch" 
+				+ File.separator + 
+				"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		Content content = fscp.getContent(contentUrl);
 
 		byte[] bytes = (byte[]) declaredMethod.invoke(fscp, content);
@@ -225,7 +228,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		// + "/testSynch/testzipfiles.zip!/testzipfiles/doc1.txt";
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		Content c = fscp.getContent("zip://" + partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/doc1.txt");
+				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/doc1.txt");
 		c.setProvider(fscp.getId());
 		repository.addContent(c);
 		assertTrue(c.getFulltext().trim().equalsIgnoreCase("new text"));
@@ -250,7 +253,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 					.equalsIgnoreCase(
 							"zip://"
 									+ testDataDir
-									+ "/testSynch/testzipfiles.zip!/testzipfiles/doc2.txt"))
+									+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/doc2.txt"))
 				assertTrue(content.getFulltext().trim()
 						.equals("zipDoc21\r\nzipDoc22"));
 		}
@@ -276,7 +279,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		c = fscp.getContent("zip://"
 				+ partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/files/WordDataTest.doc");
+				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc");
 		repository.addContent(c);
 
 		Collection contents = repository.getContentByProvider(fscp.getId());
@@ -309,7 +312,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		contentUrl = "zip://"
 				+ partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/files/WordDataTest.doc";
+				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		testGetBinaryData(contentUrl);
 	}
 
@@ -317,7 +320,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://"
 				+ partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/files/WordDataTest.doc";
+				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		FilesystemContentProvider fscp = new FilesystemContentProvider();
 		ZipFileModel fileModel = fscp.getZipFileModel(contentUrl);
 		ZipFileModel zfm2 = getZipFileModel(contentUrl);
@@ -448,7 +451,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://"
 				+ partialURL
-				+ "\\testSynch\\testzipfiles.zip!\\testzipfiles/files/WordDataTest.doc";// file.getAbsolutePath();
+				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";// file.getAbsolutePath();
 
 		assertTrue(urls.contains(contentUrl));
 	}
@@ -509,7 +512,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		IOUtils.closeQuietly(out);
 
 		contentURL = "zip://" + testDataDir
-				+ "/output/testzipfiles.zip!\\testzipfiles/doc1.txt";
+				+ "/output/testzipfiles.zip!/testzipfiles/doc1.txt";
 		performSaveAction(contentURL, contentURL);
 
 		Repository repository = Configuration.getConfiguration()

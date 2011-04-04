@@ -223,9 +223,15 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 		 * will be DELETE from the Object Graph
 		 */
 
-		try {
+		
 			// get the object graph content URLs
-			Collection<Content> existingContents = getExistingContents();
+			Collection<Content> existingContents = null;
+			try {
+				existingContents = getExistingContents();
+			} catch (IQserException e) {
+				logger.fatal("Error while synchronizing: "+e.getMessage());
+			}
+			
 			if (existingContents == null) {
 				existingContents = new ArrayList<Content>();
 			}
@@ -269,7 +275,13 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 								updateContent(getContent(file.getAbsolutePath()));
 							}
 						} else {
-							ZipFileModel zfm = getZipFileModel(contentUrl);
+							ZipFileModel zfm = null;
+							try {
+								zfm = getZipFileModel(contentUrl);
+							} catch (IOException e) {
+								logger.fatal("Error while reading the zip file: "+e.getMessage());
+								
+							}
 							boolean isModified = zfm.getZipEntry().getTime() > content
 									.getModificationDate();
 							if (isModified)
@@ -280,15 +292,7 @@ public class FilesystemContentProvider extends AbstractContentProvider {
 				}
 			}
 
-		} catch (IQserException e) {
-			e.printStackTrace();
-			throw new IQserRuntimeException("Error while do synch: "
-					+ e.getMessage());
-		} catch (IOException e) {
-			throw new IQserRuntimeException("Error while do synch: "
-					+ e.getMessage());
-		}
-
+	
 	}
 
 	/**
