@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>iqserfileplugin</artifactId>
+		<groupId>net.sf.iqser.plugin.file</groupId>
+		<version>1.0-SNAPSHOT</version>
+	</parent>
+	<groupId>net.sf.iqser.plugin.file</groupId>
+	<artifactId>cmis-provider</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<name>CMIS ContentProvider</name>
+	<description>This module contains a ContentProvider implementation to connect CMIS ECM to the iQser GIN Platform.</description>
+	<url></url>
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>file-parser</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+</project>
