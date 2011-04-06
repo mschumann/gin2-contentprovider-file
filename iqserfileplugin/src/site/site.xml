@@ -1,26 +1,31 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project name="IMAP Content Provider Plugin for iQser GIN Platform" xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<project name="File Plugins for iQser GIN Platform" xmlns="http://maven.apache.org/DECORATION/1.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
 	<body>
 		<links>
 			<item name="iQser" href="http://www.iqser.com/" />
-			<item name="Sourceforge" href="http://sourceforge.net/projects/iqserimapplugin/" />
+			<item name="Sourceforge" href="http://sourceforge.net/projects/iqserfileplugin/" />
 		</links>
 
 		<menu name="Welcome">
 			<item name="Introduction" href="index.html"/>
+			<item name="Supported Repositories" href="repositories.html"/>
+			<item name="Components" href="components.html"/>
+			<item name="Getting Started" href="https://sourceforge.net/apps/trac/iqserfileplugin/wiki/GettingStartedGuide"/>
+			<item name="Download" href="http://sourceforge.net/projects/iqserfileplugin/files/"/>
 			<item name="Support" href="support.html"/>
-			<item name="Download" href="http://sourceforge.net/projects/iqserimapplugin/files/"/>
 			<item name="Join us" href="contribution.html"/>
 		</menu>
 
 		<menu name="Documentation">
-			<item name="Wiki" href="http://sourceforge.net/apps/trac/iqserimapplugin/wiki"/>
+			<item name="Wiki" href="http://sourceforge.net/apps/trac/iqserfileplugin/wiki"/>
 			<item name="Javadocs" href="apidocs/index.html"/>
 		</menu>
 
+		<menu ref="modules" />
+		
 		<menu ref="reports" />
 
 	</body>
