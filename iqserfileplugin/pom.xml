@@ -96,6 +96,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<iqser.version>1.2.2.1</iqser.version>
 		<compileSource>1.5</compileSource>
+		<sourceforge.artifact>${project.build.directory}/${project.build.finalName}</sourceforge.artifact>
+		<sourceforge.upload>${sf.username},iqserfileplugin@frs.sourceforge.net:/home/pfs/project/i/iq/iqserfileplugin</sourceforge.upload>
 	</properties>
 
 	<repositories>
@@ -292,6 +294,40 @@
 						<goals>
 							<goal>jar-no-fork</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-jsch</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+					<dependency>
+						<groupId>jsch</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.25</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>publish_jar</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<scp todir="${sourceforge.upload}" password="${sf.password}"
+									trust="true">
+									<fileset dir="${project.build.directory}">
+										<include name="${project.build.finalName}*.jar" />
+									</fileset>
+								</scp>
+							</tasks>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
