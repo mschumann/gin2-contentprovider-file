@@ -73,8 +73,7 @@ public class FileParserFactory {
 		try {
 			logger.info("Loading FileParser mappings");
 			mappings = new Properties();
-			mappings.load(ClassLoader
-					.getSystemResourceAsStream(PARSER_MAPPINGS_PROPERTIES));
+			mappings.load(this.getClass().getClassLoader().getResourceAsStream(PARSER_MAPPINGS_PROPERTIES));
 		} catch (IOException e) {
 			logger.fatal("Unable to load FileParser mappings", e);
 			// If this happens, there is no sense to continue
