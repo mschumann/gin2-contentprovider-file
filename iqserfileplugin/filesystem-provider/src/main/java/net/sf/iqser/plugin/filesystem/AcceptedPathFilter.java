@@ -42,29 +42,43 @@ public class AcceptedPathFilter implements FileFilter {
 			return false;
 		}
 
-		// Is Path explizit accepted?
-		for (Iterator i = acceptedPath.iterator(); i.hasNext();) {
-			File compare = new File((String) i.next());
-
-			if (file.getAbsolutePath().startsWith(compare.getAbsolutePath())) {
-				// Is Path sub dir of a accepted dir and explict denied?
-				for (Iterator x = deniedPath.iterator(); x.hasNext();) {
-					compare = new File((String) x.next());
-
-					if (file.getAbsolutePath().startsWith(
-							compare.getAbsolutePath())) {
-						logger.debug("accept(File file=" + file
-								+ ") - end - return value=" + false);
-						return false;
+		if (!acceptedPath.isEmpty()){
+			// Is Path explizit accepted?
+			for (Iterator i = acceptedPath.iterator(); i.hasNext();) {
+				File compare = new File((String) i.next());
+	
+				if (file.getAbsolutePath().startsWith(compare.getAbsolutePath())) {
+					// Is Path sub dir of a accepted dir and explict denied?
+					for (Iterator x = deniedPath.iterator(); x.hasNext();) {
+						compare = new File((String) x.next());
+	
+						if (file.getAbsolutePath().startsWith(
+								compare.getAbsolutePath())) {
+							logger.debug("accept(File file=" + file
+									+ ") - end - return value=" + false);
+							return false;
+						}
 					}
+	
+					logger.debug("accept(File file=" + file
+							+ ") - end - return value=" + true);
+					return true;
 				}
-
-				logger.debug("accept(File file=" + file
-						+ ") - end - return value=" + true);
-				return true;
 			}
-		}
+		}else{			
+			// Is Path sub dir of a accepted dir and explict denied?
+			for (Iterator x = deniedPath.iterator(); x.hasNext();) {
+				File compare = new File((String) x.next());
 
+				if (file.getAbsolutePath().startsWith(
+						compare.getAbsolutePath())) {
+					logger.debug("accept(File file=" + file
+							+ ") - end - return value=" + false);
+					return false;
+				}
+			}
+			return true;			
+		}
 		logger.debug("accept(File file=" + file + ") - end - return value="
 				+ false);
 		return false;

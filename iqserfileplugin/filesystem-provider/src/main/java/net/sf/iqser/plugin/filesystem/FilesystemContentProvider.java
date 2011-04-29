@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -477,13 +478,19 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		String filter = (String) params.get("filter-pattern");
 		Collection filterFileTypes = extractConfigAttributes(filter);
 
-		String filterFolderInclude = (String) params
-				.get("filter-folder-include");
-		Collection includedFolders = extractConfigAttributes(filterFolderInclude);
-
-		String filterFolderExclude = (String) params
-				.get("filter-folder-exclude");
-		Collection excludedFolders = extractConfigAttributes(filterFolderExclude);
+		String filterFolderInclude = (String) params.get("filter-folder-include");
+		Collection includedFolders = null;
+		if (filterFolderInclude!=null)
+			includedFolders = extractConfigAttributes(filterFolderInclude);
+		else
+			includedFolders = Collections.EMPTY_LIST;
+		
+		String filterFolderExclude = (String) params.get("filter-folder-exclude");
+		Collection excludedFolders = null;
+		if (filterFolderExclude!=null)
+			excludedFolders = extractConfigAttributes(filterFolderExclude);
+		else
+			excludedFolders = Collections.EMPTY_LIST;		
 
 		String folder = (String) params.get("folder");
 		Collection folders = extractConfigAttributes(folder);
