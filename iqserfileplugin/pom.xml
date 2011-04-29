@@ -256,7 +256,7 @@
 				<executions>
 					<execution>
 						<goals>
-							<goal>clean</goal>
+							<!-- <goal>clean</goal> -->
 							<goal>cobertura</goal>
 						</goals>
 					</execution>
