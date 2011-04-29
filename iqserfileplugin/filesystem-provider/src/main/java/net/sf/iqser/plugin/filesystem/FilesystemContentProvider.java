@@ -24,7 +24,6 @@ import java.util.zip.ZipOutputStream;
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserFactory;
-import net.sf.iqser.plugin.file.parser.pdf.PdfFileParser;
 import net.sf.iqser.plugin.file.parser.zip.ZipFileModel;
 import net.sf.iqser.plugin.filesystem.utils.ContentUpdate;
 
@@ -38,6 +37,7 @@ import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Content;
 import com.iqser.core.plugin.AbstractContentProvider;
+import com.iqser.core.plugin.ContentProvider;
 
 /**
  * file system content provider.
@@ -45,12 +45,12 @@ import com.iqser.core.plugin.AbstractContentProvider;
  * @author alexandru.galos
  * 
  */
-public class FilesystemContentProvider extends AbstractContentProvider {
+public class FilesystemContentProvider extends AbstractContentProvider implements ContentProvider {
 
 	/**
 	 * Default Logger for this class.
 	 */
-	private static Logger logger = Logger.getLogger(PdfFileParser.class);
+	private static Logger logger = Logger.getLogger(FilesystemContentProvider.class);
 
 	/**
 	 * UID.
