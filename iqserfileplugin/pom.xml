@@ -254,10 +254,13 @@
 				</configuration>
 				<executions>
 					<execution>
+					<!-- 
 						<id>cobertura</id>
 						<phase>test</phase>
+					 -->
 						<goals>
-							<goal>cobertura</goal>
+							<goal>clean</goal>
+							<goal>check</goal>
 						</goals>
 					</execution>
 				</executions>
