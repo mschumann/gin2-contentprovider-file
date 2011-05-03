@@ -14,11 +14,58 @@
 	<name>CMIS ContentProvider</name>
 	<description>This module contains a ContentProvider implementation to connect CMIS ECM to the iQser GIN Platform.</description>
 	<url></url>
+	<repositories>
+		<repository>
+			<id>apache.releases</id>
+			<url>https://repository.apache.org/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>jboss</id>
+			<url>http://repository.jboss.org/maven2/</url>
+		</repository>
+		<!-- The following file is outdated: http://repo1.maven.org/maven2/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar 
+			It's missing javax/xml/ws/soap/Addressing -->
+		<repository>
+			<id>maven-repository.dev.java.net</id>
+			<url>https://maven-repository.dev.java.net/repository/</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>file-parser</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-api</artifactId>
+			<version>0.3.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-bindings</artifactId>
+			<version>0.3.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-impl</artifactId>
+			<version>0.3.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		
+		<!--unit test-->
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>2.5.2</version>
+			<type>jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iqser>
+	<plugin>
+		<id>net.sf.iqser.plugin.file</id>
+		<type>CMISDocument</type>
+		<name>CMIS Content Provider</name>
+		<vendor>IQser Technologies</vendor>
+		<provider-class>net.sf.iqser.plugin.filesystem.FilesystemContentProvider</provider-class>
+		<!-- Use a Cron formatted string to define the synchronization schedule. -->
+		<scheduler>
+			<syncjob>0 5 * * * ?</syncjob>
+			<housekeeperjob>0 0 23 * * ?</housekeeperjob>
+		</scheduler>
+
+		<!-- CMIS web services url -->
+		<init-param>			
+			<param-name>WEBSERVICES_REPOSITORY_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_ACL_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_DISCOVERY_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_MULTIFILING_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_NAVIGATION_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_OBJECT_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_POLICY_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_RELATIONSHIP_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_REPOSITORY_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<init-param>			
+			<param-name>WEBSERVICES_VERSIONING_SERVICE</param-name>
+			<param-value>http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl</param-value>
+		</init-param>
+		<!-- Authentication STANDARD or NTLM-->
+		<init-param>			
+			<param-name>AUTHENTICATION_PROVIDER_CLASS</param-name>
+			<param-value>NTLM</param-value>
+		</init-param> 	
+		<!-- credentials -->
+		<init-param>
+			<param-name>USERNAME</param-name>
+			<param-value>user</param-value>
+		</init-param>
+		<init-param>
+			<param-name>PASSWORD</param-name>
+			<param-value>pass</param-value>
+		</init-param>			
+ 		
+ 		<!-- repositories that will be synchronized -->
+ 		<init-param>
+			<param-name>REPOSITORY</param-name>
+			<param-value>[MyRepo1][MyRepo2]</param-value>
+		</init-param>
+ 		
+		<init-param>
+			<!-- attribute mappings -->
+			<param-name>ATTRIBUTE-MAPPINGS</param-name>
+			<param-value>[attr1=new_attr1][attr2=new_attr2]</param-value>
+		</init-param>
+		<init-param>
+			<!-- the attributes that are changed to key-attributes. 
+			If an attribute has been mapped in ATTRIBUTE.MAPPINGS, the new name must be placed here attribute name must be -->
+			<param-name>KEY-ATTRIBUTES</param-name>
+			<param-value>[attr3][new_attr2]</param-value>
+		</init-param>		
+
+	</plugin>
+</iqser>
