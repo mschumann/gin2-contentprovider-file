@@ -59,6 +59,7 @@ public class TikaFileParser implements FileParser {
 				if (content.getAttributeByName(name) == null) {
 					attribute.setName(name);
 					attribute.setValue(metadata.get(name));
+					attribute.setType(Attribute.ATTRIBUTE_TYPE_TEXT);
 					content.addAttribute(attribute);
 				}
 			}
