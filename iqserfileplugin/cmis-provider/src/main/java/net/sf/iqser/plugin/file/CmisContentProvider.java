@@ -96,7 +96,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * a collection of CMIS repositories. 
 	 */
 	private Collection<Repository> repositories = new ArrayList<Repository>();
-		
+	
+	/**
+	 * map for content type---custom name for content type.
+	 */
+	private Map<String, String> contentTypeMappings = new HashMap<String, String>();
+	
 	/**
 	 * map for new attribute---for replacing the name of the attributes.
 	 */
@@ -123,7 +128,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 		keyAttributeNames = CmisUtils.parseInitParam(keyAttrInitParam);
 		//attribute-mapping
 		String attrMappingsInitParam = (String) initParams.getProperty("ATTRIBUTE-MAPPINGS");
-		attributeMappings = CmisUtils.parseAttributesMappings(attrMappingsInitParam);		
+		attributeMappings = CmisUtils.parseAttributesMappings(attrMappingsInitParam);	
+		//content-type-mappings
+		String attrContentTypeMappings = (String) initParams.getProperty("CONTENT-TYPE-MAPPINGS");
+		contentTypeMappings = CmisUtils.parseAttributesMappings(attrContentTypeMappings);	
 		
 		// Default factory implementation of client runtime.
 		SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
@@ -204,7 +212,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		
 		byte[] binaryData = null;
 		
-		if (CMIS_DOCUMENT_TYPE.equalsIgnoreCase(content.getType())){
+		if (isDocument(content)){
 			//if content type is CMIS_DOCUMENT and has attribute hasStream true stream then return the content stream
 			Attribute attr = content.getAttributeByName("hasContentStream");
 			if ("true".equalsIgnoreCase(attr.getValue())){
@@ -367,9 +375,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 	@Override
 	public Collection getActions(Content content) {		 
 		String[] actions = null;
-		if (CMIS_FOLDER_TYPE.equals(content.getType())){
+		if (isFolder(content)){
 			actions = new String[] { ACTION_DELETE, ACTION_UPDATE};
-		}else if (CMIS_DOCUMENT_TYPE.equals(content.getType())){
+		}else if (isDocument(content)){
 			actions = new String[] { ACTION_DELETE, ACTION_UPDATE, ACTION_CHECK_OUT, ACTION_CHECK_IN };
 		}else{
 			actions = new String[0];	
@@ -421,7 +429,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 		changeAttributeName(content);
 		
 		//set key attributes
-		setKeyAttributes(content);		
+		setKeyAttributes(content);	
+		
+		//change type
+		String userType = contentTypeMappings.get(content.getType());
+		if (userType !=null){
+			content.setType(userType);
+		}
 		
 		return content;		
 	}
@@ -757,4 +771,14 @@ public class CmisContentProvider extends AbstractContentProvider {
 		return repositories;
 	}
 	
+	private boolean isFolder(Content content){
+		String type = content.getType();
+		return type.equals(CMIS_FOLDER_TYPE) || type.equals(contentTypeMappings.get(CMIS_FOLDER_TYPE));
+	}
+	
+	private boolean isDocument(Content content){
+		String type = content.getType();
+		return type.equals(CMIS_DOCUMENT_TYPE) || type.equals(contentTypeMappings.get(CMIS_DOCUMENT_TYPE));		
+	}
+		
 }

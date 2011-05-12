@@ -74,6 +74,11 @@
 			<param-value>[MyRepo1][MyRepo2]</param-value>
 		</init-param>
  		
+ 		<init-param>
+			<!-- content type mappings - change default content type name-->
+			<param-name>CONTENT-TYPE-MAPPINGS</param-name>
+			<param-value>[CMIS_FOLDER=iQserFolder][CMIS_DOCUMENT=iQserDocument]</param-value>
+		</init-param>
 		<init-param>
 			<!-- attribute mappings -->
 			<param-name>ATTRIBUTE-MAPPINGS</param-name>

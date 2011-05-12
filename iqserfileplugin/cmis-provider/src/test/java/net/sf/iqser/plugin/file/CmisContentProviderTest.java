@@ -768,6 +768,52 @@ public class CmisContentProviderTest extends TestCase {
 		
 	}
 	
+	public void testContentTypeMappings(){
+
+		Properties prop = new Properties();
+		prop.setProperty("CONTENT-TYPE-MAPPINGS", "[CMIS_DOCUMENT=IQserDocument]");
+		ccp.setInitParams(prop);
+		try{
+			ccp.init();
+			fail();
+		}catch(CmisBaseException cbe){			
+		}
+		ccp.getRepositories().add(mockCmisRepo);
+		
+		String contentUrl = "http://cmis/Shared Documents/cmis:document#3-1024";
+
+		//expected doc				
+		MockDocument expectedDoc = new MockDocument();				
+		expectedDoc.getProperties().add(helperCreateProperty("cmis:objectId","3-1024"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmis:name","MyFile.txt"));
+		expectedDoc.getProperties().add(helperCreateProperty("myProp","myPropValue"));		
+		expectedDoc.setContentStream(helperCreateContentStream(), true);		
+		
+		//expected behavior		
+		EasyMock.expect(mockCmisRepo.getName()).andReturn("Shared Documents").anyTimes();
+		EasyMock.expect(mockCmisRepo.createSession()).andReturn(mockCmisSession);
+		EasyMock.expect(mockCmisSession.getObject("3-1024")).andReturn(expectedDoc);		
+		
+		//register behavior
+		EasyMock.replay(mockCmisRepo, mockCmisSession);
+
+		Content content = ccp.getContent(contentUrl);
+		
+		//verify
+		EasyMock.verify();
+						
+		assertNotNull(content);
+		assertNotNull(content.getModificationDate());
+		assertEquals("IQserDocument", content.getType());	
+		assertEquals(ccp.getId(), content.getProvider());
+		
+		assertTrue(content.getAttributes().size() > 0);
+				
+		assertEquals("myPropValue", content.getAttributeByName("myProp").getValue());
+		assertEquals("MyFile.txt", content.getAttributeByName("cmis:name").getValue());	
+		
+	}
+	
 	
 	//helper methods	
 	
