@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -112,6 +113,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 */
 	private Collection<String> keyAttributeNames = new ArrayList<String>();
 	
+	/**
+	 * last synchronization time
+	 */
+	private long lastSynchTime = 0; 
 	
 	/**
 	 * Initialization method. 
@@ -290,7 +295,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * Performs synchronization.
 	 */
 	@Override
-	public void doSynchonization() {
+	public void doSynchonization() {				
+		
+		long startLastSynchTime = new Date().getTime();
+		
 		for (Repository repo : repositories) {		
 			Session session = repo.createSession();
 			
@@ -299,6 +307,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 			
 			doSynchFolder(repo, root);		
 		}
+		
+		lastSynchTime = startLastSynchTime;
 	}
 	
 	/**
@@ -330,33 +340,35 @@ public class CmisContentProvider extends AbstractContentProvider {
 				doSynchFolder(repo, (Folder)o);
 			}else if (o.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT){				
 				//synch Document
-				Document doc = (Document)o;
-				Content docContent = createDocumentContent(repo, doc);
-				try {
-					isExistingContent = isExistingContent(docContent.getContentUrl());
-					if (isExistingContent){
-						updateContent(docContent);
-					}else{
-						addContent(docContent);
-					}
-				} catch (IQserException e) {
-					logger.error("Exception in isExistingcontent for content " + docContent.getContentUrl(), e);
-				}	
-				//synch all versions
+				Document doc = (Document)o;				
+				//synch all versions				
 				List<Document> versions = doc.getAllVersions();
-				for (Document verDoc : versions) {
-					if (!doc.getId().equalsIgnoreCase(verDoc.getId())){
-						docContent = createDocumentContent(repo, verDoc);
-						try {
+				boolean found = true;
+				for (Document vdoc : versions) {
+					if (vdoc.getId().equals(doc.getId())){
+						found = true;
+						break;
+					}
+				}
+				if (!found){
+					versions.add(doc);
+				}				
+				
+				for (Document verDoc : versions) {										
+					try {
+						long lastModDate = doc.getLastModificationDate().getTime().getTime();				
+						if (lastModDate >= lastSynchTime){
+							Content docContent = createDocumentContent(repo, verDoc);
 							isExistingContent = isExistingContent(docContent.getContentUrl());
 							if (isExistingContent){
 								updateContent(docContent);
 							}else{
 								addContent(docContent);
 							}
-						} catch (IQserException e) {
-							logger.error("Exception in isExistingcontent for content " + docContent.getContentUrl(), e);
 						}
+					} catch (IQserException e) {
+						String url = this.createURL(repo.getName(), "CMIS_DOCUMENT" , verDoc.getId());
+						logger.error("Exception in doSynch for document " + url, e);
 					}
 				}								
 			}			
