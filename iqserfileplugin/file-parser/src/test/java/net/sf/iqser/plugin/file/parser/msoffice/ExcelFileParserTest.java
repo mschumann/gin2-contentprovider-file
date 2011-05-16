@@ -32,6 +32,8 @@ public class ExcelFileParserTest extends TestCase{
 		for (Attribute attribute : attributes) {
 			String name = attribute.getName();
 			String value = attribute.getValue();
+			assertNotNull(value);
+			assertTrue(value.trim().length() > 0);
 			log.debug("Attribute name="+name + " value="+value);
 		}
 	

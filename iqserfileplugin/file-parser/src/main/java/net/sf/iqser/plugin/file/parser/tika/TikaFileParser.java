@@ -7,6 +7,8 @@ import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserUtils;
 
+import org.apache.commons.lang.StringUtils;
+
 import org.apache.tika.Tika;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
@@ -56,7 +58,7 @@ public class TikaFileParser implements FileParser {
 			for (String name : metadata.names()) {
 				Attribute attribute = new Attribute();
 				attribute.setKey(true);
-				if (content.getAttributeByName(name) == null) {
+				if (content.getAttributeByName(name) == null && !StringUtils.isEmpty(metadata.get(name))) {
 					attribute.setName(name);
 					attribute.setValue(metadata.get(name));
 					attribute.setType(Attribute.ATTRIBUTE_TYPE_TEXT);
