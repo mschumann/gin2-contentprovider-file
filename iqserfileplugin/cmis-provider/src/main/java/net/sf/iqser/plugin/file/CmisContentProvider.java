@@ -37,6 +37,7 @@ import org.apache.chemistry.opencmis.commons.enums.PropertyType;
 import org.apache.chemistry.opencmis.commons.enums.Updatability;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.iqser.core.event.Event;
@@ -718,18 +719,21 @@ public class CmisContentProvider extends AbstractContentProvider {
 		for (Property<?> prop : doc.getProperties()) {
 			String name = prop.getId();
 			String value = prop.getValueAsString();
-			int type=Attribute.ATTRIBUTE_TYPE_TEXT;
-			if (PropertyType.BOOLEAN == prop.getType()){
-				type=Attribute.ATTRIBUTE_TYPE_BOOLEAN;
-			}else if (PropertyType.DATETIME == prop.getType()){
-				type=Attribute.ATTRIBUTE_TYPE_DATE;
-			}else if (PropertyType.INTEGER == prop.getType() || PropertyType.DECIMAL == prop.getType()){
-				type=Attribute.ATTRIBUTE_TYPE_NUMBER;
-			}else{
-				type=Attribute.ATTRIBUTE_TYPE_TEXT;
-			}
+			//check for non empty attributes
+			if (!StringUtils.isEmpty(value)){
+				int type=Attribute.ATTRIBUTE_TYPE_TEXT;
+				if (PropertyType.BOOLEAN == prop.getType()){
+					type=Attribute.ATTRIBUTE_TYPE_BOOLEAN;
+				}else if (PropertyType.DATETIME == prop.getType()){
+					type=Attribute.ATTRIBUTE_TYPE_DATE;
+				}else if (PropertyType.INTEGER == prop.getType() || PropertyType.DECIMAL == prop.getType()){
+					type=Attribute.ATTRIBUTE_TYPE_NUMBER;
+				}else{
+					type=Attribute.ATTRIBUTE_TYPE_TEXT;
+				}
 			
-			content.addAttribute(new Attribute(name, value, type, true));
+				content.addAttribute(new Attribute(name, value, type, true));
+			}
 		}
 	}
 
