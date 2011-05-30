@@ -114,7 +114,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	private Collection<String> keyAttributeNames = new ArrayList<String>();
 	
 	/**
-	 * last synchronization time
+	 * last synchronization time.
 	 */
 	private long lastSynchTime = 0; 
 	
