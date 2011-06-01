@@ -11,6 +11,8 @@ import javax.swing.text.rtf.RTFEditorKit;
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserUtils;
+
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
@@ -58,7 +60,7 @@ public class RtfFileParser implements FileParser {
 		content.setType(RTF_FILE_CONTENT_TYPE);
 
 		// Set the file name attribute. This Attribute is no key.
-		content.addAttribute(new Attribute("FILENAME", fileName,
+		content.addAttribute(new Attribute("FILENAME", FilenameUtils.getName(fileName),
 				Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		// Set the title attribute. This Attribute is a key.
