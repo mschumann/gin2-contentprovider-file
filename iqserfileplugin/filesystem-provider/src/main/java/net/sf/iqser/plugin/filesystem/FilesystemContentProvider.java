@@ -249,8 +249,8 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			logger.info("Synch - add conntent " + contentUrl);
 			try{
 				addContent(getContent((String) contentUrl));
-			}catch(IQserRuntimeException ire){
-				logger.error("Could not add content.", ire);
+			}catch(Throwable t){
+				logger.error("Could not add content.", t);
 			}
 		}
 
