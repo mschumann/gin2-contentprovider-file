@@ -453,7 +453,7 @@
 	<modules>
 		<module>file-parser</module>
 		<module>filesystem-provider</module>
-		<module>cmis-provider</module>
+		<!-- <module>cmis-provider</module>  -->
 	</modules>
 
 </project>

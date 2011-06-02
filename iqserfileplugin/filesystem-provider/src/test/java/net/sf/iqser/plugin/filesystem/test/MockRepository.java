@@ -19,7 +19,7 @@ import com.iqser.core.repository.Repository;
 /**
  * Supports testing of classes of the iQser Web Content Provider Family.
  * 
- * @author Jšrg Wurzer
+ * @author Joerg Wurzer
  *
  */
 public class MockRepository implements Repository {
@@ -372,6 +372,34 @@ public class MockRepository implements Repository {
 	public void updateRelation(Relation arg0) throws IQserTechnicalException {
 		// TODO Auto-generated method stub
 
+	}
+
+
+	public Collection<String> getAttributesByProvider(String arg0)
+		throws IQserTechnicalException {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
+
+
+	public Collection<String> getAttributesByType(String arg0)
+		throws IQserTechnicalException {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
+
+
+	public Collection<Concept> getConcepts(long arg0)
+		throws IQserTechnicalException {
+	    // TODO Auto-generated method stub
+	    return null;
+	}
+
+
+	public Collection<Concept> getRelatedConcepts(long arg0)
+		throws IQserTechnicalException {
+	    // TODO Auto-generated method stub
+	    return null;
 	}
 
 }
