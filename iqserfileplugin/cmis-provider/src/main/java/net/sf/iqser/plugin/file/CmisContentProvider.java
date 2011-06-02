@@ -608,8 +608,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 	Map<String, String> propMap = determineCMISUpdatableProperties(
 		cmisObject, content);
 	cmisObject.updateProperties(propMap);
-
-	this.updateContent(content);
+	try {
+	    this.updateContent(content);
+	} catch (Throwable t) {
+	    // Make sure to catch everthing to continue
+	    // with next Content
+	    logger.error("Could not update content.", t);
+	}
     }
 
     /**
@@ -662,7 +667,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 	    String newContentUrl = createURL(repo.getName(),
 		    CmisContentProvider.CMIS_DOCUMENT_TYPE, pwcId.getId());
 	    Content newContent = this.getContent(session, newContentUrl);
-	    this.addContent(newContent);
+	    try {
+		this.addContent(newContent);
+	    } catch (Throwable t) {
+		// Make sure to catch everthing to continue
+		// with next Content
+		logger.error("Could not add content.", t);
+	    }
 	}
     }
 
