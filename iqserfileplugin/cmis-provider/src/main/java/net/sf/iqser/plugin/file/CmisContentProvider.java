@@ -762,11 +762,16 @@ public class CmisContentProvider extends AbstractContentProvider {
 	handleProperties(doc, content);
 
 	List<Folder> parents = doc.getParents();
-	int i = 0;
-	for (Folder parentFolder : parents) {
-	    i++;
-	    content.addAttribute(new Attribute("Parent_" + i, parentFolder
-		    .getName(), Attribute.ATTRIBUTE_TYPE_TEXT, true));
+	if (! parents.isEmpty()){
+		Attribute mva = new Attribute();
+		mva.setMultiValue(true);
+		mva.setName("Parents");
+		mva.setType(Attribute.ATTRIBUTE_TYPE_TEXT);	
+		content.addAttribute(mva);
+
+		for (Folder parentFolder : parents) {		
+			mva.addValue(parentFolder.getName());
+		}			
 	}
 
 	ContentStream cstream = doc.getContentStream();

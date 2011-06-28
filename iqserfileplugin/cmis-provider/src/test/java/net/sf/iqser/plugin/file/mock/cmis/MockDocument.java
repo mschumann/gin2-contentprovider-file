@@ -214,8 +214,12 @@ public class MockDocument implements Document, CmisObject {
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> value = (List<String>)getPropertyValue("cmis:name");
+		if (value!=null && !value.isEmpty()){
+			return value.get(0);
+		}else{
+			return null;
+		}
 	}
 
 	public List<Property<?>> getProperties() {
