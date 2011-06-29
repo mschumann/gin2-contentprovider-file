@@ -18,6 +18,7 @@ import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
 import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.PropertyConfigurator;
 
@@ -275,7 +276,7 @@ public class FilesystemContentProviderTest extends TestCase {
 
 		for (File file : root.listFiles()) {
 
-			if (file.isFile()) {
+			if (file.isFile() && ! FilenameUtils.isExtension(file.getName(), "zip")) {
 				String absolutePath = file.getAbsolutePath();
 				Content content = fscp.getContent(absolutePath);
 				assertNotNull(content);
