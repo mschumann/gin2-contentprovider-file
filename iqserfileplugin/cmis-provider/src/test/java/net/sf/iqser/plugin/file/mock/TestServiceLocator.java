@@ -9,6 +9,7 @@ import com.iqser.core.event.EventPublisher;
 import com.iqser.core.index.Index;
 import com.iqser.core.locator.ServiceLocator;
 import com.iqser.core.plugin.ContentProvider;
+import com.iqser.core.plugin.ContentProviderFacade;
 import com.iqser.core.plugin.PluginManager;
 import com.iqser.core.repository.Repository;
 import com.iqser.core.tracker.Tracker;
@@ -101,6 +102,12 @@ public class TestServiceLocator implements ServiceLocator {
 
 	
 	public Tracker getTracker() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	public ContentProviderFacade getContentProviderFacade() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,1 +1,1 @@
-testing synchronization initial
+testing synchronization
