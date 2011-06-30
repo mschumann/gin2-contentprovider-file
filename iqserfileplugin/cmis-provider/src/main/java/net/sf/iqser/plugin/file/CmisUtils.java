@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * @author robert.baban
  *
  */
-class CmisUtils {
+public class CmisUtils {
 	
 	/**
 	 * Parses repository initialization parameters. 
@@ -24,7 +24,7 @@ class CmisUtils {
 	 * 
 	 * @return a list of repository names
 	 */
-	static  List<String> parseInitParam(String initParam) {
+	public static  List<String> parseInitParam(String initParam) {
 		
 		List<String> repositories =  new ArrayList<String>();
 		
@@ -50,7 +50,7 @@ class CmisUtils {
 	 * 
 	 * @return a map of attribute names of repository names
 	 */
-	static Map<String, String> parseAttributesMappings(String initParam) {
+	public static Map<String, String> parseAttributesMappings(String initParam) {
 		
 		Map<String, String> mappings = new HashMap<String, String>();
 		
@@ -75,7 +75,7 @@ class CmisUtils {
 	 * @param contentUrl - url 
 	 * @return a string representing repository name
 	 */
-	static String getRepository(String contentUrl){
+	public static String getRepository(String contentUrl){
 		
 		
 		Pattern p = Pattern.compile("cmis/([^/]+)/([^#]+)#(.+)");		
@@ -95,7 +95,7 @@ class CmisUtils {
 	 * @param contentUrl - url 
 	 * @return a string representing objectId name
 	 */
-	static String getObjectID(String contentUrl){
+	public static String getObjectID(String contentUrl){
 		
 		//http://cmis/repositoryName/basicType#ID
 		Pattern p = Pattern.compile("cmis/([^/]+)/([^#]+)#(.+)");		
