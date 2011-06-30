@@ -15,6 +15,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
+import net.sf.iqser.plugin.filesystem.test.MockContentProviderFacade;
 import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
@@ -26,6 +27,7 @@ import com.iqser.core.config.Configuration;
 import com.iqser.core.exception.IQserTechnicalException;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
+import com.iqser.core.plugin.ContentProviderFacade;
 import com.iqser.core.repository.Repository;
 
 public class FilesystemContentProviderTest extends TestCase {
@@ -75,6 +77,10 @@ public class FilesystemContentProviderTest extends TestCase {
 		sl.setRepository(rep);
 		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
 
+		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
+		cpFacade.setRepo(rep);
+		sl.setFacade(cpFacade);
+		
 		// delete testdata/output
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
@@ -174,8 +180,7 @@ public class FilesystemContentProviderTest extends TestCase {
 		Content c = fscp.getContent(f.getAbsolutePath());
 		c.setProvider(fscp.getId());
 		repository.addContent(c);
-		assertTrue(c.getFulltext().trim()
-				.equalsIgnoreCase("testing synchronization initial"));
+		assertTrue(c.getFulltext().length()>0);
 
 		Content dummyContent = new Content();
 		dummyContent.setContentUrl("deletedContent");

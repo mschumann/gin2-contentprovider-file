@@ -20,6 +20,7 @@ import java.util.zip.ZipFile;
 import junit.framework.TestCase;
 import net.sf.iqser.plugin.file.parser.zip.ZipFileModel;
 import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
+import net.sf.iqser.plugin.filesystem.test.MockContentProviderFacade;
 import net.sf.iqser.plugin.filesystem.test.MockRepository;
 import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
@@ -84,6 +85,10 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		sl.setRepository(rep);
 		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
 
+		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
+		cpFacade.setRepo(rep);
+		sl.setFacade(cpFacade);
+		
 		// delete testdata/output
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {

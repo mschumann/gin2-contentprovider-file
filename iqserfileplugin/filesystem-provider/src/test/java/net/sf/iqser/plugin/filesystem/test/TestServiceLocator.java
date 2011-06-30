@@ -28,6 +28,10 @@ public class TestServiceLocator implements ServiceLocator {
 	/** AnalyzerTaskStarter mpckup for testing */
 	private AnalyzerTaskStarter ats = null;	
 	
+	/** ContentProviderFacade for testing */
+	private ContentProviderFacade facade = null;
+	
+	
 	public void setAnalyzerTaskStarter(AnalyzerTaskStarter arg0) {
 		ats = arg0;
 	}
@@ -35,6 +39,10 @@ public class TestServiceLocator implements ServiceLocator {
 	
 	public AnalyzerTaskStarter getAnalyzerTaskStarter() {
 		return ats;
+	}
+	
+	public void setFacade(ContentProviderFacade facade) {
+		this.facade = facade;
 	}
 
 	
@@ -108,8 +116,8 @@ public class TestServiceLocator implements ServiceLocator {
 
 
 	public ContentProviderFacade getContentProviderFacade() {
-		// TODO Auto-generated method stub
-		return null;
+		return facade;
 	}
 
+	
 }
