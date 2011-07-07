@@ -8,6 +8,7 @@ import java.util.Properties;
 
 import junit.framework.TestCase;
 import net.sf.iqser.plugin.file.mock.MockAnalyzerTaskStarter;
+import net.sf.iqser.plugin.file.mock.MockContentProviderFacade;
 import net.sf.iqser.plugin.file.mock.MockRepository;
 import net.sf.iqser.plugin.file.mock.TestServiceLocator;
 
@@ -85,6 +86,10 @@ public class CmisContentProviderPerformActionTestIntegration extends TestCase {
 
 		sl.setRepository(repo);
 		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
+		
+		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
+		cpFacade.setRepo(repo);
+		sl.setFacade(cpFacade);
 				
 		cmisSession = createSession();
 		Map<String, String> prop = new HashMap<String, String>();

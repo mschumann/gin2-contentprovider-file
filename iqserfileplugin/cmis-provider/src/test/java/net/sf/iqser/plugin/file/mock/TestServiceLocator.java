@@ -17,7 +17,7 @@ import com.iqser.core.tracker.Tracker;
 /**
  * Supports testing of classes of the iQser Web Content Provider Family.
  * 
- * @author Jšrg Wurzer
+ * @author Jorg Wurzer
  *
  */
 public class TestServiceLocator implements ServiceLocator {
@@ -26,8 +26,12 @@ public class TestServiceLocator implements ServiceLocator {
 	private Repository rep = null;
 	
 	/** AnalyzerTaskStarter mpckup for testing */
-	private AnalyzerTaskStarter ats = null;
-
+	private AnalyzerTaskStarter ats = null;	
+	
+	/** ContentProviderFacade for testing */
+	private ContentProviderFacade facade = null;
+	
+	
 	public void setAnalyzerTaskStarter(AnalyzerTaskStarter arg0) {
 		ats = arg0;
 	}
@@ -36,52 +40,56 @@ public class TestServiceLocator implements ServiceLocator {
 	public AnalyzerTaskStarter getAnalyzerTaskStarter() {
 		return ats;
 	}
+	
+	public void setFacade(ContentProviderFacade facade) {
+		this.facade = facade;
+	}
 
 	
 	public CategoryBuilder getCategoryBuilder() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public CategoryManager getCategoryManager() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public ClientFacade getClientFacade() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public ContentAnalyzer getContentAnalyzer() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public ContentProvider getContentProvider(String arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public EventPublisher getEventPublisher() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public Index getIndex() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public PluginManager getPluginManager() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
@@ -96,20 +104,20 @@ public class TestServiceLocator implements ServiceLocator {
 
 	
 	public SecurityManager getSecurityManager() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	
 	public Tracker getTracker() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 
 	public ContentProviderFacade getContentProviderFacade() {
-		// TODO Auto-generated method stub
-		return null;
+		return facade;
 	}
 
+	
 }
