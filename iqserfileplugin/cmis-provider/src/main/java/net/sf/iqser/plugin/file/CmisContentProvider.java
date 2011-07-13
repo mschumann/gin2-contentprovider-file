@@ -333,7 +333,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	    // getFolders and getDocuments
 	    Folder root = session.getRootFolder();
 
-	    doSynchFolder(repo, root);
+	    doSynchFolder(repo, root, null);
 	}
 
 	lastSynchTime = startLastSynchTime;
@@ -346,11 +346,13 @@ public class CmisContentProvider extends AbstractContentProvider {
      *            CMIS repository
      * @param root
      *            folder
+     * @param parent
+     * 			  parent folder           
      */
-    protected void doSynchFolder(Repository repo, Folder root) {
+    protected void doSynchFolder(Repository repo, Folder root, Folder parent) {
 
 	// synch Folder
-	Content folderContent = createFolderContent(repo, root);
+	Content folderContent = createFolderContent(repo, root, parent);
 	boolean isExistingContent;
 	try {
 	    isExistingContent = isExistingContent(folderContent.getContentUrl());
@@ -380,7 +382,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	ItemIterable<CmisObject> children = root.getChildren();
 	for (CmisObject o : children) {
 	    if (o.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-		doSynchFolder(repo, (Folder) o);
+		doSynchFolder(repo, (Folder) o , root);
 	    } else if (o.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
 		// synch Document
 		Document doc = (Document) o;
@@ -480,7 +482,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	Content content = null;
 	if (baseType == BaseTypeId.CMIS_FOLDER) {
-	    content = createFolderContent(repository, (Folder) object);
+	    content = createFolderContent(repository, (Folder) object, null);
 	} else { // baseType == BaseTypeId.CMIS_DOCUMENT
 	    content = createDocumentContent(repository, (Document) object);
 	}
@@ -761,11 +763,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	handleProperties(doc, content);
 
+	content.addAttribute(new Attribute("repository",repository.getName(),Attribute.ATTRIBUTE_TYPE_TEXT, false));
+	
 	List<Folder> parents = doc.getParents();
 	if (! parents.isEmpty()){
 		Attribute mva = new Attribute();
 		mva.setMultiValue(true);
-		mva.setName("Parents");
+		mva.setName("parent");
 		mva.setType(Attribute.ATTRIBUTE_TYPE_TEXT);	
 		content.addAttribute(mva);
 
@@ -792,6 +796,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 		Content fileContent = fileParser.getContent(fileName,
 			new ByteArrayInputStream(baos.toByteArray()));
 		content.getAttributes().addAll(fileContent.getAttributes());
+		
+		//fulltext
+		if (!StringUtils.isEmpty(fileContent.getFulltext())){
+			content.setFulltext(fileContent.getFulltext());
+		}
+		
 	    } catch (FileParserException e) {
 		logger.error("Error while parsing file content for document"
 			+ doc.getName(), e);
@@ -839,9 +849,11 @@ public class CmisContentProvider extends AbstractContentProvider {
      *            CMIS repository
      * @param folder
      *            CMIS folder
+     * @param parentFolder            
+     *            CMIS parent folder
      * @return a content object
      */
-    protected Content createFolderContent(Repository repository, Folder folder) {
+    protected Content createFolderContent(Repository repository, Folder folder, Folder parentFolder) {
 	Content content = new Content();
 	content.setContentUrl(createURL(repository.getName(), CMIS_FOLDER_TYPE,
 		folder.getId()));
@@ -850,6 +862,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	handleProperties(folder, content);
 
+	content.addAttribute(new Attribute("repository",repository.getName(),Attribute.ATTRIBUTE_TYPE_TEXT, false));
+	
+	if (parentFolder!=null){
+		content.addAttribute(new Attribute("parent",parentFolder.getName(),Attribute.ATTRIBUTE_TYPE_TEXT, false));		
+	}
+	
 	return content;
     }
 
