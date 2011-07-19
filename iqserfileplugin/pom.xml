@@ -254,8 +254,9 @@
 				</configuration>
 				<executions>
 					<execution>
+						<id>cobertura</id>
+						<phase>verify</phase>
 						<goals>
-							<!-- <goal>clean</goal> -->
 							<goal>cobertura</goal>
 						</goals>
 					</execution>
