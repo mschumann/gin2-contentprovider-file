@@ -47,7 +47,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		// testDataDir = System.getProperty("testdata.dir", "D:/testdata");
 
 		System.out.println("testDataDir:" + testDataDir);
-		
+
 		PropertyConfigurator.configure("src/test/resources/log4j.properties");
 
 		super.setUp();
@@ -55,15 +55,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		Properties initParams = new Properties();
 		initParams.setProperty("folder", "[" + testDataDir + "/testSynch]");
 		initParams.setProperty("filter-pattern", "[txt][zip][pdf][xls][doc]");
-		initParams.setProperty("filter-folder-include", "[" + testDataDir
-				+ "/testSynch][" + testDataDir + "/testAttributes/]");
-		initParams.setProperty("filter-folder-exclude", "[" + testDataDir
-				+ "/testSynch/exclude/][" + testDataDir + "/testSynch/.svn/]["
-				+ testDataDir + "/testSynch/include/.svn/]");
-		initParams
-				.setProperty(
-						"attribute.mappings",
-						"{AUTHOR:Autor, Last-Author:Autor, Author:Autor, title:Bezeichnung,TITLE:Bezeichnung}");
+		initParams.setProperty("filter-folder-include", "[" + testDataDir + "/testSynch][" + testDataDir
+				+ "/testAttributes/]");
+		initParams.setProperty("filter-folder-exclude", "[" + testDataDir + "/testSynch/exclude/][" + testDataDir
+				+ "/testSynch/.svn/][" + testDataDir + "/testSynch/include/.svn/]");
+		initParams.setProperty("attribute.mappings",
+				"{AUTHOR:Autor, Last-Author:Autor, Author:Autor, title:Bezeichnung,TITLE:Bezeichnung}");
 		initParams.setProperty("key-attributes", "[Autor][Bezeichnung]");
 		fscp = new FilesystemContentProvider();
 		fscp.setInitParams(initParams);
@@ -72,13 +69,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		fscp.setInitParams(initParams);
 		fscp.init();
 
-		Configuration
-				.configure(new File("src/test/resources/iqser-config.xml"));
+		Configuration.configure(new File("src/test/resources/iqser-config.xml"));
 
 		// fscp =
 		// FileSystemContentProviderCreator.getFilesystemContentProvider(testDataDir);
-		TestServiceLocator sl = (TestServiceLocator) Configuration
-				.getConfiguration().getServiceLocator();
+		TestServiceLocator sl = (TestServiceLocator) Configuration.getConfiguration().getServiceLocator();
 		MockRepository rep = new MockRepository();
 		rep.init();
 
@@ -88,7 +83,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
 		cpFacade.setRepo(rep);
 		sl.setFacade(cpFacade);
-		
+
 		// delete testdata/output
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
@@ -107,43 +102,33 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		super.tearDown();
 	}
 
-	public void testGetInputStreamContent() throws SecurityException,
-			NoSuchMethodException, IllegalArgumentException,
+	public void testGetInputStreamContent() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, IOException {
 
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		String contentUrl = "zip://"
-				+ partialURL
-				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
+		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 
-		Method declaredMethod = fscp.getClass().getDeclaredMethod(
-				"getInputStreamForZipContent", String.class);
+		Method declaredMethod = fscp.getClass().getDeclaredMethod("getInputStreamForZipContent", String.class);
 
 		declaredMethod.setAccessible(true);
-		InputStream inputStream = (InputStream) declaredMethod.invoke(fscp,
-				contentUrl);
+		InputStream inputStream = (InputStream) declaredMethod.invoke(fscp, contentUrl);
 
 		assertNotNull(inputStream);
 		assertTrue(inputStream.available() > 0);
 
 	}
 
-	public void testGetBinaryZipFile() throws SecurityException,
-			NoSuchMethodException, IllegalArgumentException,
+	public void testGetBinaryZipFile() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 
-		Method declaredMethod = fscp.getClass().getDeclaredMethod(
-				"extractBinaryPackedFiles", Content.class);
+		Method declaredMethod = fscp.getClass().getDeclaredMethod("extractBinaryPackedFiles", Content.class);
 
 		declaredMethod.setAccessible(true);
 
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		String contentUrl = "zip://"
-				+ partialURL
-				+ File.separator
-				+ "testSynch" 
-				+ File.separator + 
-				"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
+		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		Content content = fscp.getContent(contentUrl);
 
 		byte[] bytes = (byte[]) declaredMethod.invoke(fscp, content);
@@ -223,18 +208,16 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		assertEquals("Autor", value);
 	}
 
-	public void testDoSynchronization() throws IQserTechnicalException,
-			IOException {
+	public void testDoSynchronization() throws IQserTechnicalException, IOException {
 
-		Repository repository = Configuration.getConfiguration()
-				.getServiceLocator().getRepository();
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
 		// add dummy contents
 		// String url = "zip://" + testDataDir
 		// + "/testSynch/testzipfiles.zip!/testzipfiles/doc1.txt";
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		Content c = fscp.getContent("zip://" + partialURL
-				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/doc1.txt");
+		Content c = fscp.getContent("zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/doc1.txt");
 		c.setProvider(fscp.getId());
 		repository.addContent(c);
 		assertTrue(c.getFulltext().trim().equalsIgnoreCase("new text"));
@@ -254,14 +237,10 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			if (content.getContentUrl().equalsIgnoreCase(c.getContentUrl())) {
 				assertTrue(content.getFulltext().trim().equals("new text"));
 			}
-			if (content
-					.getContentUrl()
-					.equalsIgnoreCase(
-							"zip://"
-									+ testDataDir
-									+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/doc2.txt"))
-				assertTrue(content.getFulltext().trim()
-						.equals("zipDoc21\r\nzipDoc22"));
+			if (content.getContentUrl().equalsIgnoreCase(
+					"zip://" + testDataDir + File.separator + "testSynch" + File.separator
+							+ "testzipfiles.zip!/testzipfiles/doc2.txt"))
+				assertTrue(content.getFulltext().trim().equals("zipDoc21\r\nzipDoc22"));
 		}
 
 		assertEquals(10, contents.size());
@@ -269,8 +248,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 	public void testDoHousekeeping() throws IQserTechnicalException {
 
-		Repository repository = Configuration.getConfiguration()
-				.getServiceLocator().getRepository();
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
 		// add dummy contents
 		File f = new File(testDataDir + "/testSynch/file2.txt");
@@ -283,9 +261,8 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		repository.addContent(c);
 
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		c = fscp.getContent("zip://"
-				+ partialURL
-				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc");
+		c = fscp.getContent("zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc");
 		repository.addContent(c);
 
 		Collection contents = repository.getContentByProvider(fscp.getId());
@@ -316,26 +293,21 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		testGetBinaryData(contentUrl);
 
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		contentUrl = "zip://"
-				+ partialURL
-				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
+		contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		testGetBinaryData(contentUrl);
 	}
 
 	public void testZipFileModel() throws IOException {
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		String contentUrl = "zip://"
-				+ partialURL
-				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
+		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		FilesystemContentProvider fscp = new FilesystemContentProvider();
 		ZipFileModel fileModel = fscp.getZipFileModel(contentUrl);
 		ZipFileModel zfm2 = getZipFileModel(contentUrl);
-		assertEquals(fileModel.getZipFile().getName(), zfm2.getZipFile()
-				.getName());
-		assertEquals(fileModel.getZipEntry().getName(), zfm2.getZipEntry()
-				.getName());
-		assertEquals(fileModel.getZipEntry().getCompressedSize(), zfm2
-				.getZipEntry().getCompressedSize());
+		assertEquals(fileModel.getZipFile().getName(), zfm2.getZipFile().getName());
+		assertEquals(fileModel.getZipEntry().getName(), zfm2.getZipEntry().getName());
+		assertEquals(fileModel.getZipEntry().getCompressedSize(), zfm2.getZipEntry().getCompressedSize());
 	}
 
 	private ZipFileModel getZipFileModel(String zipFileName) throws IOException {
@@ -345,8 +317,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			ZipFileModel zfm = new ZipFileModel();
 			index += ".zip".length();
 			String fileName = zipFileName.substring(index + 2);
-			String zipFilePath = zipFileName
-					.substring("zip://".length(), index);
+			String zipFilePath = zipFileName.substring("zip://".length(), index);
 			ZipFile zipFile = new ZipFile(zipFilePath);
 			zfm.setZipFile(zipFile);
 
@@ -358,8 +329,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			throw new IQserRuntimeException("Invalid zip url");
 	}
 
-	private void testGetBinaryData(String contentUrl) throws IOException,
-			FileNotFoundException {
+	private void testGetBinaryData(String contentUrl) throws IOException, FileNotFoundException {
 		Content content = fscp.getContent(contentUrl);
 		byte[] binaryContent = fscp.getBinaryData(content);
 		byte[] expectedByteContent = null;
@@ -375,8 +345,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			expectedByteContent = IOUtils.toByteArray(inputStream);
 
 		} else
-			expectedByteContent = IOUtils.toByteArray(new FileInputStream(
-					contentUrl));
+			expectedByteContent = IOUtils.toByteArray(new FileInputStream(contentUrl));
 
 		assertEquals(expectedByteContent.length, binaryContent.length);
 
@@ -387,8 +356,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 	public void testGetActionsContent() {
 
-		Collection expectedActions = Arrays.asList(new String[] { "delete",
-				"save" });
+		Collection expectedActions = Arrays.asList(new String[] { "delete", "save" });
 
 		Collection actions = fscp.getActions(null);
 
@@ -401,7 +369,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 		for (File file : root.listFiles()) {
 
-			if (file.isFile() && ! FilenameUtils.isExtension(file.getName(), "zip")){
+			if (file.isFile() && !FilenameUtils.isExtension(file.getName(), "zip")) {
 				String absolutePath = file.getAbsolutePath();
 				Content content = fscp.getContent(absolutePath);
 				assertNotNull(content);
@@ -455,9 +423,8 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 		// File file = new File(testDataDir + "/testSynch/file1.txt");
 		String partialURL = new File(testDataDir).getAbsolutePath();
-		String contentUrl = "zip://"
-				+ partialURL
-				+ File.separator+"testSynch"+File.separator+"testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";// file.getAbsolutePath();
+		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
+				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";// file.getAbsolutePath();
 
 		assertTrue(urls.contains(contentUrl));
 	}
@@ -466,13 +433,13 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		// TODO implement me
 	}
 
-	public void testPerformActionStringContent() throws IOException,
-			IQserTechnicalException {
+	public void testPerformActionStringContent() throws IOException, IQserTechnicalException {
 
 		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
 		f.mkdirs();
+		f.deleteOnExit();
 
 		// Repository repository = Configuration.getConfiguration()
 		// .getServiceLocator().getRepository();
@@ -516,13 +483,13 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		IOUtils.copy(in, out);
 		IOUtils.closeQuietly(in);
 		IOUtils.closeQuietly(out);
+		in.close();
+		out.close();
 
-		contentURL = "zip://" + testDataDir
-				+ "/output/testzipfiles.zip!/testzipfiles/doc1.txt";
+		contentURL = "zip://" + testDataDir + "/output/testzipfiles.zip!/testzipfiles/doc1.txt";
 		performSaveAction(contentURL, contentURL);
 
-		Repository repository = Configuration.getConfiguration()
-				.getServiceLocator().getRepository();
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
 		Collection contents = null;
 		try {
@@ -548,16 +515,18 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 		// check if folder is empty
 		// delete zip file
-		testZip.delete();
-
 		File outputFolder = new File(testDataDir + "/output");
-		// the zip file is not deleted
-		assertTrue(outputFolder.list().length == 0);
+		if (testZip.delete()) {
+			assertTrue(outputFolder.list().length == 0);
+		} else {
+			// the zip file is not deleted
+			assertTrue(outputFolder.list().length == 1);
+			testZip.deleteOnExit();
+		}
 
 	}
 
-	public void testPerformActionStringContentPDF() throws IOException,
-			IQserTechnicalException {
+	public void testPerformActionStringContentPDF() throws IOException, IQserTechnicalException {
 
 		String contentURL, newContentURL;
 
@@ -568,8 +537,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		newContentURL = testDataDir + "/output/testpdf.pdf";
 		performSaveAction(contentURL, newContentURL);
 
-		Repository repository = Configuration.getConfiguration()
-				.getServiceLocator().getRepository();
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
 		Collection contents = repository.getAllContentItem(-1);
 		assertTrue(contents.size() == 1);
@@ -582,8 +550,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 	}
 
-	private void performSaveAction(String contentURL, String newContentURL)
-			throws IOException {
+	private void performSaveAction(String contentURL, String newContentURL) throws IOException {
 
 		Content content = fscp.getContent(contentURL);
 		assertNotNull(content);
