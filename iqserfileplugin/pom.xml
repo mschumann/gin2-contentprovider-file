@@ -101,29 +101,29 @@
 	</properties>
 
 	<repositories>
- 		<repository>
-  			<id>iqser_release</id>
+		<repository>
+			<id>iqser_release</id>
 			<name>Artifactory Mirror</name>
-  			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
-  			<releases>
-   				<enabled>true</enabled>
-  			</releases>
+			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
 			<snapshots>
-   				<enabled>true</enabled>
-  			</snapshots>
- 		</repository>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 	</repositories>
 	<pluginRepositories>
- 		<pluginRepository>
-  			<id>iqser_release</id>
-  			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
-  			<releases>
-   				<enabled>true</enabled>
-  			</releases>
-  			<snapshots>
-   				<enabled>true</enabled>
-  			</snapshots>
- 		</pluginRepository>
+		<pluginRepository>
+			<id>iqser_release</id>
+			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<distributionManagement>
@@ -408,6 +408,69 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
+
+		<!-- file parser -->
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-app</artifactId>
+			<version>0.8</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-core</artifactId>
+			<version>0.8</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.tika</groupId>
+			<artifactId>tika-parsers</artifactId>
+			<version>0.8</version>
+			<type>jar</type>
+			<classifier>jdk14</classifier>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>1.3.2</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- cmis-provider -->
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-api</artifactId>
+			<version>0.3.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-bindings</artifactId>
+			<version>0.3.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.chemistry.opencmis</groupId>
+			<artifactId>chemistry-opencmis-client-impl</artifactId>
+			<version>0.3.0</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- filesystem-provider -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20080701</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<!-- all -->
 		<dependency>
 			<groupId>com.iqser.core</groupId>
 			<artifactId>iqser-core-api</artifactId>
@@ -449,6 +512,15 @@
 			<version>0.7.3</version>
 			<type>jar</type>
 			<optional>false</optional>
+		</dependency>
+
+		<!-- cmis-provider unit test -->
+		<dependency>
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.0</version>
+			<type>jar</type>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
