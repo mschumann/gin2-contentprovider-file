@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -45,7 +46,7 @@ import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
-import com.iqser.core.plugin.AbstractContentProvider;
+import com.iqser.core.plugin.provider.AbstractContentProvider;
 
 /**
  * 
@@ -323,7 +324,7 @@ public class CmisContentProvider extends AbstractContentProvider {
      * Performs synchronization.
      */
     @Override
-    public void doSynchonization() {
+    public void doSynchronization() {
 
 	long startLastSynchTime = new Date().getTime();
 
@@ -914,5 +915,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 	return type.equals(CMIS_DOCUMENT_TYPE)
 		|| type.equals(contentTypeMappings.get(CMIS_DOCUMENT_TYPE));
     }
+
+	@Override
+	public void performAction(String arg0, Hashtable<String, String> arg1,
+			Content arg2) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

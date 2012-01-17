@@ -1,7 +1,7 @@
 package net.sf.iqser.plugin.file.security;
 
 import junit.framework.TestCase;
-import net.sf.iqser.plugin.file.CmisContentProvider;
+
 import net.sf.iqser.plugin.file.security.CmisDefaultSecurityFilter;
 
 import com.iqser.core.model.Content;
@@ -33,19 +33,5 @@ public class CmisDefaultSecurityFilterTestIntegration extends TestCase {
 		assertTrue(canEdit);
 	}
 
-	public void testCanExecuteAction() throws IQserSecurityException {
-		
-		String[] actions = new String[]{
-				CmisContentProvider.ACTION_DELETE,
-				CmisContentProvider.ACTION_UPDATE,				
-				CmisContentProvider.ACTION_CHECK_OUT				
-		};
-		
-		for (String action : actions) {
-			boolean canExecuteAction = filter.canExecuteAction(user, password, action, content);
-			
-			assertTrue(canExecuteAction);			
-		}
-	}
 
 }

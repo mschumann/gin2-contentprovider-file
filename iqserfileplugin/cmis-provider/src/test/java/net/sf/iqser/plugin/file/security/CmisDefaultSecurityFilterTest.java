@@ -7,7 +7,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import junit.framework.TestCase;
-import net.sf.iqser.plugin.file.CmisContentProvider;
+
 import net.sf.iqser.plugin.file.mock.cmis.MockAllowableActions;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
@@ -117,55 +117,6 @@ public class CmisDefaultSecurityFilterTest extends TestCase {
 		assertFalse(canEdit);
 	}
 
-	public void testCanExecuteAction() throws IQserSecurityException {
-		
-		Set<Action> allowableActions;
-		boolean expected = true;
-		
-		allowableActions = new HashSet<Action>();
-		allowableActions.add(Action.CAN_UPDATE_PROPERTIES);		
-		canExecuteAction(CmisContentProvider.ACTION_UPDATE, expected, allowableActions);
-		
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		allowableActions = new HashSet<Action>();
-		allowableActions.add(Action.CAN_DELETE_OBJECT);
-		canExecuteAction(CmisContentProvider.ACTION_DELETE, expected, allowableActions);
-		
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		allowableActions = new HashSet<Action>();
-		allowableActions.add(Action.CAN_CHECK_IN);		
-		canExecuteAction(CmisContentProvider.ACTION_CHECK_IN, expected, allowableActions);
-
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		allowableActions = new HashSet<Action>();
-		allowableActions.add(Action.CAN_CHECK_OUT);		
-		canExecuteAction(CmisContentProvider.ACTION_CHECK_OUT, expected, allowableActions);
-		
-		
-		expected = false;		
-		allowableActions = new HashSet<Action>();
-		allowableActions.add(Action.CAN_ADD_OBJECT_TO_FOLDER);
-		
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		canExecuteAction(CmisContentProvider.ACTION_UPDATE, expected, allowableActions);
-		
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		canExecuteAction(CmisContentProvider.ACTION_DELETE, expected, allowableActions);
-		
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		canExecuteAction(CmisContentProvider.ACTION_CHECK_IN, expected, allowableActions);
-
-		EasyMock.reset(mockFactory, mockCmisSession);
-		
-		canExecuteAction(CmisContentProvider.ACTION_CHECK_OUT, expected, allowableActions);
-
-	}
 	
 	private void canExecuteAction(String action, boolean expected, Set<Action> allowableActions) throws IQserSecurityException {
 		//"http://cmis/repositoryName/basicType#cmisObjectId"

@@ -4,12 +4,10 @@ import java.util.Collection;
 
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Content;
-import com.iqser.core.plugin.ContentProviderFacade;
-import com.iqser.core.repository.Repository;
 
-public class MockContentProviderFacade implements ContentProviderFacade{
+public class MockContentProviderFacade {
 
-	private Repository repo;		
+	/*private Repository repo;		
 		
 	public void setRepo(Repository repo) {
 		this.repo = repo;
@@ -46,7 +44,7 @@ public class MockContentProviderFacade implements ContentProviderFacade{
 
 	public void updateContent(Content content) throws IQserException {
 		repo.updateContent(content);		
-	}
+	}*/
 
 	
 

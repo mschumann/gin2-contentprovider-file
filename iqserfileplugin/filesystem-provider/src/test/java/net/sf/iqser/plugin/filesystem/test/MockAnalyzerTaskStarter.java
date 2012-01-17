@@ -18,7 +18,7 @@ public class MockAnalyzerTaskStarter implements AnalyzerTaskStarter {
 	private static Logger logger = Logger.getLogger( MockAnalyzerTaskStarter.class );
 	
 	public void startTask(ContentAnalyzerJob job) {
-		logger.debug("startTask() startet for " + job.getContent().getContentUrl() + " and type " + job.getJobType());
+		/*logger.debug("startTask() startet for " + job.getContent().getContentUrl() + " and type " + job.getJobType());
 
 		MockRepository rep = (MockRepository)Configuration.getConfiguration().getServiceLocator().getRepository();
 		
@@ -49,6 +49,6 @@ public class MockAnalyzerTaskStarter implements AnalyzerTaskStarter {
 		}
 		default:
 			break;
-		}
+		}*/
 	}
 }

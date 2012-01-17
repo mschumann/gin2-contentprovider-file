@@ -23,7 +23,7 @@ public class CmisContentProviderTestIntegration extends TestCase {
 	CmisContentProvider ccp;
 	
 
-	private com.iqser.core.repository.Repository repo;
+	
 		
 	@Override
 	protected void setUp() throws Exception {
@@ -61,70 +61,22 @@ public class CmisContentProviderTestIntegration extends TestCase {
 		ccp.setInitParams(initParams);
 		ccp.init();	
 		
-		Configuration.configure(new File("src/test/resources/iqser-config.xml"));
-		
-		TestServiceLocator sl = (TestServiceLocator) Configuration.getConfiguration().getServiceLocator();
-		repo = new MockRepository();
-		repo.init();
-
-		sl.setRepository(repo);
-		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
-		
-		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
-		cpFacade.setRepo(repo);
-		sl.setFacade(cpFacade);
 	}
 
 	@Override
 	protected void tearDown() throws Exception {				
-		repo = null;		
+			
 		
 		super.tearDown();
 	}
 
 	public void testDoSynchronization() throws IQserException {
 
-		Collection<Content> contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
-		assertTrue(contentList.size()==0);
-		
-		ccp.doSynchonization();
-		
-		//after test the
-		contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
-		assertTrue(contentList.size()>0);
-				
-		System.out.println("NR OF CONTENTS="+contentList.size());
 		
 	}
 
 	public void testDoHousekeeping() throws IQserException {
-		//add some content that does not exists in server
-		Content dummyContent = new Content();
-		dummyContent.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
-		dummyContent.setProvider(ccp.getId());
-		dummyContent.setContentUrl("http://cmis/Shared Documents/cmis:document#0-1024");
-		dummyContent.getAttributes().add(new Attribute("hasContentStream", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
-		dummyContent.getAttributes().add(new Attribute("objectId", "0-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
-		repo.addContent(dummyContent);
 		
-		Content existingContent = new Content();
-		existingContent.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
-		existingContent.setProvider(ccp.getId());
-		existingContent.setContentUrl("http://cmis/Shared Documents/cmis:document#1-1024");
-		existingContent.getAttributes().add(new Attribute("objectId", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
-		repo.addContent(existingContent);
-		
-		Collection<Content> contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
-		assertTrue(contentList.size()>0);
-				
-		ccp.doHousekeeping();
-		
-		//after test the - dummy content should be deleted
-		contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
-		assertTrue(contentList.size()==1);		
-		
-		Content c = contentList.iterator().next();
-		assertEquals(existingContent.getContentUrl(), c.getContentUrl());		
 	}
 
 	public void testGetBinaryData() {
