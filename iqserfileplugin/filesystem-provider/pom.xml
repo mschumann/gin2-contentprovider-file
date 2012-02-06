@@ -3,13 +3,11 @@
 	<parent>
 		<artifactId>iqserfileplugin</artifactId>
 		<groupId>net.sf.iqser.plugin.file</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>2.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.sf.iqser.plugin.file</groupId>
 	<artifactId>filesystem-provider</artifactId>
 	<name>Filesystem ContentProvider</name>
-	<version>1.0-SNAPSHOT</version>
 	<description>This module contains a ContentProvider implementation to connect filesystems to the iQser GIN Platform.</description>
 	<dependencies>
 		<dependency>
