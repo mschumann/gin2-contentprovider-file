@@ -237,16 +237,16 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	 */
 	@Override
 	public boolean canRead(String user, String password, long contentId) throws IQserSecurityException {
+		return null != getCmisObjectByContentId(user, password, contentId);
 
-		Content content;
-		try {
-			content = ServiceLocatorFactory.getServiceLocator().getRepositoryReader().getContent(contentId);
-		} catch (IQserTechnicalException e) {
-			throw new IQserSecurityException("Cannot find content with id=" + contentId + " in the repository.", e);
-		}
+	}
+
+	private CmisObject getCmisObjectByContentId(String user, String password, long contentId)
+			throws IQserSecurityException {
+		Content content = getContent(contentId);
 
 		if (null == content) {
-			return false;
+			return null;
 		}
 
 		String cmisObjectId = CmisUtils.getObjectID(content.getContentUrl());
@@ -255,14 +255,12 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 		if (repositoryId == null) {
 			logger.warn("Could not find repository " + repositoryName);
-			return false;
+			return null;
 		}
 
 		try {
 			Session session = openSession(user, password, repositoryId);
-			CmisObject cmisObj = session.getObject(cmisObjectId);
-
-			return cmisObj != null;
+			return session.getObject(cmisObjectId);
 		} catch (CmisBaseException cbe) {
 			throw new IQserSecurityException(cbe.getMessage());
 		}
@@ -283,36 +281,13 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	 */
 	@Override
 	public boolean canEdit(String user, String password, long contentId) throws IQserSecurityException {
-
-		Content content;
-		try {
-			content = ServiceLocatorFactory.getServiceLocator().getRepositoryReader().getContent(contentId);
-		} catch (IQserTechnicalException e) {
-			throw new IQserSecurityException("Cannot find content with id=" + contentId + " in the repository.", e);
-		}
-
-		if (null == content) {
+		CmisObject cmisObj = getCmisObjectByContentId(user, password, contentId);
+		if (null == cmisObj) {
 			return false;
 		}
 
-		String cmisObjectId = CmisUtils.getObjectID(content.getContentUrl());
-		String repositoryName = CmisUtils.getRepository(content.getContentUrl());
-		String repositoryId = repositoryNameToIdMap.get(repositoryName);
-
-		if (repositoryId == null) {
-			logger.warn("Could not find repository " + repositoryName);
-			return false;
-		}
-
-		try {
-			Session session = openSession(user, password, repositoryId);
-			CmisObject cmisObj = session.getObject(cmisObjectId);
-			Set<Action> actions = cmisObj.getAllowableActions().getAllowableActions();
-
-			return actions.contains(Action.CAN_UPDATE_PROPERTIES);
-		} catch (CmisBaseException cbe) {
-			throw new IQserSecurityException(cbe.getMessage());
-		}
+		Set<Action> actions = cmisObj.getAllowableActions().getAllowableActions();
+		return actions.contains(Action.CAN_UPDATE_PROPERTIES);
 	}
 
 	/**
@@ -334,44 +309,34 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	public boolean canExecuteAction(String user, String password, String action, long contentId)
 			throws IQserSecurityException {
 
+		CmisObject cmisObj = getCmisObjectByContentId(user, password, contentId);
+		if (null == cmisObj) {
+			return false;
+		}
+
+		Set<Action> actions = cmisObj.getAllowableActions().getAllowableActions();
+
+		if (CmisContentProvider.ACTION_UPDATE.equalsIgnoreCase(action)) {
+			return actions.contains(Action.CAN_UPDATE_PROPERTIES);
+		} else if (CmisContentProvider.ACTION_DELETE.equalsIgnoreCase(action)) {
+			return actions.contains(Action.CAN_DELETE_OBJECT);
+		} else if (CmisContentProvider.ACTION_CHECK_IN.equalsIgnoreCase(action)) {
+			return actions.contains(Action.CAN_CHECK_IN);
+		} else if (CmisContentProvider.ACTION_CHECK_OUT.equalsIgnoreCase(action)) {
+			return actions.contains(Action.CAN_CHECK_OUT);
+		}
+		return false;
+
+	}
+
+	private Content getContent(long contentId) throws IQserSecurityException {
 		Content content;
 		try {
 			content = ServiceLocatorFactory.getServiceLocator().getRepositoryReader().getContent(contentId);
 		} catch (IQserTechnicalException e) {
 			throw new IQserSecurityException("Cannot find content with id=" + contentId + " in the repository.", e);
 		}
-
-		if (null == content) {
-			return false;
-		}
-
-		String cmisObjectId = CmisUtils.getObjectID(content.getContentUrl());
-		String repositoryName = CmisUtils.getRepository(content.getContentUrl());
-		String repositoryId = repositoryNameToIdMap.get(repositoryName);
-
-		if (repositoryId == null) {
-			logger.warn("Could not find repository " + repositoryName);
-			return false;
-		}
-		try {
-			Session session = openSession(user, password, repositoryId);
-
-			CmisObject cmisObj = session.getObject(cmisObjectId);
-			Set<Action> actions = cmisObj.getAllowableActions().getAllowableActions();
-
-			if (CmisContentProvider.ACTION_UPDATE.equalsIgnoreCase(action)) {
-				return actions.contains(Action.CAN_UPDATE_PROPERTIES);
-			} else if (CmisContentProvider.ACTION_DELETE.equalsIgnoreCase(action)) {
-				return actions.contains(Action.CAN_DELETE_OBJECT);
-			} else if (CmisContentProvider.ACTION_CHECK_IN.equalsIgnoreCase(action)) {
-				return actions.contains(Action.CAN_CHECK_IN);
-			} else if (CmisContentProvider.ACTION_CHECK_OUT.equalsIgnoreCase(action)) {
-				return actions.contains(Action.CAN_CHECK_OUT);
-			}
-			return false;
-		} catch (CmisBaseException cbe) {
-			throw new IQserSecurityException(cbe.getMessage());
-		}
+		return content;
 	}
 
 	@Override
