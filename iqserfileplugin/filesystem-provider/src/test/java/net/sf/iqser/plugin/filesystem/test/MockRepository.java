@@ -9,12 +9,12 @@ import org.apache.log4j.Logger;
 import com.iqser.core.exception.IQserTechnicalException;
 import com.iqser.core.model.Concept;
 import com.iqser.core.model.Content;
-
+import com.iqser.core.model.ContentItem;
 import com.iqser.core.model.Cooccurrence;
 import com.iqser.core.model.Filter;
 import com.iqser.core.model.Relation;
 import com.iqser.core.model.SearchResult;
-
+import com.iqser.core.repository.Repository;
 
 /**
  * Supports testing of classes of the iQser Web Content Provider Family.
@@ -22,8 +22,8 @@ import com.iqser.core.model.SearchResult;
  * @author Joerg Wurzer
  *
  */
-public class MockRepository {
-	/*
+public class MockRepository implements Repository {
+	
 	private ArrayList<Content> cl = null;
 		
 	public static final int ADD_CONTENT = 0;
@@ -407,6 +407,6 @@ public class MockRepository {
 			throws IQserTechnicalException {
 		// TODO Auto-generated method stub
 		return null;
-	}*/
+	}
 
 }

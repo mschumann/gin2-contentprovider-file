@@ -27,7 +27,8 @@ import com.iqser.core.config.Configuration;
 import com.iqser.core.exception.IQserTechnicalException;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
-
+import com.iqser.core.plugin.ContentProviderFacade;
+import com.iqser.core.repository.Repository;
 
 public class FilesystemContentProviderTest extends TestCase {
 
@@ -37,7 +38,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 
-		/*testDataDir = System.getProperty("testdata.dir", "testdata");
+		testDataDir = System.getProperty("testdata.dir", "testdata");
 		// testDataDir = System.getProperty("testdata.dir", "D:/testdata");
 
 		PropertyConfigurator.configure("src/test/resources/log4j.properties");
@@ -84,26 +85,26 @@ public class FilesystemContentProviderTest extends TestCase {
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
 			file.delete();
-		}*/
+		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		/*fscp.destroy();
+		fscp.destroy();
 		// delete testdata/output
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
 			file.delete();
 		}
-		super.tearDown();*/
+		super.tearDown();
 	}
 
 	public void testDestroy() {
-		//fscp.destroy(); // nothing to do
+		fscp.destroy(); // nothing to do
 	}
 
 	public void testKeyParameters() {
-		/*Field field = null;
+		Field field = null;
 		try {
 			field = fscp.getClass().getDeclaredField("keyAttributesList");
 		} catch (SecurityException e) {
@@ -130,12 +131,12 @@ public class FilesystemContentProviderTest extends TestCase {
 		assertEquals("Autor", value);
 		value = keyAttributes.get(1);
 		assertEquals("Bezeichnung", value);
-*/
+
 	}
 
 	public void testInit() {
 		// fscp.init(); //nothing to do
-		/*Field field = null;
+		Field field = null;
 		try {
 			field = fscp.getClass().getDeclaredField("attributeMappings");
 		} catch (SecurityException e) {
@@ -165,13 +166,13 @@ public class FilesystemContentProviderTest extends TestCase {
 		value = attributeMappings.get("Last-Author");
 		assertEquals("Autor", value);
 		value = attributeMappings.get("Author");
-		assertEquals("Autor", value);*/
+		assertEquals("Autor", value);
 	}
 
 	public void testDoSynchronization() throws IQserTechnicalException,
 			IOException {
 
-		/*Repository repository = Configuration.getConfiguration()
+		Repository repository = Configuration.getConfiguration()
 				.getServiceLocator().getRepository();
 
 		// add dummy contents
@@ -209,12 +210,12 @@ public class FilesystemContentProviderTest extends TestCase {
 		fw.write("testing synchronization initial");
 		fw.close();
 
-		assertEquals(4, contents.size()); */
+		assertEquals(4, contents.size());
 	}
 
 	public void testDoHousekeeping() throws IQserTechnicalException {
 
-		/*Repository repository = Configuration.getConfiguration()
+		Repository repository = Configuration.getConfiguration()
 				.getServiceLocator().getRepository();
 
 		// add dummy contents
@@ -233,22 +234,22 @@ public class FilesystemContentProviderTest extends TestCase {
 		fscp.doHousekeeping();
 		contents = repository.getContentByProvider(fscp.getId());
 
-		assertEquals(1, contents.size());*/
+		assertEquals(1, contents.size());
 
 	}
 
 	public void testGetBinaryData() throws IOException {
-		/*String contentUrl;
+		String contentUrl;
 		contentUrl = testDataDir + "/TxtDataTest.txt";
 		testGetBinaryData(contentUrl);
 
 		contentUrl = testDataDir + "/WordDataTest.doc";
-		testGetBinaryData(contentUrl);*/
+		testGetBinaryData(contentUrl);
 	}
 
 	private void testGetBinaryData(String contentUrl) throws IOException,
 			FileNotFoundException {
-		/*Content content = fscp.getContent(contentUrl);
+		Content content = fscp.getContent(contentUrl);
 		byte[] binaryContent = fscp.getBinaryData(content);
 
 		assertNotNull(binaryContent);
@@ -261,22 +262,22 @@ public class FilesystemContentProviderTest extends TestCase {
 
 		for (int i = 0; i < expectedByteContent.length; i++) {
 			assertEquals(expectedByteContent[i], binaryContent[i]);
-		}*/
+		}
 	}
 
 	public void testGetActionsContent() {
 
-		/*Collection expectedActions = Arrays.asList(new String[] { "delete",
+		Collection expectedActions = Arrays.asList(new String[] { "delete",
 				"save" });
 
 		Collection actions = fscp.getActions(null);
 
-		assertEquals(expectedActions, actions);*/
+		assertEquals(expectedActions, actions);
 	}
 
 	public void testGetContentString() {
 
-		/*File root = new File(testDataDir);
+		File root = new File(testDataDir);
 
 		for (File file : root.listFiles()) {
 
@@ -300,12 +301,12 @@ public class FilesystemContentProviderTest extends TestCase {
 				assertNotNull(fulltext);
 
 			}
-		}*/
+		}
 	}
 
 	public void testGetContentInputStream() throws FileNotFoundException {
 
-		/*File root = new File(testDataDir);
+		File root = new File(testDataDir);
 		for (File file : root.listFiles()) {
 			if (file.isFile() && !file.getName().toLowerCase().endsWith(".zip")) {
 				InputStream inputStream = new FileInputStream(file);
@@ -314,19 +315,19 @@ public class FilesystemContentProviderTest extends TestCase {
 				String fulltext = content.getFulltext();
 				assertNotNull(fulltext);
 			}
-		}*/
+		}
 
 	}
 
 	public void testGetContentUrls() {
-		/*Collection urls = fscp.getContentUrls();
+		Collection urls = fscp.getContentUrls();
 
 		assertEquals(3, urls.size());
 
 		File file = new File(testDataDir + "/testSynch/file1.txt");
 		String contentUrl = file.getAbsolutePath();
 
-		assertTrue(urls.contains(contentUrl));*/
+		assertTrue(urls.contains(contentUrl));
 	}
 
 	public void testOnChangeEventEvent() {
@@ -336,7 +337,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	public void testPerformActionStringContent() throws IOException,
 			IQserTechnicalException {
 
-		/*String contentURL, newContentURL;
+		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
 		f.mkdirs();
@@ -402,13 +403,13 @@ public class FilesystemContentProviderTest extends TestCase {
 		// check if folder is empty
 		File outputFolder = new File(testDataDir + "/output");
 		assertTrue(outputFolder.list().length == 0);
-*/
+
 	}
 
 	public void testPerformActionStringContentPDF() throws IOException,
 			IQserTechnicalException {
 
-		/*String contentURL, newContentURL;
+		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
 		f.mkdirs();
@@ -427,14 +428,14 @@ public class FilesystemContentProviderTest extends TestCase {
 			performDeleteAction(content);
 		}
 		contents = repository.getAllContentItem(-1);
-		assertTrue(contents.size() == 0);*/
+		assertTrue(contents.size() == 0);
 
 	}
 
 	private void performSaveAction(String contentURL, String newContentURL)
 			throws IOException {
 
-		/*Content content = fscp.getContent(contentURL);
+		Content content = fscp.getContent(contentURL);
 		assertNotNull(content);
 		String fulltext = content.getFulltext();
 		assertNotNull(fulltext);
@@ -449,11 +450,11 @@ public class FilesystemContentProviderTest extends TestCase {
 			String newFulltext = newContent.getFulltext();
 
 			assertEquals(fulltext, newFulltext);
-		}*/
+		}
 	}
 
 	private void performDeleteAction(Content content) {
-		//fscp.performAction("delete", content);
+		fscp.performAction("delete", content);
 	}
 
 	

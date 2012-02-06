@@ -33,7 +33,7 @@ import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.exception.IQserTechnicalException;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
-
+import com.iqser.core.repository.Repository;
 
 public class FileSystemContentProviderZipTest extends TestCase {
 
@@ -42,7 +42,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-/*
+
 		testDataDir = System.getProperty("testdata.dir", "testdata");
 		// testDataDir = System.getProperty("testdata.dir", "D:/testdata");
 
@@ -88,24 +88,24 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
 			file.delete();
-		}*/
+		}
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
-		/*fscp.destroy();
+		fscp.destroy();
 		// delete testdata/output
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
 			file.delete();
 		}
-		super.tearDown();*/
+		super.tearDown();
 	}
 
 	public void testGetInputStreamContent() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException, IOException {
 
-		/*String partialURL = new File(testDataDir).getAbsolutePath();
+		String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
 				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 
@@ -115,14 +115,14 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		InputStream inputStream = (InputStream) declaredMethod.invoke(fscp, contentUrl);
 
 		assertNotNull(inputStream);
-		assertTrue(inputStream.available() > 0);*/
+		assertTrue(inputStream.available() > 0);
 
 	}
 
 	public void testGetBinaryZipFile() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
 			IllegalAccessException, InvocationTargetException {
 
-		/*Method declaredMethod = fscp.getClass().getDeclaredMethod("extractBinaryPackedFiles", Content.class);
+		Method declaredMethod = fscp.getClass().getDeclaredMethod("extractBinaryPackedFiles", Content.class);
 
 		declaredMethod.setAccessible(true);
 
@@ -134,16 +134,16 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		byte[] bytes = (byte[]) declaredMethod.invoke(fscp, content);
 
 		assertNotNull(bytes);
-		assertTrue(bytes.length > 0);*/
+		assertTrue(bytes.length > 0);
 
 	}
 
 	public void testDestroy() {
-		//fscp.destroy(); // nothing to do
+		fscp.destroy(); // nothing to do
 	}
 
 	public void testKeyParameters() {
-		/*Field field = null;
+		Field field = null;
 		try {
 			field = fscp.getClass().getDeclaredField("keyAttributesList");
 		} catch (SecurityException e) {
@@ -171,12 +171,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		value = keyAttributes.get(1);
 		assertEquals("Bezeichnung", value);
 
-*/
 	}
 
 	public void testInit() {
 		// fscp.init(); //nothing to do
-		/*Field field = null;
+		Field field = null;
 		try {
 			field = fscp.getClass().getDeclaredField("attributeMappings");
 		} catch (SecurityException e) {
@@ -206,12 +205,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		value = attributeMappings.get("Last-Author");
 		assertEquals("Autor", value);
 		value = attributeMappings.get("Author");
-		assertEquals("Autor", value);*/
+		assertEquals("Autor", value);
 	}
 
 	public void testDoSynchronization() throws IQserTechnicalException, IOException {
 
-		/*Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
 		// add dummy contents
 		// String url = "zip://" + testDataDir
@@ -244,12 +243,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 				assertTrue(content.getFulltext().trim().equals("zipDoc21\r\nzipDoc22"));
 		}
 
-		assertEquals(10, contents.size());*/
+		assertEquals(10, contents.size());
 	}
 
 	public void testDoHousekeeping() throws IQserTechnicalException {
 
-		/*Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
+		Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
 		// add dummy contents
 		File f = new File(testDataDir + "/testSynch/file2.txt");
@@ -272,12 +271,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		fscp.doHousekeeping();
 		contents = repository.getContentByProvider(fscp.getId());
 
-		assertEquals(2, contents.size());*/
+		assertEquals(2, contents.size());
 
 	}
 
 	public void testGetBinaryData() throws IOException {
-		/*String contentUrl;
+		String contentUrl;
 		contentUrl = testDataDir + "/TxtDataTest.txt";
 		testGetBinaryData(contentUrl);
 
@@ -296,11 +295,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String partialURL = new File(testDataDir).getAbsolutePath();
 		contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
 				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
-		testGetBinaryData(contentUrl);*/
+		testGetBinaryData(contentUrl);
 	}
 
 	public void testZipFileModel() throws IOException {
-		/*String partialURL = new File(testDataDir).getAbsolutePath();
+		String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
 				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";
 		FilesystemContentProvider fscp = new FilesystemContentProvider();
@@ -308,12 +307,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		ZipFileModel zfm2 = getZipFileModel(contentUrl);
 		assertEquals(fileModel.getZipFile().getName(), zfm2.getZipFile().getName());
 		assertEquals(fileModel.getZipEntry().getName(), zfm2.getZipEntry().getName());
-		assertEquals(fileModel.getZipEntry().getCompressedSize(), zfm2.getZipEntry().getCompressedSize());*/
+		assertEquals(fileModel.getZipEntry().getCompressedSize(), zfm2.getZipEntry().getCompressedSize());
 	}
 
 	private ZipFileModel getZipFileModel(String zipFileName) throws IOException {
-		return null;
-/*
+
 		int index = zipFileName.indexOf(".zip!");
 		if (index != -1) {
 			ZipFileModel zfm = new ZipFileModel();
@@ -328,11 +326,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 			return zfm;
 		} else
-			throw new IQserRuntimeException("Invalid zip url");*/
+			throw new IQserRuntimeException("Invalid zip url");
 	}
 
 	private void testGetBinaryData(String contentUrl) throws IOException, FileNotFoundException {
-		/*Content content = fscp.getContent(contentUrl);
+		Content content = fscp.getContent(contentUrl);
 		byte[] binaryContent = fscp.getBinaryData(content);
 		byte[] expectedByteContent = null;
 
@@ -353,20 +351,20 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 		for (int i = 0; i < expectedByteContent.length; i++) {
 			assertEquals(expectedByteContent[i], binaryContent[i]);
-		}*/
+		}
 	}
 
 	public void testGetActionsContent() {
-/*
+
 		Collection expectedActions = Arrays.asList(new String[] { "delete", "save" });
 
 		Collection actions = fscp.getActions(null);
 
-		assertEquals(expectedActions, actions);*/
+		assertEquals(expectedActions, actions);
 	}
 
 	public void testGetContentString() {
-/*
+
 		File root = new File(testDataDir);
 
 		for (File file : root.listFiles()) {
@@ -400,11 +398,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 					assertEquals(contentURL, content.getContentUrl());
 				}
 			}
-		}*/
+		}
 	}
 
 	public void testGetContentInputStream() throws FileNotFoundException {
-/*
+
 		File root = new File(testDataDir);
 		for (File file : root.listFiles()) {
 			if (file.isFile() && !file.getName().toLowerCase().endsWith(".zip")) {
@@ -414,12 +412,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 				String fulltext = content.getFulltext();
 				assertNotNull(fulltext);
 			}
-		}*/
+		}
 
 	}
 
 	public void testGetContentUrls() {
-		/*Collection urls = fscp.getContentUrls();
+		Collection urls = fscp.getContentUrls();
 
 		assertEquals(9, urls.size());
 
@@ -428,7 +426,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
 				+ "testzipfiles.zip!/testzipfiles/files/WordDataTest.doc";// file.getAbsolutePath();
 
-		assertTrue(urls.contains(contentUrl));*/
+		assertTrue(urls.contains(contentUrl));
 	}
 
 	public void testOnChangeEventEvent() {
@@ -436,7 +434,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 	}
 
 	public void testPerformActionStringContent() throws IOException, IQserTechnicalException {
-/*
+
 		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
@@ -525,12 +523,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			assertTrue(outputFolder.list().length == 1);
 			testZip.deleteOnExit();
 		}
-*/
+
 	}
 
 	public void testPerformActionStringContentPDF() throws IOException, IQserTechnicalException {
 
-		/*String contentURL, newContentURL;
+		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
 		f.mkdirs();
@@ -549,13 +547,12 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		}
 		contents = repository.getAllContentItem(-1);
 		assertTrue(contents.size() == 0);
-		*/
 
 	}
 
 	private void performSaveAction(String contentURL, String newContentURL) throws IOException {
 
-		/*Content content = fscp.getContent(contentURL);
+		Content content = fscp.getContent(contentURL);
 		assertNotNull(content);
 		if (contentURL.startsWith("zip"))
 			content.setFulltext("new text");
@@ -572,11 +569,11 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			String newFulltext = newContent.getFulltext();
 
 			assertEquals(fulltext, newFulltext);
-		}*/
+		}
 	}
 
 	private void performDeleteAction(Content content) {
-		//fscp.performAction("delete", content);
+		fscp.performAction("delete", content);
 	}
 
 }

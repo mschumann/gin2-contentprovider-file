@@ -84,7 +84,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter{
 		
 	}
 	
-	public void init(){
+	private void init(){
 		try{
 			//load init params from property file			
 			InputStream in = getClass().getResourceAsStream("cmis_security.properties");
@@ -322,84 +322,6 @@ public class CmisDefaultSecurityFilter implements SecurityFilter{
 		}catch(CmisBaseException cbe){
 			throw new IQserSecurityException(cbe.getMessage());
 		}
-	}
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getClassname() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Properties getInitParams() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getVendor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getVersion() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setClassname(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setId(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setInitParams(Properties arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setName(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setVendor(String arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void setVersion(String arg0) {
-		// TODO Auto-generated method stub
-		
 	}	
 
 }

@@ -61,7 +61,18 @@ public class CmisContentProviderTest extends TestCase {
 		ccp.setId("net.sf.iqser.plugin.file");
 		ccp.getRepositories().add(mockCmisRepo);
 		
+		Configuration.configure(new File("src/test/resources/iqser-config.xml"));
 		
+		TestServiceLocator sl = (TestServiceLocator) Configuration.getConfiguration().getServiceLocator();
+		repo = new MockRepository();
+		repo.init();
+
+		sl.setRepository(repo);
+		sl.setAnalyzerTaskStarter(new MockAnalyzerTaskStarter());
+		
+		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
+		cpFacade.setRepo(repo);
+		sl.setFacade(cpFacade);
 	}
 
 	@Override
@@ -71,24 +82,236 @@ public class CmisContentProviderTest extends TestCase {
 
 	public void testDoSynchronization() throws IQserException {
 
+		Collection<Content> contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()==0);
 		
+		MockFolder dummyRootFolder = new MockFolder();
+		dummyRootFolder.getProperties().add(helperCreateProperty("cmis:objectId","-1"));
+		dummyRootFolder.getProperties().add(helperCreateProperty("cmis:name","RootFolder"));
+		
+		MockDocument expectedDoc1_v1 = new MockDocument();
+		expectedDoc1_v1.getProperties().add(helperCreateProperty("cmis:objectId","1-512"));
+		expectedDoc1_v1.getProperties().add(helperCreateProperty("cmis:name","Doc1_v1"));
+		expectedDoc1_v1.setContentStream(helperCreateContentStream(), true);		
+		expectedDoc1_v1.dummyAddParent(dummyRootFolder);
+		
+		MockDocument expectedDoc1_v2 = new MockDocument();
+		expectedDoc1_v2.getProperties().add(helperCreateProperty("cmis:objectId","1-1024"));
+		expectedDoc1_v2.getProperties().add(helperCreateProperty("cmis:name","Doc1_v2"));
+		expectedDoc1_v2.setContentStream(helperCreateContentStream(), true);
+		expectedDoc1_v2.dummyAddVersion(expectedDoc1_v1);
+		expectedDoc1_v2.dummyAddParent(dummyRootFolder);
+		dummyRootFolder.dummyAddCmisChild(expectedDoc1_v2);
+
+		MockFolder dummyFolder = new MockFolder();
+		dummyFolder.getProperties().add(helperCreateProperty("cmis:objectId","10"));
+		dummyFolder.getProperties().add(helperCreateProperty("cmis:name","Folder"));
+		dummyFolder.dummyAddParent(dummyRootFolder);
+		dummyRootFolder.dummyAddCmisChild(dummyFolder);
+		
+		MockDocument expectedDoc3 = new MockDocument();
+		expectedDoc3.getProperties().add(helperCreateProperty("cmis:objectId","3-512"));
+		expectedDoc3.getProperties().add(helperCreateProperty("cmis:name","Doc3"));
+		expectedDoc3.setContentStream(helperCreateContentStream(), true);
+		expectedDoc3.dummyAddParent(dummyFolder);
+		dummyFolder.dummyAddCmisChild(expectedDoc3);
+		
+		//expected behavior		
+		EasyMock.expect(mockCmisRepo.getName()).andReturn("Shared Documents").anyTimes();
+		EasyMock.expect(mockCmisRepo.createSession()).andReturn(mockCmisSession);			
+		EasyMock.expect(mockCmisSession.getRootFolder()).andReturn(dummyRootFolder);
+		
+		//register behavior
+		EasyMock.replay(mockCmisRepo, mockCmisSession);
+		
+		ccp.doSynchonization();
+		
+		//verify
+		EasyMock.verify();
+		
+		//after test the
+		contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()>0);
+						
+		for (Content content : contentList) {
+			assertNotNull(content.getAttributeByName("cmis:objectId").getValue());
+			assertNotNull(content.getAttributeByName("cmis:name").getValue());
+			if (CmisContentProvider.CMIS_DOCUMENT_TYPE.equalsIgnoreCase(content.getType())){
+				//	file parser properties
+				assertNotNull(content.getAttributeByName("FILENAME").getValue());				
+				assertNotNull(content.getAttributeByName("TITLE").getValue());
+			}
+		}
 		
 	}
 	
 	public void testDoSynchronizationWithUpdate1() throws IQserException {
 
+		String contentUrl = "http://cmis/Shared Documents/cmis:document#1-512";
+		Content existingContent = helperCreateDummyDocumentContentFromUrl(contentUrl);
+		existingContent.addAttribute(new Attribute("cmis:objectId","1-512",Attribute.ATTRIBUTE_TYPE_TEXT));
+		existingContent.addAttribute(new Attribute("cmis:name","origName",Attribute.ATTRIBUTE_TYPE_TEXT));
+		existingContent.addAttribute(new Attribute("FILENAME","origName.txt",Attribute.ATTRIBUTE_TYPE_TEXT));
+		existingContent.addAttribute(new Attribute("TITLE","origTitle",Attribute.ATTRIBUTE_TYPE_TEXT));
+		repo.addContent(existingContent);	
 		
+		Collection<Content> contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()==1);
+		
+		MockFolder dummyRootFolder = new MockFolder();
+		dummyRootFolder.getProperties().add(helperCreateProperty("cmis:objectId","-1"));
+		dummyRootFolder.getProperties().add(helperCreateProperty("cmis:name","RootFolder"));
+		
+		MockDocument expectedDoc1_v1 = new MockDocument();
+		expectedDoc1_v1.getProperties().add(helperCreateProperty("cmis:objectId","1-512"));
+		expectedDoc1_v1.getProperties().add(helperCreateProperty("cmis:name","Doc1_v1"));
+		expectedDoc1_v1.setContentStream(helperCreateContentStream(), true);		
+		expectedDoc1_v1.dummyAddParent(dummyRootFolder);
+		
+		MockDocument expectedDoc1_v2 = new MockDocument();
+		expectedDoc1_v2.getProperties().add(helperCreateProperty("cmis:objectId","1-1024"));
+		expectedDoc1_v2.getProperties().add(helperCreateProperty("cmis:name","Doc1_v2"));
+		expectedDoc1_v2.setContentStream(helperCreateContentStream(), true);
+		expectedDoc1_v2.dummyAddVersion(expectedDoc1_v1);
+		expectedDoc1_v2.dummyAddParent(dummyRootFolder);
+		dummyRootFolder.dummyAddCmisChild(expectedDoc1_v2);		
+		
+		//expected behavior		
+		EasyMock.expect(mockCmisRepo.getName()).andReturn("Shared Documents").anyTimes();
+		EasyMock.expect(mockCmisRepo.createSession()).andReturn(mockCmisSession);			
+		EasyMock.expect(mockCmisSession.getRootFolder()).andReturn(dummyRootFolder);
+		
+		//register behavior
+		EasyMock.replay(mockCmisRepo, mockCmisSession);
+		
+		ccp.doSynchonization();
+		
+		//verify
+		EasyMock.verify();
+		
+		//after test the
+		contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()>0);
+						
+		for (Content content : contentList) {
+			assertNotNull(content.getAttributeByName("cmis:objectId").getValue());
+			assertNotNull(content.getAttributeByName("cmis:name").getValue());
+			System.out.println(content.getAttributeByName("cmis:name").getValue());
+			if (CmisContentProvider.CMIS_DOCUMENT_TYPE.equalsIgnoreCase(content.getType())){
+				//	file parser properties
+				assertNotNull(content.getAttributeByName("FILENAME").getValue());				
+				assertNotNull(content.getAttributeByName("TITLE").getValue());
+			}
+		}
+		for (Content content : contentList) {
+			if (existingContent.getContentUrl().equals(content.getContentUrl())){
+				assertEquals("Doc1_v1",content.getAttributeByName("cmis:name").getValue());
+			}
+		}
 		
 	}
 	
 	public void testDoSynchronizationWithUpdate2() throws IQserException {
 
+		String contentUrl = "http://cmis/Shared Documents/cmis:document#1-512";
+		Content existingContent = helperCreateDummyDocumentContentFromUrl(contentUrl);
+		existingContent.addAttribute(new Attribute("cmis:objectId","1-512",Attribute.ATTRIBUTE_TYPE_TEXT));
+		existingContent.addAttribute(new Attribute("cmis:name","origName",Attribute.ATTRIBUTE_TYPE_TEXT));
+		existingContent.addAttribute(new Attribute("FILENAME","origName.txt",Attribute.ATTRIBUTE_TYPE_TEXT));
+		existingContent.addAttribute(new Attribute("TITLE","origTitle",Attribute.ATTRIBUTE_TYPE_TEXT));
+		repo.addContent(existingContent);	
+
 		
+		Collection<Content> contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()==1);
+		
+		MockFolder dummyRootFolder = new MockFolder();
+		dummyRootFolder.getProperties().add(helperCreateProperty("cmis:objectId","-1"));
+		dummyRootFolder.getProperties().add(helperCreateProperty("cmis:name","RootFolder"));
+		
+		MockDocument expectedDoc1_v1 = new MockDocument();
+		expectedDoc1_v1.getProperties().add(helperCreateProperty("cmis:objectId","1-512"));
+		expectedDoc1_v1.getProperties().add(helperCreateProperty("cmis:name","Doc1_v1"));
+		expectedDoc1_v1.setContentStream(helperCreateContentStream(), true);		
+		expectedDoc1_v1.dummyAddParent(dummyRootFolder);		
+		dummyRootFolder.dummyAddCmisChild(expectedDoc1_v1);		
+		
+		//expected behavior		
+		EasyMock.expect(mockCmisRepo.getName()).andReturn("Shared Documents").anyTimes();
+		EasyMock.expect(mockCmisRepo.createSession()).andReturn(mockCmisSession);			
+		EasyMock.expect(mockCmisSession.getRootFolder()).andReturn(dummyRootFolder);
+		
+		//register behavior
+		EasyMock.replay(mockCmisRepo, mockCmisSession);
+		
+		ccp.doSynchonization();
+		
+		//verify
+		EasyMock.verify();
+		
+		//after test the
+		contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()>0);
+						
+		for (Content content : contentList) {
+			assertNotNull(content.getAttributeByName("cmis:objectId").getValue());
+			assertNotNull(content.getAttributeByName("cmis:name").getValue());
+			System.out.println(content.getAttributeByName("cmis:name").getValue());
+			if (CmisContentProvider.CMIS_DOCUMENT_TYPE.equalsIgnoreCase(content.getType())){
+				//	file parser properties
+				assertNotNull(content.getAttributeByName("FILENAME").getValue());				
+				assertNotNull(content.getAttributeByName("TITLE").getValue());
+			}
+		}
+		for (Content content : contentList) {
+			if (existingContent.getContentUrl().equals(content.getContentUrl())){
+				assertEquals("Doc1_v1",content.getAttributeByName("cmis:name").getValue());
+			}
+		}
 		
 	}
 
 	public void testDoHousekeeping() throws IQserException {
-			
+		//add some content that does not exists in server
+		Content dummyContent = new Content();
+		dummyContent.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
+		dummyContent.setProvider(ccp.getId());
+		dummyContent.setContentUrl("http://cmis/Shared Documents/cmis:document#0-1024");
+		dummyContent.getAttributes().add(new Attribute("hasContentStream", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
+		dummyContent.getAttributes().add(new Attribute("objectId", "0-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
+		repo.addContent(dummyContent);	
+		
+		Content existingContent = new Content();
+		existingContent.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
+		existingContent.setProvider(ccp.getId());
+		existingContent.setContentUrl("http://cmis/Shared Documents/cmis:document#1-1024");
+		existingContent.getAttributes().add(new Attribute("objectId", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
+		repo.addContent(existingContent);
+		
+		Collection<Content> contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()>0);
+				
+		//expected behavior		
+		EasyMock.expect(mockCmisRepo.getName()).andReturn("Shared Documents").anyTimes();
+		EasyMock.expect(mockCmisRepo.createSession()).andReturn(mockCmisSession);
+		EasyMock.expect(mockCmisSession.getObject("0-1024")).andReturn(null);
+		EasyMock.expect(mockCmisRepo.createSession()).andReturn(mockCmisSession);
+		EasyMock.expect(mockCmisSession.getObject("1-1024")).andReturn(new MockDocument());
+		
+		//register behavior
+		EasyMock.replay(mockCmisRepo, mockCmisSession);
+		
+		ccp.doHousekeeping();
+		
+		//verify
+		EasyMock.verify();
+		
+		//after test the - dummy content should be deleted, existingContent should not be deleted
+		contentList = (Collection<Content>)repo.getContentByProvider(ccp.getId(), true);
+		assertTrue(contentList.size()==1);		
+		
+		Content c = contentList.iterator().next();
+		assertEquals(existingContent.getContentUrl(), c.getContentUrl());		
 	}
 
 	public void testGetBinaryData() {

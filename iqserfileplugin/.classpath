@@ -10,15 +10,8 @@
 	<classpathentry kind="src" path="cmis-provider/src/test/resources"/>
 	<classpathentry kind="src" path="file-parser/src/test/resources"/>
 	<classpathentry kind="src" path="filesystem-provider/src/test/resources"/>
-	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.devzuz.q.maven.jdt.core.mavenClasspathContainer"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Documents and Settings/pmo/.m2/repository/com/iqser/core/iqser-core-plugin/2.0-SNAPSHOT/iqser-core-plugin-2.0-SNAPSHOT.jar">
-		<attributes>
-			<attribute name="maven.groupId" value="com.iqser.core"/>
-			<attribute name="maven.artifactId" value="iqser-core-plugin"/>
-			<attribute name="maven.version" value="2.0-SNAPSHOT"/>
-			<attribute name="maven.scope" value="compile"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

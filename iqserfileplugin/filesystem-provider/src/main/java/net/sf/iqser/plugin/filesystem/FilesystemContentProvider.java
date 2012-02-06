@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +37,8 @@ import com.iqser.core.event.Event;
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Content;
-import com.iqser.core.plugin.provider.AbstractContentProvider;
-import com.iqser.core.plugin.provider.ContentProvider;
+import com.iqser.core.plugin.AbstractContentProvider;
+import com.iqser.core.plugin.ContentProvider;
 
 /**
  * file system content provider.
@@ -208,7 +207,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * modified.
 	 */
 	@Override
-	public void doSynchronization() {
+	public void doSynchonization() {
 
 		/**
 		 * synchronize file system against the object graph - if a file is new
@@ -784,14 +783,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		while ((bytesRead = input.read(buffer)) != -1) {
 			output.write(buffer, 0, bytesRead);
 		}
-	}
-
-
-	@Override
-	public void performAction(String arg0, Hashtable<String, String> arg1,
-			Content arg2) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
