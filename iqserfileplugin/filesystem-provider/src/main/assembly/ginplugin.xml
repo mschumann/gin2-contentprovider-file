@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ginplugin
+	xsi:schemaLocation="http://www.iqser.com/schema/ginplugin/2.0 http://www.iqser.com/schema/ginplugin/2.0/ginplugin.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iqser.com/schema/ginplugin/2.0">
+
+	<name>ProcessAnalyzerTask</name>
+	<vendor>iQser GmbH</vendor>
+	<version>2.0-SNAPSHOT</version>
+
+	<description>
+		This ContentProvider plugin is able to scan the filesystem for files 
+		matching the filter-pattern are transformed into Content objects which 
+		are provided to the iQser GIN Server.
+	</description>
+
+	<classname type="ContentProvider">
+		<!-- full qualified class name -->
+		net.sf.iqser.plugin.filesystem.FilesystemContentProvider
+	</classname>
+
+	<params>
+		<param name="folder" type="String" optional="false">
+			Folder from where the files are read.
+		</param>
+		<param name="filter-pattern" type="String" optional="false">
+			One or more file extension ins brackets; 
+			e.g. [pdf][doc][docx][xls][xlsx][ppt][pptx][txt]
+		</param>
+		<param name="filter-folder-include" type="String" optional="true">
+			If set, only these sub-folders are taken in consideration.
+		</param>
+		<param name="filter-folder-exclude" type="String" optional="true">
+			If set, these sub-folders are excluded from processing.
+		</param>
+		<param name="key-attributes" type="String" optional="true">
+			Provide here the names of the attribute which are handled as "keys" by the platform; 
+			e.g. [FILENAME][NAME][Title][Category][Keywords][AUTHOR][subject] 
+		</param>
+		<param name="attribute.mappings" type="String" optional="true">
+			Attribute mappings in json format: "{attr1:new_attr1,attr2:new_attr2}"; 
+			e.g. {title:NAME}
+		</param>
+	</params>
+</ginplugin>

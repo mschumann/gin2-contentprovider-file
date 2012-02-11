@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ginplugin
+	xsi:schemaLocation="http://www.iqser.com/schema/ginplugin/2.0 http://www.iqser.com/schema/ginplugin/2.0/ginplugin.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iqser.com/schema/ginplugin/2.0">
+
+	<name>ProcessAnalyzerTask</name>
+	<vendor>iQser GmbH</vendor>
+	<version>1.0-SNAPSHOT</version>
+
+	<description>
+		This ContentProvider plugin is able to connect to a file repository 
+		with CMIS support and provided files as Content objects to the iQser GIN Server.
+	</description>
+
+	<classname type="ContentProvider">
+		<!-- full qualified class name -->
+		net.sf.iqser.plugin.file.CmisContentProvider
+	</classname>
+
+	<params>
+		<param name="WEBSERVICES_REPOSITORY_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_ACL_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_DISCOVERY_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_MULTIFILING_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_NAVIGATION_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_OBJECT_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_POLICY_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_RELATIONSHIP_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_REPOSITORY_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="WEBSERVICES_VERSIONING_SERVICE" type="String"
+			optional="false">
+			URL to the WSDL.
+		</param>
+		<param name="AUTHENTICATION_PROVIDER_CLASS" type="String"
+			optional="false">
+			"STANDARD" or "NTLM"
+		</param>
+		<param name="USERNAME" type="String"
+			optional="false">
+			The username to connect to the repository.
+		</param>
+		<param name="PASSWORD" type="String"
+			optional="false">
+			The password to connect to the repository.
+		</param>
+		<param name="REPOSITORY" type="String"
+			optional="false">
+			Repositories (in brackets) that will be synchronized;
+			e.g. [MyRepo1][MyRepo2]
+		</param>
+		<param name="CONTENT-TYPE-MAPPINGS" type="String"
+			optional="true">
+			Content type mappings to change the default content type name;
+			e.g. [CMIS_FOLDER=iQserFolder][CMIS_DOCUMENT=iQserDocument]
+		</param>
+		<param name="ATTRIBUTE-MAPPINGS" type="String"
+			optional="true">
+			Attribute mappings;
+			e.g. [attr1=new_attr1][attr2=new_attr2]
+		</param>
+		<param name="KEY-ATTRIBUTES" type="String"
+			optional="true">
+			Provide here the names of the attribute which are handled as "keys" by the platform.
+			If an attribute has been mapped in ATTRIBUTE-MAPPINGS, the new name must be placed here;
+			e.g. [attr3][new_attr2]
+		</param>
+	</params>
+</ginplugin>

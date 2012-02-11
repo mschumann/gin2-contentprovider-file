@@ -323,7 +323,7 @@
 								<scp todir="${sourceforge.upload}" password="${sf.password}"
 									trust="true">
 									<fileset dir="${project.build.directory}">
-										<include name="${project.build.finalName}*.jar" />
+										<include name="${project.build.finalName}*.gin" />
 									</fileset>
 								</scp>
 							</tasks>
