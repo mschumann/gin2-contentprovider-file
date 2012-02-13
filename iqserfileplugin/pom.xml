@@ -11,7 +11,7 @@
 	<name>File ContentProvider for iQser GIN</name>
 	<description>The goal of this project is to provide a reusable library to transform common file formats to content objects and ContentProvider plugins to common file repositories (Filesystem and common DMS) for iQser GIN Semantic Middleware (www.iqser.com). Please visit projects Wiki at https://sourceforge.net/apps/trac/iqserfileplugin/wiki for more information and documentation.</description>
 	<url>http://iqserfileplugin.sourceforge.net</url>
-
+	
 	<licenses>
 		<license>
 			<name>Apache 2</name>
@@ -52,7 +52,7 @@
 			<id>jwurzer</id>
 			<name>Jörg Wurzer</name>
 			<email>joerg.wurzer (at) iqser.net</email>
-			<organization>IQser AG</organization>
+			<organization>iQser AG</organization>
 			<organizationUrl>http://www.iqser.com</organizationUrl>
 			<roles>
 				<role>Requirement Engineer</role>
@@ -92,6 +92,11 @@
 		</developer>
 	</developers>
 
+	<organization>
+		<name>iQser GmbH</name>
+		<url>http://www.iqser.com</url>
+	</organization>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<iqser.version>2.0-SNAPSHOT</iqser.version>
@@ -113,6 +118,28 @@
 			</snapshots>
 		</repository>
 	</repositories>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<pluginRepositories>
 		<pluginRepository>
 			<id>iqser_release</id>

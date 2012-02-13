@@ -3,7 +3,7 @@
 	xsi:schemaLocation="http://www.iqser.com/schema/ginplugin/2.0 http://www.iqser.com/schema/ginplugin/2.0/ginplugin.xsd"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iqser.com/schema/ginplugin/2.0">
 
-	<name>ProcessAnalyzerTask</name>
+	<name>CMIS Content Provider</name>
 	<vendor>iQser GmbH</vendor>
 	<version>1.0-SNAPSHOT</version>
 
