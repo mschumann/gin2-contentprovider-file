@@ -11,7 +11,7 @@
 	<name>File ContentProvider for iQser GIN</name>
 	<description>The goal of this project is to provide a reusable library to transform common file formats to content objects and ContentProvider plugins to common file repositories (Filesystem and common DMS) for iQser GIN Semantic Middleware (www.iqser.com). Please visit projects Wiki at https://sourceforge.net/apps/trac/iqserfileplugin/wiki for more information and documentation.</description>
 	<url>http://iqserfileplugin.sourceforge.net</url>
-	
+
 	<licenses>
 		<license>
 			<name>Apache 2</name>
@@ -427,13 +427,11 @@
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-app</artifactId>
 			<version>0.8</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tika</groupId>
 			<artifactId>tika-core</artifactId>
 			<version>0.8</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.tika</groupId>
@@ -441,14 +439,12 @@
 			<version>0.8</version>
 			<type>jar</type>
 			<classifier>jdk14</classifier>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>1.3.2</version>
 			<type>jar</type>
-			<scope>provided</scope>
 		</dependency>
 
 		<!-- cmis-provider -->
