@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +37,7 @@ import com.iqser.core.event.Event;
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Content;
+import com.iqser.core.model.Parameter;
 import com.iqser.core.plugin.provider.AbstractContentProvider;
 import com.iqser.core.plugin.provider.ContentProvider;
 
@@ -62,7 +62,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	/**
 	 * map for new attribute---for replacing the name of the attributes.
 	 */
-	private Map<String, String> attributeMappings = new HashMap<String, String>();
+	private final Map<String, String> attributeMappings = new HashMap<String, String>();
 
 	/**
 	 * a collection of new key attributes.
@@ -76,6 +76,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 *            the content for which to extract the binary data
 	 * @return an array of bytes
 	 */
+	@Override
 	public byte[] getBinaryData(Content content) {
 		logger.debug("getBinaryData( Content content=" + content + ") - end - return value=" + null);
 
@@ -171,6 +172,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * 
 	 * @see com.iqser.plugin.ContentProvider#destroy()
 	 */
+	@Override
 	public void destroy() {
 		// Nothing to do
 	}
@@ -311,6 +313,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * 
 	 * @return a collection of String actions
 	 */
+	@Override
 	public Collection getActions(Content content) {
 		String[] actions = new String[] { "delete", "save" };
 		return Arrays.asList(actions);
@@ -786,12 +789,10 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		}
 	}
 
-
 	@Override
-	public void performAction(String arg0, Hashtable<String, String> arg1,
-			Content arg2) {
+	public void performAction(String arg0, Collection<Parameter> arg1, Content arg2) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
