@@ -18,45 +18,9 @@
 	</classname>
 
 	<params>
-		<param name="WEBSERVICES_REPOSITORY_SERVICE" type="String"
+		<param name="ATOMPUB" type="String"
 			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_ACL_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_DISCOVERY_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_MULTIFILING_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_NAVIGATION_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_OBJECT_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_POLICY_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_RELATIONSHIP_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_REPOSITORY_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
-		</param>
-		<param name="WEBSERVICES_VERSIONING_SERVICE" type="String"
-			optional="false">
-			URL to the WSDL.
+			AtomPub URL
 		</param>
 		<param name="AUTHENTICATION_PROVIDER_CLASS" type="String"
 			optional="false">
