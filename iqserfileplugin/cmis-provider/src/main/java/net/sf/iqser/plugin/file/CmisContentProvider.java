@@ -61,6 +61,7 @@ import com.iqser.core.plugin.provider.AbstractContentProvider;
  * http://cmis/repositoryName/cmis:folder#10
  * 
  * @author robert.baban
+ * @modified sebastian.danninger
  * 
  */
 public class CmisContentProvider extends AbstractContentProvider {
@@ -146,29 +147,14 @@ public class CmisContentProvider extends AbstractContentProvider {
 		// User credentials
 		cmisParameters.put(SessionParameter.USER, initParams.getProperty("USERNAME"));
 		cmisParameters.put(SessionParameter.PASSWORD, initParams.getProperty("PASSWORD"));
-
-		// CMIS WebService Urls
-		cmisParameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,
-				initParams.getProperty("WEBSERVICES_REPOSITORY_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_ACL_SERVICE, initParams.getProperty("WEBSERVICES_ACL_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE,
-				initParams.getProperty("WEBSERVICES_DISCOVERY_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE,
-				initParams.getProperty("WEBSERVICES_MULTIFILING_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE,
-				initParams.getProperty("WEBSERVICES_NAVIGATION_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE,
-				initParams.getProperty("WEBSERVICES_OBJECT_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_POLICY_SERVICE,
-				initParams.getProperty("WEBSERVICES_POLICY_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE,
-				initParams.getProperty("WEBSERVICES_RELATIONSHIP_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,
-				initParams.getProperty("WEBSERVICES_REPOSITORY_SERVICE"));
-		cmisParameters.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE,
-				initParams.getProperty("WEBSERVICES_VERSIONING_SERVICE"));
+		
 		// bind to webservcie
-		cmisParameters.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
+		cmisParameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+
+		
+		// CMIS Atompub Url
+		cmisParameters.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
+		
 
 		// authentication - Standard or NTLM
 		String auth = initParams.getProperty("AUTHENTICATION_PROVIDER_CLASS");
