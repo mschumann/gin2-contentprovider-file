@@ -124,28 +124,12 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	private HashMap<String, String> createCMISProperties(String user, String password) {
 		HashMap<String, String> cmisParams = new HashMap<String, String>();
 
-		// CMIS WebService Urls
-		cmisParams.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,
-				initParams.getProperty("WEBSERVICES_REPOSITORY_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_ACL_SERVICE, initParams.getProperty("WEBSERVICES_ACL_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_DISCOVERY_SERVICE,
-				initParams.getProperty("WEBSERVICES_DISCOVERY_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_MULTIFILING_SERVICE,
-				initParams.getProperty("WEBSERVICES_MULTIFILING_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_NAVIGATION_SERVICE,
-				initParams.getProperty("WEBSERVICES_NAVIGATION_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_OBJECT_SERVICE,
-				initParams.getProperty("WEBSERVICES_OBJECT_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_POLICY_SERVICE,
-				initParams.getProperty("WEBSERVICES_POLICY_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_RELATIONSHIP_SERVICE,
-				initParams.getProperty("WEBSERVICES_RELATIONSHIP_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_REPOSITORY_SERVICE,
-				initParams.getProperty("WEBSERVICES_REPOSITORY_SERVICE"));
-		cmisParams.put(SessionParameter.WEBSERVICES_VERSIONING_SERVICE,
-				initParams.getProperty("WEBSERVICES_VERSIONING_SERVICE"));
-		// bind to webservcie
-		cmisParams.put(SessionParameter.BINDING_TYPE, BindingType.WEBSERVICES.value());
+		// bind to Atompub
+		cmisParams.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+
+		
+		// CMIS Atompub Url
+		cmisParams.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
 
 		// authentication - Standard or NTLM
 		String auth = initParams.getProperty("AUTHENTICATION_PROVIDER_CLASS");

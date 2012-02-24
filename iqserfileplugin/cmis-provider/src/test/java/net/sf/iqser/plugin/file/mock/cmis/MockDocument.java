@@ -409,4 +409,12 @@ public class MockDocument implements Document, CmisObject {
 		return null;
 	}
 
+    public FileableCmisObject move(ObjectId oi, ObjectId oi1, OperationContext oc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<Folder> getParents(OperationContext oc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

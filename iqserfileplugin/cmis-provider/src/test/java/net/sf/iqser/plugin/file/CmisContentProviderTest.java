@@ -1,8 +1,10 @@
 package net.sf.iqser.plugin.file;
 
+import com.iqser.core.exception.IQserException;
+import com.iqser.core.model.Attribute;
+import com.iqser.core.model.Content;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -10,15 +12,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
-
 import junit.framework.TestCase;
-import net.sf.iqser.plugin.file.mock.MockAnalyzerTaskStarter;
-import net.sf.iqser.plugin.file.mock.MockContentProviderFacade;
 import net.sf.iqser.plugin.file.mock.MockRepository;
-import net.sf.iqser.plugin.file.mock.TestServiceLocator;
 import net.sf.iqser.plugin.file.mock.cmis.MockDocument;
 import net.sf.iqser.plugin.file.mock.cmis.MockFolder;
-
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Property;
 import org.apache.chemistry.opencmis.client.api.Repository;
@@ -31,11 +28,6 @@ import org.apache.chemistry.opencmis.commons.impl.dataobjects.ContentStreamImpl;
 import org.apache.chemistry.opencmis.commons.impl.dataobjects.PropertyStringDefinitionImpl;
 import org.apache.log4j.PropertyConfigurator;
 import org.easymock.EasyMock;
-
-import com.iqser.core.config.Configuration;
-import com.iqser.core.exception.IQserException;
-import com.iqser.core.model.Attribute;
-import com.iqser.core.model.Content;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class CmisContentProviderTest extends TestCase {
@@ -374,19 +366,10 @@ public class CmisContentProviderTest extends TestCase {
 	public void testInit(){
 		Properties initParams = new Properties();
 		initParams.put("USERNAME","username");
-		initParams.put("PASSWORD","password");			
-		String sharepointWS = "http://mySharepointServer/_vti_bin/cmissoapwsdl.aspx?wsdl";		
-		// CMIS WebService Urls
-		initParams.put("WEBSERVICES_REPOSITORY_SERVICE",sharepointWS); 
-		initParams.put("WEBSERVICES_ACL_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_DISCOVERY_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_MULTIFILING_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_NAVIGATION_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_OBJECT_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_POLICY_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_RELATIONSHIP_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_REPOSITORY_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_VERSIONING_SERVICE",sharepointWS);
+		initParams.put("PASSWORD","password");
+		String atompubUrl = "http://alfresco/alfresco/service/cmis";		
+		// CMIS Atompub Url
+		initParams.put("ATOMPUB",atompubUrl); 
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS","BASIC");
 
@@ -458,9 +441,22 @@ public class CmisContentProviderTest extends TestCase {
 	
 	public void testKeyAttributes(){
 
-		Properties prop = new Properties();
-		prop.setProperty("KEY-ATTRIBUTES", "[myProp]");
-		ccp.setInitParams(prop);
+		/*Properties prop = new Properties();
+		prop.setProperty("KEY-ATTRIBUTES", "[myProp]");*/
+                
+                Properties initParams = new Properties();
+		initParams.put("USERNAME","username");
+		initParams.put("PASSWORD","password");
+		String atompubUrl = "http://alfresco/alfresco/service/cmis";		
+		// CMIS Atompub Url
+		initParams.put("ATOMPUB",atompubUrl); 
+
+		initParams.put("AUTHENTICATION_PROVIDER_CLASS","BASIC");
+
+		initParams.put("ATTRIBUTE-MAPPINGS","[cmis:name=CmisName][Title=CmisTitle]");
+		initParams.put("KEY-ATTRIBUTES", "[myProp]");
+		
+                ccp.setInitParams(initParams);
 		try{
 			ccp.init();
 			fail();
@@ -503,9 +499,19 @@ public class CmisContentProviderTest extends TestCase {
 	
 	public void testAttributesMappings(){
 
-		Properties prop = new Properties();
-		prop.setProperty("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");
-		ccp.setInitParams(prop);
+		/*Properties prop = new Properties();
+		prop.setProperty("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");*/
+            
+                Properties initParams = new Properties();
+		initParams.put("USERNAME","username");
+		initParams.put("PASSWORD","password");
+		String atompubUrl = "http://alfresco/alfresco/service/cmis";		
+		// CMIS Atompub Url
+		initParams.put("ATOMPUB",atompubUrl); 
+
+		initParams.put("AUTHENTICATION_PROVIDER_CLASS","BASIC");
+                initParams.put("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");
+		ccp.setInitParams(initParams);
 		try{
 			ccp.init();
 			fail();
@@ -551,9 +557,19 @@ public class CmisContentProviderTest extends TestCase {
 	
 	public void testContentTypeMappings(){
 
-		Properties prop = new Properties();
-		prop.setProperty("CONTENT-TYPE-MAPPINGS", "[CMIS_DOCUMENT=IQserDocument]");
-		ccp.setInitParams(prop);
+		/*Properties prop = new Properties();
+		prop.setProperty("CONTENT-TYPE-MAPPINGS", "[CMIS_DOCUMENT=IQserDocument]");*/
+            
+                Properties initParams = new Properties();
+		initParams.put("USERNAME","username");
+		initParams.put("PASSWORD","password");
+		String atompubUrl = "http://alfresco/alfresco/service/cmis";		
+		// CMIS Atompub Url
+		initParams.put("ATOMPUB",atompubUrl); 
+
+		initParams.put("AUTHENTICATION_PROVIDER_CLASS","BASIC");
+                initParams.put("CONTENT-TYPE-MAPPINGS", "[CMIS_DOCUMENT=IQserDocument]");
+		ccp.setInitParams(initParams);
 		try{
 			ccp.init();
 			fail();

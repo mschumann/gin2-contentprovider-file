@@ -362,4 +362,16 @@ public class MockFolder implements Folder, CmisObject {
 		return false;
 	}
 
+    public FileableCmisObject move(ObjectId oi, ObjectId oi1, OperationContext oc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public List<Folder> getParents(OperationContext oc) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public String getParentId() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
 }

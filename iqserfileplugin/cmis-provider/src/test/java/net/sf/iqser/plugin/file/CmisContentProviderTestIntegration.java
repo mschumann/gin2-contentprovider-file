@@ -37,19 +37,9 @@ public class CmisContentProviderTestIntegration extends TestCase {
 		// User credentials
 		initParams.put("USERNAME","robert.baban");
 		initParams.put("PASSWORD","#EDCXSW@1qaz");			
-		String sharepointWS = "http://win2008:8778/_vti_bin/cmissoapwsdl.aspx?wsdl";
-		
-		// CMIS WebService Urls
-		initParams.put("WEBSERVICES_REPOSITORY_SERVICE",sharepointWS); 
-		initParams.put("WEBSERVICES_ACL_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_DISCOVERY_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_MULTIFILING_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_NAVIGATION_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_OBJECT_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_POLICY_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_RELATIONSHIP_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_REPOSITORY_SERVICE",sharepointWS);
-		initParams.put("WEBSERVICES_VERSIONING_SERVICE",sharepointWS);
+		String atompubUrl = "http://alfresco/alfresco/service/cmis";		
+		// CMIS Atompub Url
+		initParams.put("ATOMPUB",atompubUrl); 
 		//authentication - Standard or NTLM
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS","NTLM");
 		//repository

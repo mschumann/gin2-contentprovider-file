@@ -148,7 +148,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		cmisParameters.put(SessionParameter.USER, initParams.getProperty("USERNAME"));
 		cmisParameters.put(SessionParameter.PASSWORD, initParams.getProperty("PASSWORD"));
 		
-		// bind to webservcie
+		// bind to Atompub
 		cmisParameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
 		
