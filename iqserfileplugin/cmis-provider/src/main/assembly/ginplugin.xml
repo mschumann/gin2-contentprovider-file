@@ -23,7 +23,7 @@
 			AtomPub URL
 		</param>
 		<param name="AUTHENTICATION_PROVIDER_CLASS" type="String"
-			optional="false">
+			optional="true">
 			"STANDARD" or "NTLM"
 		</param>
 		<param name="USERNAME" type="String"
@@ -35,7 +35,7 @@
 			The password to connect to the repository.
 		</param>
 		<param name="REPOSITORY" type="String"
-			optional="false">
+			optional="true">
 			Repositories (in brackets) that will be synchronized;
 			e.g. [MyRepo1][MyRepo2]
 		</param>
