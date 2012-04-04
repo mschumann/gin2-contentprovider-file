@@ -33,7 +33,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.iqser.core.event.Event;
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Content;
@@ -476,7 +475,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * 
 	 * @return a collection of string representing the urls of the files
 	 */
-	@Override
 	public Collection getContentUrls() {
 
 		Properties params = getInitParams();
@@ -580,18 +578,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		}
 
 		return keyAttributesList;
-	}
-
-	/**
-	 * nothing to do here.
-	 * 
-	 * @param arg0
-	 *            the event
-	 */
-	@Override
-	public void onChangeEvent(Event arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**

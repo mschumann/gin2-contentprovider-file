@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +39,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
-import com.iqser.core.event.Event;
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Attribute;
@@ -507,29 +505,6 @@ public class CmisContentProvider extends AbstractContentProvider {
 	@Override
 	public Content getContent(InputStream inputStream) {
 		throw new RuntimeException("NOT IMPLEMENTED");
-	}
-
-	/**
-	 * Use doSynchronization() and doHousekeeping() instead.
-	 * 
-	 * @return a collection of urls
-	 */
-	@SuppressWarnings("rawtypes")
-	@Override
-	@Deprecated
-	public Collection getContentUrls() {
-		return Collections.EMPTY_LIST;
-	}
-
-	/**
-	 * Use doSynchronization() and doHousekeeping() instead.
-	 * 
-	 * @param event
-	 *            - an event
-	 */
-	@Override
-	@Deprecated
-	public void onChangeEvent(Event event) {
 	}
 
 	/**
