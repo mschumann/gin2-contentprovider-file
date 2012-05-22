@@ -149,7 +149,7 @@ public class FileScanner {
 		ArrayList list = new ArrayList();
 		list.add(parent.getAbsolutePath());
 
-		if ((parent != null) && parent.isDirectory()) {
+		if (parent != null && parent.isDirectory()) {
 			File[] subs = parent.listFiles(pathFilter);
 
 			if (subs != null) {

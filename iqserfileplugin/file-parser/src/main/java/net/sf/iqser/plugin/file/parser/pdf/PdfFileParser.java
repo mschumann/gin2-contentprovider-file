@@ -10,11 +10,12 @@ import net.sf.iqser.plugin.file.parser.FileParserUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.pdfbox.cos.COSDocument;
-import org.pdfbox.pdfparser.PDFParser;
-import org.pdfbox.pdmodel.PDDocument;
-import org.pdfbox.pdmodel.PDDocumentInformation;
-import org.pdfbox.util.PDFTextStripper;
+import org.apache.pdfbox.cos.COSDocument;
+import org.apache.pdfbox.io.RandomAccessBuffer;
+import org.apache.pdfbox.pdfparser.PDFParser;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+import org.apache.pdfbox.util.PDFTextStripper;
 
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
@@ -91,15 +92,16 @@ public class PdfFileParser implements FileParser {
 		PDFParser parser = null;
 		PDDocument doc = null;
 
-		parser = new PDFParser(is);
+		parser = new PDFParser(is, new RandomAccessBuffer(), true);
 		parser.parse();
 
 		COSDocument cosdoc = parser.getDocument();
 		doc = new PDDocument(cosdoc);
 
-		if ((doc != null) && (!doc.isEncrypted())) {
+		if (doc != null && !doc.isEncrypted()) {
 			getDocumentInformation(doc, content);
 			content.setFulltext(FileParserUtils.cleanUpText(extractText(cosdoc)));
+			System.out.println("FullText:\n" + FileParserUtils.cleanUpText(extractText(cosdoc)));
 		}
 		cosdoc.close();
 		doc.close();
@@ -114,7 +116,7 @@ public class PdfFileParser implements FileParser {
 	 */
 	private void getDocumentInformation(PDDocument doc, Content content) {
 		PDDocumentInformation docInfo = doc.getDocumentInformation();
-		if ((docInfo != null) && (!doc.isEncrypted())) {
+		if (docInfo != null && !doc.isEncrypted()) {
 			if (!StringUtils.isEmpty(docInfo.getAuthor())) {
 				addOrUpdateAttribute(content, new Attribute("AUTHOR", docInfo.getAuthor(),
 						Attribute.ATTRIBUTE_TYPE_TEXT, true));

@@ -113,7 +113,7 @@ public class AcceptedPathFilter implements FileFilter {
 	public void addAcceptedPath(String path) {
 		logger.debug("addAcceptedPath(String path=" + path + ") - start");
 
-		if ((path != null) && !path.equals("")) {
+		if (path != null && !path.equals("")) {
 			acceptedPath.add(path);
 		}
 
@@ -148,7 +148,7 @@ public class AcceptedPathFilter implements FileFilter {
 	public void addDeniedPath(String path) {
 		logger.debug("addDeniedPath(String path=" + path + ") - start");
 
-		if ((path != null) && !path.equals("")) {
+		if (path != null && !path.equals("")) {
 			deniedPath.add(path);
 		}
 

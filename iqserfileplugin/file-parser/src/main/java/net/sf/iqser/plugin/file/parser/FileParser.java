@@ -23,7 +23,6 @@ public interface FileParser {
      *             Throw this Exception if the {@link InputStream} cannot be
      *             parsed.
      */
-    public Content getContent(String fileName, InputStream inputStream)
+    Content getContent(String fileName, InputStream inputStream)
 	    throws FileParserException;
-
 }
