@@ -11,7 +11,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.pdfbox.cos.COSDocument;
-import org.apache.pdfbox.io.RandomAccessBuffer;
 import org.apache.pdfbox.pdfparser.PDFParser;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -92,7 +91,8 @@ public class PdfFileParser implements FileParser {
 		PDFParser parser = null;
 		PDDocument doc = null;
 
-		parser = new PDFParser(is, new RandomAccessBuffer(), true);
+		//parser = new PDFParser(is, new RandomAccessBuffer(), true);
+		parser = new PDFParser(is);
 		parser.parse();
 
 		COSDocument cosdoc = parser.getDocument();
