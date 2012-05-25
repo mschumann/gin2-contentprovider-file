@@ -101,7 +101,6 @@ public class PdfFileParser implements FileParser {
 		if (doc != null && !doc.isEncrypted()) {
 			getDocumentInformation(doc, content);
 			content.setFulltext(FileParserUtils.cleanUpText(extractText(cosdoc)));
-			System.out.println("FullText:\n" + FileParserUtils.cleanUpText(extractText(cosdoc)));
 		}
 		cosdoc.close();
 		doc.close();
