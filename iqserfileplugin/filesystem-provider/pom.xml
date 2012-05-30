@@ -56,14 +56,34 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<copy
-									file="${project.build.directory}/${project.build.finalName}.zip"
-									tofile="${project.build.directory}/${project.build.finalName}.gin" />
+								<copy file="${project.build.directory}/${project.build.finalName}.zip" tofile="${project.build.directory}/${project.build.finalName}.gin" />
 							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>abc</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-artifact</goal>
+						</goals>
+						<configuration>
+							<artifacts>
+								<artifact>
+									<file>${project.build.directory}/${project.build.finalName}.gin</file>
+									<type>gin</type>
+								</artifact>
+							</artifacts>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
