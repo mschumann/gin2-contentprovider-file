@@ -53,7 +53,7 @@ public class CmisContentProviderTest extends TestCase {
 		ccp = new CmisContentProvider();
 
 		ccp.setType("CMISObject");
-		ccp.setId("net.sf.iqser.plugin.file");
+		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.getRepositories().add(mockCmisRepo);
 
 	}
@@ -244,7 +244,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
 		assertEquals("CMIS_DOCUMENT", content.getType());
-		assertEquals(ccp.getId(), content.getProvider());
+		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 
@@ -286,7 +286,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
 		assertEquals(CmisContentProvider.CMIS_FOLDER_TYPE, content.getType());
-		assertEquals(ccp.getId(), content.getProvider());
+		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 
@@ -328,7 +328,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
 		assertEquals("CMIS_DOCUMENT", content.getType());
-		assertEquals(ccp.getId(), content.getProvider());
+		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 
@@ -472,7 +472,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
 		assertEquals("CMIS_DOCUMENT", content.getType());
-		assertEquals(ccp.getId(), content.getProvider());
+		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 
@@ -529,7 +529,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
 		assertEquals("CMIS_DOCUMENT", content.getType());
-		assertEquals(ccp.getId(), content.getProvider());
+		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 
@@ -590,7 +590,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
 		assertEquals("IQserDocument", content.getType());
-		assertEquals(ccp.getId(), content.getProvider());
+		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 

@@ -47,7 +47,7 @@ public class CmisContentProviderTestIntegration extends TestCase {
 		
 		ccp.setInitParams(initParams);
 		ccp.setType("CMISObject");
-		ccp.setId("net.sf.iqser.plugin.file");
+		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.setInitParams(initParams);
 		ccp.init();	
 		

@@ -404,7 +404,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 				FileParser parser = parserFactory.getFileParser(contentUrl);
 
 				content = parser.getContent(contentUrl, inputStream);
-				content.setProvider(this.getId());
+				content.setProvider(this.getName());
 				content.setContentUrl(contentUrl);
 
 				File file = getFile(contentUrl);
@@ -452,7 +452,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 				if (parser != null) {
 					content = parser.getContent(null, new ByteArrayInputStream(bytes));
 
-					content.setProvider(this.getId());
+					content.setProvider(this.getName());
 
 					// update the attributes with the ones from the
 					// initialization parameters

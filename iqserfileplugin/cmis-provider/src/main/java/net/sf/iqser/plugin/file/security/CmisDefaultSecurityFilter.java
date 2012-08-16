@@ -336,9 +336,9 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	}
 
 	@Override
-	public String getId() {
+	public int getId() {
 		// TODO Auto-generated method stub
-		return null;
+		return (Integer) null;
 	}
 
 	@Override
@@ -371,11 +371,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 	}
 
-	@Override
-	public void setId(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
+	
 
 	@Override
 	public void setInitParams(Properties arg0) {
@@ -399,5 +395,14 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	public void setVersion(String arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	/* (non-Javadoc)
+	 * @see com.iqser.core.plugin.Plugin#setId(int)
+	 */
+	@Override
+	public void setId(int arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -48,7 +48,7 @@ public class CmisContentProviderPerformActionTest extends TestCase {
 		ccp = new CmisContentProvider();			
 			
 		ccp.setType("CMISObject");
-		ccp.setId("net.sf.iqser.plugin.file");
+		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.getRepositories().add(mockCmisRepo);
 		
 	}
@@ -103,7 +103,7 @@ public class CmisContentProviderPerformActionTest extends TestCase {
 	
 	private Content createDummyContentFromUrl(String contentUrl){
 		Content content = new Content();
-		content.setProvider(ccp.getId());
+		content.setProvider(ccp.getName());
 		content.setType("CMIS_DOCUMENT");
 		content.setContentUrl(contentUrl);
 		

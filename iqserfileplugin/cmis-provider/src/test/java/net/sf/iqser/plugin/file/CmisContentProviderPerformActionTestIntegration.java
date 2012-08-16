@@ -64,7 +64,7 @@ public class CmisContentProviderPerformActionTestIntegration extends TestCase {
 		
 		ccp.setInitParams(initParams);
 		ccp.setType("CMISObject");
-		ccp.setId("net.sf.iqser.plugin.file");
+		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.setInitParams(initParams);
 		ccp.init();
 		
@@ -125,7 +125,7 @@ public class CmisContentProviderPerformActionTestIntegration extends TestCase {
 	
 	private Content createDummyContentFromUrl(String contentUrl){
 		Content content = new Content();
-		content.setProvider(ccp.getId());
+		content.setProvider(ccp.getName());
 		content.setType("CMIS_DOCUMENT");
 		content.setContentUrl(contentUrl);
 		

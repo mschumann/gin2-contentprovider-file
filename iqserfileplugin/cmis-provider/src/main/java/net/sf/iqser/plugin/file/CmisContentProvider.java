@@ -452,7 +452,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		}
 
 		content.setContentUrl(contentUrl);
-		content.setProvider(this.getId());
+		content.setProvider(this.getName());
 
 		// change attribute name according to mappings
 		changeAttributeName(content);
@@ -691,7 +691,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	protected Content createDocumentContent(Repository repository, Document doc) {
 		Content content = new Content();
 		content.setContentUrl(createURL(repository.getName(), CMIS_DOCUMENT_TYPE, doc.getId()));
-		content.setProvider(this.getId());
+		content.setProvider(this.getName());
 		content.setType(CMIS_DOCUMENT_TYPE);
 
 		handleProperties(doc, content);
@@ -782,7 +782,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	protected Content createFolderContent(Repository repository, Folder folder, Folder parentFolder) {
 		Content content = new Content();
 		content.setContentUrl(createURL(repository.getName(), CMIS_FOLDER_TYPE, folder.getId()));
-		content.setProvider(this.getId());
+		content.setProvider(this.getName());
 		content.setType(CMIS_FOLDER_TYPE);
 
 		handleProperties(folder, content);
