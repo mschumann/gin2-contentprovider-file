@@ -1,0 +1,28 @@
+ -----
+Getting Started
+ -----
+
+Getting Started
+
+ This guide will help you start using the artifacts in your own project.
+
+ Reminder: For accessing the iQser repository, you need a free developer account. Use the contact form on the {{{http://www.iqser.com}iQser Website}}. or send an email to iQser Support.
+ 
+* Define Maven Repositories
+
+ Add the repository definitions to your POM:
+ 
+%{include|source=src/site/apt/snippets/pom_snippet.xml|snippet=#repo|verbatim=true|show-gutter=false|highlight-theme=eclipse}
+
+* File Content Provider
+
+ To use the File Content Provider, add the following dependecy to your POM: 
+ 
+%{include|source=src/site/apt/snippets/pom_snippet.xml|snippet=#file_cp_dep|verbatim=true|show-gutter=false|highlight-theme=eclipse}
+
+
+* File Parsers
+
+ If you only want to use the file-parser library, add the following dependecy to your POM: 
+
+%{include|source=src/site/apt/snippets/pom_snippet.xml|snippet=#file_parser_dep|verbatim=true|show-gutter=false|highlight-theme=eclipse}

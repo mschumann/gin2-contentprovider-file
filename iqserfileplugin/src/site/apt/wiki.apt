@@ -1,0 +1,46 @@
+ -----
+ Wiki
+ -----
+
+Wiki
+
+* Welcome to the File Content Provider for iQser GIN project Wiki
+
+  The intention of this project is to provide Content Provider plugins for common file repositories (like Filesystem, MS Sharepoint and other common DMS) for the iQser GIN Platform.
+  
+  The iQser GIN (Global Information Network) Platform is an enterprise class, highly scalable semantic middleware, whose features incorporate data integration, analysis, process control and information retrieval including the semantic search.
+
+  The iQser GIN Platform is designed as an intermediate layer (semantic layer) between data sources (content providers) and applications (consumers). 
+  The semantic layer comprises the iQser core and several light-weight frameworks that allow the iQser GIN Platform to be integrated seamlessly into the existing IT infrastructure and adapted to the organization's own requirements. {{{http://www.iqser.com/}Learn more}}...
+ 
+* Supported Repositories
+
+  Currently the follwing file repositories are supported:
+
+   * Filesystem (inkl. ZIP archives)
+   
+   * Under Development: {{{http://www.oasis-open.org/committees/cmis/}CMIS}} Enterprise Content Management Systems (like MS Sharepoint) 
+
+   Further repositories like JCR, FTP, Webdav, etc. are planned.
+ 
+* Getting Started
+
+  Follow this {{{./gettingstarted.html}Getting Started Guide}} to use the artifacts in your project.
+  
+* Documentation
+
+  * {{{./contentProviderConfig.html}File Content Provider Configuration}}
+  
+  * {{{http://iqserfileplugin.sourceforge.net/}Project Homepage}}
+  
+  * {{{./apidocs/index.html/}API Javadoc}} 
+
+
+* License
+
+  The software is provided 'as is' under the business friendly {{{http://iqserliferay.sourceforge.net/license.html}Apache 2.0 License}}.
+ 
+* Contribution
+
+  We are always gateful for helping hands. If you like to join the project {{{http://sourceforge.net/project/memberlist.php?group_id=403943}contact}}  us. 
+ 
