@@ -48,14 +48,12 @@ import com.iqser.core.plugin.provider.AbstractContentProvider;
 
 /**
  * 
- * This module contains a ContentProvider implementation to connect CMIS ECM to
- * the iQser GIN Platform.
+ * This module contains a ContentProvider implementation to connect CMIS ECM to the iQser GIN Platform.
  * 
  * The content URL for a CMIS object is: http://cmis/repositoryName/basicType#ID
  * 
- * where - repositoryName is the name of the CMIS repository - basicType is one
- * of cmis:folder or cmis:document - ID - is the CMIS objectID For example:
- * http://cmis/repositoryName/cmis:document#14-512,
+ * where - repositoryName is the name of the CMIS repository - basicType is one of cmis:folder or cmis:document - ID -
+ * is the CMIS objectID For example: http://cmis/repositoryName/cmis:document#14-512,
  * http://cmis/repositoryName/cmis:folder#10
  * 
  * @author robert.baban
@@ -145,14 +143,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 		// User credentials
 		cmisParameters.put(SessionParameter.USER, initParams.getProperty("USERNAME"));
 		cmisParameters.put(SessionParameter.PASSWORD, initParams.getProperty("PASSWORD"));
-		
+
 		// bind to Atompub
 		cmisParameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
-		
 		// CMIS Atompub Url
 		cmisParameters.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
-		
 
 		// authentication - Standard or NTLM
 		String auth = initParams.getProperty("AUTHENTICATION_PROVIDER_CLASS");
@@ -201,8 +197,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * If content type is CMIS_DOCUMENT will return the binary content of the
-	 * document, if the document has associated a binary content.
+	 * If content type is CMIS_DOCUMENT will return the binary content of the document, if the document has associated a
+	 * binary content.
 	 * 
 	 * Otherwise the method will return null
 	 * 
@@ -243,8 +239,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Performs cleaning. Deletes the content objects from the object graph if
-	 * the corresponding objects are no longer on the CMS system.
+	 * Performs cleaning. Deletes the content objects from the object graph if the corresponding objects are no longer
+	 * on the CMS system.
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -392,8 +388,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Returns the available actions for the given content. The content URL has
-	 * the following pattern: http://cmis/repositoryName/basicType#ID
+	 * Returns the available actions for the given content. The content URL has the following pattern:
+	 * http://cmis/repositoryName/basicType#ID
 	 * 
 	 * @param content
 	 *            the content
@@ -414,15 +410,15 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Creates a content object based on a content URL. The content URL has the
-	 * following pattern: http://cmis/repositoryName/basicType#ID
+	 * Creates a content object based on a content URL. The content URL has the following pattern:
+	 * http://cmis/repositoryName/basicType#ID
 	 * 
 	 * @param contentUrl
 	 *            content URL
 	 * @return a content object
 	 */
 	@Override
-	public Content getContent(String contentUrl) {
+	public Content createContent(String contentUrl) {
 		Repository repository = getRepository(contentUrl);
 		String objectId = getObjectID(contentUrl);
 
@@ -503,7 +499,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * @return a content object
 	 */
 	@Override
-	public Content getContent(InputStream inputStream) {
+	public Content createContent(InputStream inputStream) {
 		throw new RuntimeException("NOT IMPLEMENTED");
 	}
 

@@ -82,9 +82,8 @@ public class FileParserFactory {
 	}
 
 	/**
-	 * Return a conctrete {@link FileParser} implementation. If there is no
-	 * {@link FileParser} defined in the mappings, the {@link DefaultFileParser}
-	 * is returned. You'll never get a null from this method.
+	 * Return a conctrete {@link FileParser} implementation. If there is no {@link FileParser} defined in the mappings,
+	 * the {@link DefaultFileParser} is returned. You'll never get a null from this method.
 	 * 
 	 * @param fileName
 	 *            The name of the file including extention (e.q. sample.txt).
@@ -94,8 +93,7 @@ public class FileParserFactory {
 		FileParser parser = null;
 
 		// Get FileParser from mappings
-		String mappingClassname = mappings
-				.getProperty(getMappingName(fileName));
+		String mappingClassname = mappings.getProperty(getMappingName(fileName));
 
 		// If there is no FileParser defined in mapping use the
 		// DefaultFileParser
@@ -104,12 +102,10 @@ public class FileParserFactory {
 		} else {
 
 			try {
-				logger.debug("Found mapping" + mappingClassname + " for file "
-						+ fileName);
+				logger.debug("Found mapping" + mappingClassname + " for file " + fileName);
 				parser = createFileParserInstance(mappingClassname);
 			} catch (Exception e) {
-				logger.warn("Instance creation faild for class "
-						+ mappingClassname
+				logger.warn("Instance creation failed for class " + mappingClassname
 						+ ". Using DefaultFileParser as fallback.");
 				parser = new DefaultFileParser();
 			}
@@ -119,7 +115,9 @@ public class FileParserFactory {
 
 	/**
 	 * method that returns a file parser from an input stream.
-	 * @param is inputstream of the file.
+	 * 
+	 * @param is
+	 *            inputstream of the file.
 	 * @return parser the selected file parser.
 	 */
 	public FileParser getFileParser(InputStream is) {
@@ -127,42 +125,39 @@ public class FileParserFactory {
 		FileParser parser = null;
 		String mappingClassname = null;
 		try {
-			
-			//detect mime type from input stream
-			Tika tika = new Tika();				
+
+			// detect mime type from input stream
+			Tika tika = new Tika();
 			Metadata metadata = new Metadata();
 			Reader r = tika.parse(is, metadata);
-			r.close();		
+			r.close();
 			String contentType = metadata.get("Content-Type");
 			logger.info("content-type=" + contentType);
-			
+
 			mappingClassname = mappings.getProperty(getPropMappingName(contentType));
-			if (mappingClassname != null){
+			if (mappingClassname != null) {
 				parser = createFileParserInstance(mappingClassname);
-			}else{
+			} else {
 				logger.warn("No parser defined for mimetype " + contentType);
-				parser = new TikaFileParser();				
+				parser = new TikaFileParser();
 			}
 		} catch (IOException e) {
 			logger.warn("Error reading input stream. Using TikaFileParser as fallback.");
 			parser = new TikaFileParser();
 		} catch (Exception e) {
-			logger.warn("Instance creation faild for class "
-					+ mappingClassname
-					+ ". Using TikaFileParser as fallback.");
+			logger.warn("Instance creation faild for class " + mappingClassname + ". Using TikaFileParser as fallback.");
 			parser = new TikaFileParser();
 		}
 		return parser;
 
 	}
 
-	private FileParser createFileParserInstance(String className)
-			throws InstantiationException, IllegalAccessException,
-			ClassNotFoundException {
+	private FileParser createFileParserInstance(String className) throws InstantiationException,
+			IllegalAccessException, ClassNotFoundException {
 		return (FileParser) Class.forName(className).newInstance();
 	}
 
-	private String getPropMappingName(String mimeType) {		
+	private String getPropMappingName(String mimeType) {
 		return MIME_TYPE_PREFIX + mimeType;
 	}
 

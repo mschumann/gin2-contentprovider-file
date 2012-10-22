@@ -135,7 +135,7 @@ public class CmisContentProviderTest extends TestCase {
 	public void testGetBinaryDataInputStream() {
 		InputStream in = null;
 		try {
-			ccp.getContent(in);
+			ccp.createContent(in);
 			fail();
 		} catch (RuntimeException re) {
 			// success
@@ -236,7 +236,7 @@ public class CmisContentProviderTest extends TestCase {
 		// register behavior
 		EasyMock.replay(mockCmisRepo, mockCmisSession);
 
-		Content content = ccp.getContent(contentUrl);
+		Content content = ccp.createContent(contentUrl);
 
 		// verify
 		EasyMock.verify();
@@ -278,7 +278,7 @@ public class CmisContentProviderTest extends TestCase {
 		// register behavior
 		EasyMock.replay(mockCmisRepo, mockCmisSession);
 
-		Content content = ccp.getContent(contentUrl);
+		Content content = ccp.createContent(contentUrl);
 
 		// verify
 		EasyMock.verify();
@@ -320,7 +320,7 @@ public class CmisContentProviderTest extends TestCase {
 		// register behavior
 		EasyMock.replay(mockCmisRepo, mockCmisSession);
 
-		Content content = ccp.getContent(contentUrl);
+		Content content = ccp.createContent(contentUrl);
 
 		// verify
 		EasyMock.verify();
@@ -423,8 +423,7 @@ public class CmisContentProviderTest extends TestCase {
 	public void testKeyAttributes() {
 
 		/*
-		 * Properties prop = new Properties();
-		 * prop.setProperty("KEY-ATTRIBUTES", "[myProp]");
+		 * Properties prop = new Properties(); prop.setProperty("KEY-ATTRIBUTES", "[myProp]");
 		 */
 
 		Properties initParams = new Properties();
@@ -464,7 +463,7 @@ public class CmisContentProviderTest extends TestCase {
 		// register behavior
 		EasyMock.replay(mockCmisRepo, mockCmisSession);
 
-		Content content = ccp.getContent(contentUrl);
+		Content content = ccp.createContent(contentUrl);
 
 		// verify
 		EasyMock.verify();
@@ -483,8 +482,7 @@ public class CmisContentProviderTest extends TestCase {
 	public void testAttributesMappings() {
 
 		/*
-		 * Properties prop = new Properties();
-		 * prop.setProperty("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");
+		 * Properties prop = new Properties(); prop.setProperty("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");
 		 */
 
 		Properties initParams = new Properties();
@@ -521,7 +519,7 @@ public class CmisContentProviderTest extends TestCase {
 		// register behavior
 		EasyMock.replay(mockCmisRepo, mockCmisSession);
 
-		Content content = ccp.getContent(contentUrl);
+		Content content = ccp.createContent(contentUrl);
 
 		// verify
 		EasyMock.verify();
@@ -543,8 +541,7 @@ public class CmisContentProviderTest extends TestCase {
 	public void testContentTypeMappings() {
 
 		/*
-		 * Properties prop = new Properties();
-		 * prop.setProperty("CONTENT-TYPE-MAPPINGS",
+		 * Properties prop = new Properties(); prop.setProperty("CONTENT-TYPE-MAPPINGS",
 		 * "[CMIS_DOCUMENT=IQserDocument]");
 		 */
 
@@ -582,7 +579,7 @@ public class CmisContentProviderTest extends TestCase {
 		// register behavior
 		EasyMock.replay(mockCmisRepo, mockCmisSession);
 
-		Content content = ccp.getContent(contentUrl);
+		Content content = ccp.createContent(contentUrl);
 
 		// verify
 		EasyMock.verify();
