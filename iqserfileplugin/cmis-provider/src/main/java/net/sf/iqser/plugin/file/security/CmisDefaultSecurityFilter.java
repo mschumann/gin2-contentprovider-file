@@ -46,11 +46,11 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 	private SessionFactory sessionFactory;
 
-	private Map<String, String> repositoryNameToIdMap;
+	private final Map<String, String> repositoryNameToIdMap;
 
-	private Properties initParams;
+	private final Properties initParams;
 
-	private LinkedHashMap<String, Session> cache;
+	private final LinkedHashMap<String, Session> cache;
 
 	/**
 	 * Creates a security filter. Initialization parameters must be set in the
@@ -89,6 +89,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 	}
 
+	@Override
 	public void init() {
 		try {
 			// load init params from property file
@@ -127,7 +128,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 		// bind to Atompub
 		cmisParams.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
-		
+
 		// CMIS Atompub Url
 		cmisParams.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
 
@@ -290,6 +291,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	 * @throws IQserSecurityException
 	 * @see SecurityFilter
 	 */
+	@Override
 	public boolean canExecuteAction(String user, String password, String action, long contentId)
 			throws IQserSecurityException {
 
@@ -338,7 +340,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	@Override
 	public int getId() {
 		// TODO Auto-generated method stub
-		return (Integer) null;
+		return 0;
 	}
 
 	@Override
@@ -371,7 +373,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 	}
 
-	
+
 
 	@Override
 	public void setInitParams(Properties arg0) {
@@ -403,6 +405,15 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	@Override
 	public void setId(int arg0) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	/**
+	 * @see com.iqser.core.plugin.Plugin#preRemoveInstance()
+	 */
+	@Override
+	public void preRemoveInstance() {
+		// TODO Auto-generated method stub
+
 	}
 }
