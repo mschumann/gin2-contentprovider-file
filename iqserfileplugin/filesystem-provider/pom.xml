@@ -56,12 +56,30 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<copy file="${project.build.directory}/${project.build.finalName}.zip" tofile="${project.build.directory}/${project.build.finalName}.gin" />
+								<copy
+									file="${project.build.directory}/${project.build.finalName}.zip"
+									tofile="${project.build.directory}/${project.build.finalName}.gin" />
 							</target>
 						</configuration>
 						<goals>
 							<goal>run</goal>
 						</goals>
+					</execution>
+					<execution>
+						<id>prepare_ginplugin.xml</id>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<phase>generate-resources</phase>
+						<configuration>
+							<target>
+								<echo message="Preparing ginplugin.xml" />
+								<copy failonerror="true"
+									file="${basedir}/src/main/assembly/ginplugin.xml" tofile="${basedir}/target/generated-resources/ginplugin.xml" />
+								<replace file="${basedir}/target/generated-resources/ginplugin.xml"
+									token="###PROJECT_VERSION###" value="${project.version}" />
+							</target>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

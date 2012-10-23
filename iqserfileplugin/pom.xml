@@ -119,27 +119,6 @@
 		</repository>
 	</repositories>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>iqser_release</id>
