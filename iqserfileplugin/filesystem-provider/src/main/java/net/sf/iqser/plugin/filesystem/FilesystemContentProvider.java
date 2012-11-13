@@ -54,11 +54,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	private static Logger logger = Logger.getLogger(FilesystemContentProvider.class);
 
 	/**
-	 * UID.
-	 */
-	private static final long serialVersionUID = 6781181225882526721L;
-
-	/**
 	 * map for new attribute---for replacing the name of the attributes.
 	 */
 	private final Map<String, String> attributeMappings = new HashMap<String, String>();
@@ -177,8 +172,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * erases the content objects from the object graph if the corresponding
-	 * files are no longer on the file system.
+	 * erases the content objects from the object graph if the corresponding files are no longer on the file system.
 	 */
 	@Override
 	public void doHousekeeping() {
@@ -205,18 +199,15 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * adds or updates the content of the object graph when a file is added or
-	 * modified.
+	 * adds or updates the content of the object graph when a file is added or modified.
 	 */
 	@Override
 	public void doSynchronization() {
 
 		/**
-		 * synchronize file system against the object graph - if a file is new
-		 * INSERT in Object Graph - if a file has been modified ( see file
-		 * LAST_MODIFIED), UPDATE Object Graph - the Content Object from
-		 * ObjectGraph that do not have a coresponding file in the file system
-		 * will be DELETE from the Object Graph
+		 * synchronize file system against the object graph - if a file is new INSERT in Object Graph - if a file has
+		 * been modified ( see file LAST_MODIFIED), UPDATE Object Graph - the Content Object from ObjectGraph that do
+		 * not have a coresponding file in the file system will be DELETE from the Object Graph
 		 */
 
 		// get the object graph content URLs
@@ -239,14 +230,14 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		Collection<String> sourceContentUrls = getContentUrls();
 
 		// handle new files
-		Collection newSourceContentUrls = new ArrayList();
+		Collection<String> newSourceContentUrls = new ArrayList<String>();
 		newSourceContentUrls.addAll(sourceContentUrls);
 		newSourceContentUrls.removeAll(objectGraphContentUrls);
 
 		for (Object contentUrl : newSourceContentUrls) {
 			logger.info("Synch - add conntent " + contentUrl);
 			try {
-				addContent(getContent((String) contentUrl));
+				addContent(createContent((String) contentUrl));
 			} catch (Throwable t) {
 				// Make sure to catch everthing to continue with next Content
 				logger.error("Could not add content.", t);
@@ -272,7 +263,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 							if (lastModified > contentLastModified) {
 								logger.info("Synch - delete update " + contentUrl);
 								try {
-									updateContent(getContent(file.getAbsolutePath()));
+									updateContent(createContent(file.getAbsolutePath()));
 								} catch (Throwable t) {
 									// Make sure to catch everthing to continue
 									// with next Content
@@ -285,7 +276,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 							boolean isModified = zfm.getZipEntry().getTime() > content.getModificationDate();
 							if (isModified) {
 								try {
-									updateContent(getContent(contentUrl));
+									updateContent(createContent(contentUrl));
 								} catch (Throwable t) {
 									// Make sure to catch everthing to continue
 									// with next Content
@@ -313,7 +304,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * @return a collection of String actions
 	 */
 	@Override
-	public Collection getActions(Content content) {
+	public Collection<String> getActions(Content content) {
 		String[] actions = new String[] { "delete", "save" };
 		return Arrays.asList(actions);
 	}
@@ -378,7 +369,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * @return the created content
 	 */
 	@Override
-	public Content getContent(String contentUrl) {
+	public Content createContent(String contentUrl) {
 
 		Content content = null;
 
@@ -433,7 +424,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * @return content the created content
 	 */
 	@Override
-	public Content getContent(InputStream inputStream) {
+	public Content createContent(InputStream inputStream) {
 
 		FileParserFactory parserFactory = FileParserFactory.getInstance();
 
@@ -475,29 +466,29 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * 
 	 * @return a collection of string representing the urls of the files
 	 */
-	public Collection getContentUrls() {
+	public Collection<String> getContentUrls() {
 
 		Properties params = getInitParams();
 		// get the filters from the initialization parameters
 		String filter = (String) params.get("filter-pattern");
-		Collection filterFileTypes = extractConfigAttributes(filter);
+		Collection<String> filterFileTypes = extractConfigAttributes(filter);
 
 		String filterFolderInclude = (String) params.get("filter-folder-include");
-		Collection includedFolders = null;
+		Collection<String> includedFolders = null;
 		if (filterFolderInclude != null)
 			includedFolders = extractConfigAttributes(filterFolderInclude);
 		else
-			includedFolders = Collections.EMPTY_LIST;
+			includedFolders = Collections.emptyList();
 
 		String filterFolderExclude = (String) params.get("filter-folder-exclude");
-		Collection excludedFolders = null;
+		Collection<String> excludedFolders = null;
 		if (filterFolderExclude != null)
 			excludedFolders = extractConfigAttributes(filterFolderExclude);
 		else
-			excludedFolders = Collections.EMPTY_LIST;
+			excludedFolders = Collections.emptyList();
 
 		String folder = (String) params.get("folder");
-		Collection folders = extractConfigAttributes(folder);
+		Collection<String> folders = extractConfigAttributes(folder);
 
 		// create path filter
 		AcceptedPathFilter apf = new AcceptedPathFilter();
@@ -519,7 +510,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		}
 
 		// get all the files that are valid using the filter
-		Collection files = fs.scanFiles(aff);
+		Collection<String> files = fs.scanFiles(aff);
 
 		return files;
 	}
@@ -541,9 +532,10 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			throw new IQserRuntimeException(e);
 		}
 
-		Iterator keys = json.keys();
+		@SuppressWarnings("unchecked")
+		Iterator<String> keys = json.keys();
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			try {
 				String value = (String) json.get(key);
 				attributeMappings.put(key, value);
@@ -566,7 +558,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 *            a string of the form [keyAttr1][keyAttr2]
 	 * @return a collection of the new key attributes
 	 */
-	private Collection extractConfigAttributes(String keyAttributes) {
+	private Collection<String> extractConfigAttributes(String keyAttributes) {
 
 		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
 		String[] keyAttrs = keyAttributes.trim().split(regex);
@@ -581,8 +573,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * perform save or delete action on the object graph and also on the file
-	 * system.
+	 * perform save or delete action on the object graph and also on the file system.
 	 * 
 	 * @param action
 	 *            the type of action which can be delete of save
@@ -604,9 +595,8 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * perform save action on a content object a save action saves the file on
-	 * the file system if it is a text document or a text document in a zip
-	 * file.
+	 * perform save action on a content object a save action saves the file on the file system if it is a text document
+	 * or a text document in a zip file.
 	 * 
 	 * @param content
 	 *            the content that is saved
@@ -652,8 +642,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * deletes a content object from the object graph and also from the file
-	 * system.
+	 * deletes a content object from the object graph and also from the file system.
 	 * 
 	 * @param content
 	 *            the content that is deleted

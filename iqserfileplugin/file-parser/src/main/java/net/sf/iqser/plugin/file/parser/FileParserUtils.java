@@ -1,5 +1,7 @@
 package net.sf.iqser.plugin.file.parser;
 
+import java.io.File;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.util.XMLChar;
 
@@ -27,8 +29,7 @@ public class FileParserUtils {
 	public static final String UNKNOWN_FILE_TYPE = "Unknown" + FILE_TYPE_SUFFIX;
 
 	/**
-	 * Extract the title from the file name.The title of the file is the file
-	 * name without the extention.
+	 * Extract the title from the file name.The title of the file is the file name without the extention.
 	 * 
 	 * @param fileName
 	 *            The file name
@@ -37,7 +38,10 @@ public class FileParserUtils {
 	public static String getFileTitle(String fileName) {
 		String[] nameElements = getNameElements(fileName);
 		if (nameElements != null) {
-			return StringUtils.substringBefore(fileName, "." + nameElements[nameElements.length - 1]);
+			String fileWithoutExtension = StringUtils.substringBefore(fileName, "."
+					+ nameElements[nameElements.length - 1]);
+			return fileWithoutExtension.contains(File.separator) ? StringUtils.substringAfterLast(fileWithoutExtension,
+					File.separator) : fileWithoutExtension;
 		}
 		return null;
 	}
@@ -62,9 +66,8 @@ public class FileParserUtils {
 	 * 
 	 * @param fileName
 	 *            The file name
-	 * @return The file extention + 'Document' (e.q. 'XZY Document' if the file
-	 *         name is 'sample.xzy') or 'Unknown Document' if there is no
-	 *         extention.
+	 * @return The file extention + 'Document' (e.q. 'XZY Document' if the file name is 'sample.xzy') or 'Unknown
+	 *         Document' if there is no extention.
 	 */
 	public static String getContentType(String fileName) {
 		String[] nameElements = getNameElements(fileName);
@@ -75,15 +78,13 @@ public class FileParserUtils {
 	}
 
 	/**
-	 * Cleans up text and removes invalid characters that are not allowed in
-	 * XML. Removing invalid characters is necessary as clients for the iQser
-	 * platform use the SOAP WebService for communication.
+	 * Cleans up text and removes invalid characters that are not allowed in XML. Removing invalid characters is
+	 * necessary as clients for the iQser platform use the SOAP WebService for communication.
 	 * 
 	 * @param text
 	 *            to be cleaned
 	 * 
-	 * @return cleaned text that contains only characters which are allowed in
-	 *         an XML document.
+	 * @return cleaned text that contains only characters which are allowed in an XML document.
 	 */
 	public static String cleanUpText(String text) {
 		StringBuffer validTextBuffer = new StringBuffer();

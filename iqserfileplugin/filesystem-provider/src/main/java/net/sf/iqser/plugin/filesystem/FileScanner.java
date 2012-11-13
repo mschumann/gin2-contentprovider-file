@@ -35,7 +35,7 @@ public class FileScanner {
 	/**
 	 * Folders.
 	 */
-	private List folders;
+	private List<String> folders;
 
 	/**
 	 * Constructor.
@@ -45,14 +45,14 @@ public class FileScanner {
 	 * @param pathFilter
 	 *            A AcceptedPathFilter
 	 */
-	public FileScanner(Collection roots, FileFilter pathFilter) {
-		folders = new ArrayList();
+	public FileScanner(Collection<String> roots, FileFilter pathFilter) {
+		folders = new ArrayList<String>();
 
 		this.pathFilter = pathFilter;
 
 		if (roots != null) {
-			for (Iterator iter = roots.iterator(); iter.hasNext();) {
-				File root = new File((String) iter.next());
+			for (Iterator<String> iter = roots.iterator(); iter.hasNext();) {
+				File root = new File(iter.next());
 				folders.addAll(scanFolder(root));
 			}
 		}
@@ -62,7 +62,7 @@ public class FileScanner {
 	 * Constructor.
 	 */
 	public FileScanner() {
-		folders = new ArrayList();
+		folders = new ArrayList<String>();
 	}
 
 	/**
@@ -73,11 +73,11 @@ public class FileScanner {
 	 * 
 	 * @return A List of Filenames (String). Guaranteed not null.
 	 */
-	public Collection scanFiles(FileFilter filter) {
-		ArrayList list = new ArrayList();
+	public Collection<String> scanFiles(FileFilter filter) {
+		ArrayList<String> list = new ArrayList<String>();
 
-		for (Iterator iter = folders.iterator(); iter.hasNext();) {
-			String s = (String) iter.next();
+		for (Iterator<String> iter = folders.iterator(); iter.hasNext();) {
+			String s = iter.next();
 			File folder = new File(s);
 
 			if (folder.exists()) {
@@ -88,8 +88,7 @@ public class FileScanner {
 					for (int i = 0; i < subs.length; i++) {
 						if (subs[i].getName().toLowerCase().endsWith(".zip")) {
 							try {
-								List zipContent = listZipContent(subs[i],
-										filter);
+								List<String> zipContent = listZipContent(subs[i], filter);
 								list.addAll(zipContent);
 							} catch (ZipException e) {
 								throw new IQserRuntimeException(e);
@@ -106,14 +105,13 @@ public class FileScanner {
 		return list;
 	}
 
-	private List listZipContent(File folder, FileFilter filter)
-			throws ZipException, IOException {
+	private List<String> listZipContent(File folder, FileFilter filter) throws ZipException, IOException {
 
 		ZipFile zipFile = new ZipFile(folder);
 
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
 
-		List zipContent = new ArrayList();
+		List<String> zipContent = new ArrayList<String>();
 
 		while (entries.hasMoreElements()) {
 
@@ -143,10 +141,10 @@ public class FileScanner {
 	 * 
 	 * @return A Collection of Foldernames (String).
 	 */
-	private Collection scanFolder(File parent) {
+	private Collection<String> scanFolder(File parent) {
 		logger.debug("scanFolder(File parent=" + parent + ") - start");
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<String>();
 		list.add(parent.getAbsolutePath());
 
 		if (parent != null && parent.isDirectory()) {
@@ -161,8 +159,7 @@ public class FileScanner {
 			}
 		}
 
-		logger.debug("scanFolder(File parent=" + parent
-				+ ") - end - return value=" + list);
+		logger.debug("scanFolder(File parent=" + parent + ") - end - return value=" + list);
 		return list;
 	}
 
@@ -171,7 +168,7 @@ public class FileScanner {
 	 * 
 	 * @return A List of the folders
 	 */
-	public List getFolders() {
+	public List<String> getFolders() {
 		logger.debug("getFolders() - start");
 
 		logger.debug("getFolders() - end - return value=" + folders);
@@ -184,7 +181,7 @@ public class FileScanner {
 	 * @param folders
 	 *            The folders to set.
 	 */
-	public void setFolders(List folders) {
+	public void setFolders(List<String> folders) {
 		logger.debug("setFolders(List folders=" + folders + ") - start");
 
 		this.folders = folders;
@@ -211,12 +208,10 @@ public class FileScanner {
 	 *            The pathFilter to set.
 	 */
 	public void setPathFilter(FileFilter pathFilter) {
-		logger.debug("setPathFilter(AcceptedPathFilter pathFilter="
-				+ pathFilter + ") - start");
+		logger.debug("setPathFilter(AcceptedPathFilter pathFilter=" + pathFilter + ") - start");
 
 		this.pathFilter = pathFilter;
 
-		logger.debug("setPathFilter(AcceptedPathFilter pathFilter="
-				+ pathFilter + ") - end");
+		logger.debug("setPathFilter(AcceptedPathFilter pathFilter=" + pathFilter + ") - end");
 	}
 }
