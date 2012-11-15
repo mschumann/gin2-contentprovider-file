@@ -222,7 +222,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			if ("true".equalsIgnoreCase(attr.getValue())) {
 				// determine repository
 				Repository repo = getRepository(content.getContentUrl());
-				String objectId = content.getAttributeByName("objectId").getValue();
+				String objectId = content.getAttributeByName("cmis:objectId").getValue();
 
 				try {
 					// open session on repository
