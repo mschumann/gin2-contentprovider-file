@@ -24,23 +24,22 @@ import org.apache.chemistry.opencmis.commons.enums.BindingType;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisBaseException;
 import org.apache.log4j.Logger;
 
-import com.iqser.core.config.ServiceLocatorFactory;
-import com.iqser.core.exception.IQserTechnicalException;
+import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Content;
+import com.iqser.core.plugin.AbstractPlugin;
 import com.iqser.core.plugin.security.IQserSecurityException;
 import com.iqser.core.plugin.security.SecurityFilter;
 
 /**
  * Default security filter for CmisContentProvider.
  * 
- * Open a CMIS session using given user name and password and see if the user
- * has read, edit rights on the content. If the user has edit rights on the
- * content he can execute actions on the content.
+ * Open a CMIS session using given user name and password and see if the user has read, edit rights on the content. If
+ * the user has edit rights on the content he can execute actions on the content.
  * 
  * A cache is used to store CMIS sessions.
  * 
  */
-public class CmisDefaultSecurityFilter implements SecurityFilter {
+public class CmisDefaultSecurityFilter extends AbstractPlugin implements SecurityFilter {
 
 	private static Logger logger = Logger.getLogger(CmisDefaultSecurityFilter.class);
 
@@ -53,9 +52,8 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	private final LinkedHashMap<String, Session> cache;
 
 	/**
-	 * Creates a security filter. Initialization parameters must be set in the
-	 * configuration file cmis_security.properties. The configuration file must
-	 * be placed in package net.sf.iqser.plugin.file.security.
+	 * Creates a security filter. Initialization parameters must be set in the configuration file
+	 * cmis_security.properties. The configuration file must be placed in package net.sf.iqser.plugin.file.security.
 	 * 
 	 * It will connect to CMIS server and read repositories name and id.
 	 */
@@ -69,8 +67,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	}
 
 	/**
-	 * Creates a security filter. It will not connect to the CMIS server. Used
-	 * mainly for testing purposes.
+	 * Creates a security filter. It will not connect to the CMIS server. Used mainly for testing purposes.
 	 * 
 	 * @param sessionFactory
 	 *            CMIS session factory
@@ -128,7 +125,6 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 		// bind to Atompub
 		cmisParams.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
-
 		// CMIS Atompub Url
 		cmisParams.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
 
@@ -157,8 +153,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	}
 
 	/**
-	 * Opens a session. If the session is in cache it will reuse it, otherwise
-	 * it will create a new session
+	 * Opens a session. If the session is in cache it will reuse it, otherwise it will create a new session
 	 * 
 	 * @param user
 	 *            the user
@@ -228,7 +223,13 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 	private CmisObject getCmisObjectByContentId(String user, String password, long contentId)
 			throws IQserSecurityException {
-		Content content = getContent(contentId);
+		Content content = null;
+		try {
+			content = getContent(contentId);
+		} catch (IQserException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		if (null == content) {
 			return null;
@@ -286,8 +287,7 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 	 *            name of the action.
 	 * @param content
 	 *            the content.
-	 * @return true if the user is allowed to execute the action on the given
-	 *         content, false otherwise.
+	 * @return true if the user is allowed to execute the action on the given content, false otherwise.
 	 * @throws IQserSecurityException
 	 * @see SecurityFilter
 	 */
@@ -315,105 +315,4 @@ public class CmisDefaultSecurityFilter implements SecurityFilter {
 
 	}
 
-	private Content getContent(long contentId) throws IQserSecurityException {
-		Content content;
-		try {
-			content = ServiceLocatorFactory.getServiceLocator().getRepositoryReader().getContent(contentId);
-		} catch (IQserTechnicalException e) {
-			throw new IQserSecurityException("Cannot find content with id=" + contentId + " in the repository.", e);
-		}
-		return content;
-	}
-
-	@Override
-	public void destroy() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public String getClassname() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public int getId() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public Properties getInitParams() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getVendor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String getVersion() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setClassname(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-
-	@Override
-	public void setInitParams(Properties arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setName(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setVendor(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void setVersion(String arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/* (non-Javadoc)
-	 * @see com.iqser.core.plugin.Plugin#setId(int)
-	 */
-	@Override
-	public void setId(int arg0) {
-		// TODO Auto-generated method stub
-
-	}
-
-	/**
-	 * @see com.iqser.core.plugin.Plugin#preRemoveInstance()
-	 */
-	@Override
-	public void preRemoveInstance() {
-		// TODO Auto-generated method stub
-
-	}
 }
