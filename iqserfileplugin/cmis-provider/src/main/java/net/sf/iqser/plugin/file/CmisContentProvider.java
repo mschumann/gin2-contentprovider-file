@@ -169,7 +169,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			// default the first repository is considered
 			List<Repository> repoList = sessionFactory.getRepositories(cmisParameters);
 			if (!repoList.isEmpty()) {
-				this.repositories.add(repoList.get(0));
+				repositories.add(repoList.get(0));
 			}
 		} else {
 			// obtain all repositories and filter the ones that are present in
@@ -177,7 +177,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			List<Repository> repoList = sessionFactory.getRepositories(cmisParameters);
 			for (Repository repository : repoList) {
 				if (repositoryNames.contains(repository.getName())) {
-					this.repositories.add(repository);
+					repositories.add(repository);
 				}
 			}
 		}
@@ -242,7 +242,6 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * Performs cleaning. Deletes the content objects from the object graph if the corresponding objects are no longer
 	 * on the CMS system.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void doHousekeeping() {
 		Collection<Content> existingContents;
@@ -321,28 +320,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		// synch Folder
 		Content folderContent = createFolderContent(repo, root, parent);
-		boolean isExistingContent;
 		try {
-			isExistingContent = isExistingContent(folderContent.getContentUrl());
-			if (isExistingContent) {
-				try {
-					updateContent(folderContent);
-				} catch (Throwable t) {
-					// Make sure to catch everthing to continue
-					// with next Content
-					logger.error("Could not update content.", t);
-				}
-			} else {
-				try {
-					addContent(folderContent);
-				} catch (Throwable t) {
-					// Make sure to catch everthing to continue
-					// with next Content
-					logger.error("Could not update content.", t);
-				}
-			}
+			addOrUpdateContent(folderContent);
 		} catch (IQserException e) {
-			logger.error("Exception for content " + folderContent.getContentUrl(), e);
+			logger.error("Exception adding/updating content " + folderContent.getContentUrl(), e);
 		}
 
 		// synch documents in folder
@@ -371,15 +352,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 						long lastModDate = doc.getLastModificationDate().getTime().getTime();
 						if (lastModDate >= lastSynchTime) {
 							Content docContent = createDocumentContent(repo, verDoc);
-							isExistingContent = isExistingContent(docContent.getContentUrl());
-							if (isExistingContent) {
-								updateContent(docContent);
-							} else {
-								addContent(docContent);
-							}
+							addOrUpdateContent(docContent);
 						}
 					} catch (IQserException e) {
-						String url = this.createURL(repo.getName(), "CMIS_DOCUMENT", verDoc.getId());
+						String url = createURL(repo.getName(), "CMIS_DOCUMENT", verDoc.getId());
 						logger.error("Exception in doSynch for document " + url, e);
 					}
 				}
@@ -395,9 +371,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 *            the content
 	 * @return a collection of string representing action names
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Collection getActions(Content content) {
+	public Collection<String> getActions(Content content) {
 		String[] actions = null;
 		if (isFolder(content)) {
 			actions = new String[] { ACTION_DELETE, ACTION_UPDATE };
@@ -448,7 +423,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		}
 
 		content.setContentUrl(contentUrl);
-		content.setProvider(this.getName());
+		content.setProvider(getName());
 
 		// change attribute name according to mappings
 		changeAttributeName(content);
@@ -467,7 +442,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	private void setKeyAttributes(Content content) {
 		for (Attribute attr : content.getAttributes()) {
-			if (this.keyAttributeNames.contains(attr.getName())) {
+			if (keyAttributeNames.contains(attr.getName())) {
 				attr.setKey(true);
 			}
 		}
@@ -475,7 +450,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	private void changeAttributeName(Content content) {
 		for (Attribute attr : content.getAttributes()) {
-			String newName = this.attributeMappings.get(attr.getName());
+			String newName = attributeMappings.get(attr.getName());
 			if (newName != null) {
 				attr.setName(newName);
 			}
@@ -548,7 +523,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		Map<String, String> propMap = determineCMISUpdatableProperties(cmisObject, content);
 		cmisObject.updateProperties(propMap);
 		try {
-			this.updateContent(content);
+			addOrUpdateContent(content);
 		} catch (Throwable t) {
 			// Make sure to catch everthing to continue
 			// with next Content
@@ -575,7 +550,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		cmisObject.delete(allVersions);
 
 		try {
-			this.removeContent(content.getContentUrl());
+			removeContent(content.getContentUrl());
 		} catch (IQserException e) {
 			throw new IQserRuntimeException(e);
 		}
@@ -605,7 +580,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			String newContentUrl = createURL(repo.getName(), CmisContentProvider.CMIS_DOCUMENT_TYPE, pwcId.getId());
 			Content newContent = this.getContent(session, newContentUrl);
 			try {
-				this.addContent(newContent);
+				addOrUpdateContent(newContent);
 			} catch (Throwable t) {
 				// Make sure to catch everthing to continue
 				// with next Content
@@ -687,7 +662,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	protected Content createDocumentContent(Repository repository, Document doc) {
 		Content content = new Content();
 		content.setContentUrl(createURL(repository.getName(), CMIS_DOCUMENT_TYPE, doc.getId()));
-		content.setProvider(this.getName());
+		content.setProvider(getName());
 		content.setType(CMIS_DOCUMENT_TYPE);
 
 		handleProperties(doc, content);
@@ -778,7 +753,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	protected Content createFolderContent(Repository repository, Folder folder, Folder parentFolder) {
 		Content content = new Content();
 		content.setContentUrl(createURL(repository.getName(), CMIS_FOLDER_TYPE, folder.getId()));
-		content.setProvider(this.getName());
+		content.setProvider(getName());
 		content.setType(CMIS_FOLDER_TYPE);
 
 		handleProperties(folder, content);
