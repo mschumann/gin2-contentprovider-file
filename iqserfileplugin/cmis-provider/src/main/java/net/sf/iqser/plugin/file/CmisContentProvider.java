@@ -320,10 +320,28 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		// synch Folder
 		Content folderContent = createFolderContent(repo, root, parent);
+		boolean isExistingContent;
 		try {
-			addOrUpdateContent(folderContent);
+			isExistingContent = isExistingContent(folderContent.getContentUrl());
+			if (isExistingContent) {
+				try {
+					updateContent(folderContent);
+				} catch (Throwable t) {
+					// Make sure to catch everthing to continue
+					// with next Content
+					logger.error("Could not update content.", t);
+				}
+			} else {
+				try {
+					addContent(folderContent);
+				} catch (Throwable t) {
+					// Make sure to catch everthing to continue
+					// with next Content
+					logger.error("Could not update content.", t);
+				}
+			}
 		} catch (IQserException e) {
-			logger.error("Exception adding/updating content " + folderContent.getContentUrl(), e);
+			logger.error("Exception for content " + folderContent.getContentUrl(), e);
 		}
 
 		// synch documents in folder
@@ -352,7 +370,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 						long lastModDate = doc.getLastModificationDate().getTime().getTime();
 						if (lastModDate >= lastSynchTime) {
 							Content docContent = createDocumentContent(repo, verDoc);
-							addOrUpdateContent(docContent);
+							isExistingContent = isExistingContent(docContent.getContentUrl());
+							if (isExistingContent) {
+								updateContent(docContent);
+							} else {
+								addContent(docContent);
+							}
 						}
 					} catch (IQserException e) {
 						String url = createURL(repo.getName(), "CMIS_DOCUMENT", verDoc.getId());
@@ -478,18 +501,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 		throw new RuntimeException("NOT IMPLEMENTED");
 	}
 
-	/**
-	 * Performs an action of the given content.
-	 * 
-	 * @param action
-	 *            the action
-	 * @param content
-	 *            the content
-	 */
+
 	@Override
-	public void performAction(String action, Content content) {
-		@SuppressWarnings("rawtypes")
-		Collection availableActions = getActions(content);
+	public void performAction(String action, Collection<Parameter> parameters, Content content) {
+		Collection<String> availableActions = getActions(content);
 		if (availableActions.contains(action)) {
 			if (ACTION_DELETE.equalsIgnoreCase(action)) {
 				performActionDelete(content);
@@ -505,7 +520,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 					+ content.getContentUrl());
 		}
 
+
 	}
+
 
 	/**
 	 * Perform Update Action.
@@ -523,7 +540,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		Map<String, String> propMap = determineCMISUpdatableProperties(cmisObject, content);
 		cmisObject.updateProperties(propMap);
 		try {
-			addOrUpdateContent(content);
+			updateContent(content);
 		} catch (Throwable t) {
 			// Make sure to catch everthing to continue
 			// with next Content
@@ -580,7 +597,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			String newContentUrl = createURL(repo.getName(), CmisContentProvider.CMIS_DOCUMENT_TYPE, pwcId.getId());
 			Content newContent = this.getContent(session, newContentUrl);
 			try {
-				addOrUpdateContent(newContent);
+				addContent(newContent);
 			} catch (Throwable t) {
 				// Make sure to catch everthing to continue
 				// with next Content
@@ -808,10 +825,6 @@ public class CmisContentProvider extends AbstractContentProvider {
 		return type.equals(CMIS_DOCUMENT_TYPE) || type.equals(contentTypeMappings.get(CMIS_DOCUMENT_TYPE));
 	}
 
-	@Override
-	public void performAction(String arg0, Collection<Parameter> arg1, Content arg2) {
-		// TODO Auto-generated method stub
 
-	}
 
 }

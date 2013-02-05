@@ -37,7 +37,6 @@ public class CmisContentProviderTestIntegration extends TestCase {
 		initParams.put("REPOSITORY", "[Shared Documents]");
 
 		ccp.setInitParams(initParams);
-		ccp.setType("CMISObject");
 		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.setInitParams(initParams);
 		ccp.init();

@@ -239,7 +239,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		for (Object contentUrl : newSourceContentUrls) {
 			logger.info("Synch - add conntent " + contentUrl);
 			try {
-				addOrUpdateContent(createContent((String) contentUrl));
+				addContent(createContent((String) contentUrl));
 			} catch (Throwable t) {
 				// Make sure to catch everthing to continue with next Content
 				logger.error("Could not add content.", t);
@@ -265,7 +265,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 							if (lastModified > contentLastModified) {
 								logger.info("Synch - delete update " + contentUrl);
 								try {
-									addOrUpdateContent(createContent(file.getAbsolutePath()));
+									updateContent(createContent(file.getAbsolutePath()));
 								} catch (Throwable t) {
 									// Make sure to catch everthing to continue
 									// with next Content
@@ -278,7 +278,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 							boolean isModified = zfm.getZipEntry().getTime() > content.getModificationDate();
 							if (isModified) {
 								try {
-									addOrUpdateContent(createContent(contentUrl));
+									updateContent(createContent(contentUrl));
 								} catch (Throwable t) {
 									// Make sure to catch everthing to continue
 									// with next Content
@@ -580,17 +580,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		return keyAttributesList;
 	}
 
-	/**
-	 * perform save or delete action on the object graph and also on the file system.
-	 * 
-	 * @param action
-	 *            the type of action which can be delete of save
-	 * @param content
-	 *            the content that is deleted or saved
-	 */
-	@Override
-	public void performAction(String action, Content content) {
 
+	@Override
+	public void performAction(String action, Collection<Parameter> parameters, Content content) {
 		Collection<String> actions = getActions(content);
 		if (actions.contains(action)) {
 			if (action.equalsIgnoreCase("delete")) {
@@ -599,7 +591,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 				performSaveAction(content);
 			}
 		}
-
 	}
 
 	/**
@@ -640,7 +631,11 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			}
 		}
 		try {
-			addOrUpdateContent(content);
+			if (isExistingContent(contentUrl)) {
+				updateContent(content);
+			} else {
+				addContent(content);
+			}
 		} catch (IQserException e) {
 			throw new IQserRuntimeException(e);
 		}
@@ -771,10 +766,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		}
 	}
 
-	@Override
-	public void performAction(String arg0, Collection<Parameter> arg1, Content arg2) {
-		// TODO Auto-generated method stub
 
-	}
 
 }

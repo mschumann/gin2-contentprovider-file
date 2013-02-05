@@ -52,7 +52,6 @@ public class CmisContentProviderTest extends TestCase {
 
 		ccp = new CmisContentProvider();
 
-		ccp.setType("CMISObject");
 		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.getRepositories().add(mockCmisRepo);
 
@@ -606,8 +605,9 @@ public class CmisContentProviderTest extends TestCase {
 		// Bytes
 		ByteArrayOutputStream ba = new ByteArrayOutputStream(len);
 		try {
-			for (int i = 0; i < 1024; i++)
+			for (int i = 0; i < 1024; i++) {
 				ba.write(b);
+			}
 		} catch (IOException e) {
 			throw new RuntimeException("Failed to fill content stream with data", e);
 		}

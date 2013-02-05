@@ -1,37 +1,13 @@
 package net.sf.iqser.plugin.filesystem;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import junit.framework.TestCase;
 import net.sf.iqser.plugin.file.parser.zip.ZipFileModel;
-import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
-import net.sf.iqser.plugin.filesystem.test.MockContentProviderFacade;
-import net.sf.iqser.plugin.filesystem.test.MockRepository;
-import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.iqser.core.config.Configuration;
-import com.iqser.core.exception.IQserRuntimeException;
-import com.iqser.core.exception.IQserTechnicalException;
-import com.iqser.core.model.Attribute;
+import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Content;
 
 
@@ -42,7 +18,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-/*
+		/*
 		testDataDir = System.getProperty("testdata.dir", "testdata");
 		// testDataDir = System.getProperty("testdata.dir", "D:/testdata");
 
@@ -103,7 +79,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 	}
 
 	public void testGetInputStreamContent() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException, IOException {
+	IllegalAccessException, InvocationTargetException, IOException {
 
 		/*String partialURL = new File(testDataDir).getAbsolutePath();
 		String contentUrl = "zip://" + partialURL + File.separator + "testSynch" + File.separator
@@ -120,7 +96,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 	}
 
 	public void testGetBinaryZipFile() throws SecurityException, NoSuchMethodException, IllegalArgumentException,
-			IllegalAccessException, InvocationTargetException {
+	IllegalAccessException, InvocationTargetException {
 
 		/*Method declaredMethod = fscp.getClass().getDeclaredMethod("extractBinaryPackedFiles", Content.class);
 
@@ -171,7 +147,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		value = keyAttributes.get(1);
 		assertEquals("Bezeichnung", value);
 
-*/
+		 */
 	}
 
 	public void testInit() {
@@ -209,7 +185,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		assertEquals("Autor", value);*/
 	}
 
-	public void testDoSynchronization() throws IQserTechnicalException, IOException {
+	public void testDoSynchronization() throws IQserException, IOException {
 
 		/*Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
@@ -247,7 +223,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		assertEquals(10, contents.size());*/
 	}
 
-	public void testDoHousekeeping() throws IQserTechnicalException {
+	public void testDoHousekeeping() throws IQserException {
 
 		/*Repository repository = Configuration.getConfiguration().getServiceLocator().getRepository();
 
@@ -313,7 +289,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 
 	private ZipFileModel getZipFileModel(String zipFileName) throws IOException {
 		return null;
-/*
+		/*
 		int index = zipFileName.indexOf(".zip!");
 		if (index != -1) {
 			ZipFileModel zfm = new ZipFileModel();
@@ -357,7 +333,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 	}
 
 	public void testGetActionsContent() {
-/*
+		/*
 		Collection expectedActions = Arrays.asList(new String[] { "delete", "save" });
 
 		Collection actions = fscp.getActions(null);
@@ -366,7 +342,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 	}
 
 	public void testGetContentString() {
-/*
+		/*
 		File root = new File(testDataDir);
 
 		for (File file : root.listFiles()) {
@@ -404,7 +380,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 	}
 
 	public void testGetContentInputStream() throws FileNotFoundException {
-/*
+		/*
 		File root = new File(testDataDir);
 		for (File file : root.listFiles()) {
 			if (file.isFile() && !file.getName().toLowerCase().endsWith(".zip")) {
@@ -435,8 +411,8 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		// TODO implement me
 	}
 
-	public void testPerformActionStringContent() throws IOException, IQserTechnicalException {
-/*
+	public void testPerformActionStringContent() throws IOException, IQserException {
+		/*
 		String contentURL, newContentURL;
 
 		File f = new File(testDataDir + "/output");
@@ -525,10 +501,10 @@ public class FileSystemContentProviderZipTest extends TestCase {
 			assertTrue(outputFolder.list().length == 1);
 			testZip.deleteOnExit();
 		}
-*/
+		 */
 	}
 
-	public void testPerformActionStringContentPDF() throws IOException, IQserTechnicalException {
+	public void testPerformActionStringContentPDF() throws IOException, IQserException {
 
 		/*String contentURL, newContentURL;
 
@@ -549,7 +525,7 @@ public class FileSystemContentProviderZipTest extends TestCase {
 		}
 		contents = repository.getAllContentItem(-1);
 		assertTrue(contents.size() == 0);
-		*/
+		 */
 
 	}
 

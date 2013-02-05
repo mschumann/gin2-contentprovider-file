@@ -1,31 +1,11 @@
 package net.sf.iqser.plugin.filesystem;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import junit.framework.TestCase;
-import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
-import net.sf.iqser.plugin.filesystem.test.MockContentProviderFacade;
-import net.sf.iqser.plugin.filesystem.test.MockRepository;
-import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.iqser.core.config.Configuration;
-import com.iqser.core.exception.IQserTechnicalException;
-import com.iqser.core.model.Attribute;
+import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Content;
 
 
@@ -79,7 +59,7 @@ public class FilesystemContentProviderTest extends TestCase {
 		MockContentProviderFacade cpFacade = new MockContentProviderFacade();
 		cpFacade.setRepo(rep);
 		sl.setFacade(cpFacade);
-		
+
 		// delete testdata/output
 		File file = new File(testDataDir + "/output");
 		if (file.exists()) {
@@ -130,7 +110,7 @@ public class FilesystemContentProviderTest extends TestCase {
 		assertEquals("Autor", value);
 		value = keyAttributes.get(1);
 		assertEquals("Bezeichnung", value);
-*/
+		 */
 	}
 
 	public void testInit() {
@@ -168,8 +148,8 @@ public class FilesystemContentProviderTest extends TestCase {
 		assertEquals("Autor", value);*/
 	}
 
-	public void testDoSynchronization() throws IQserTechnicalException,
-			IOException {
+	public void testDoSynchronization() throws IQserException,
+	IOException {
 
 		/*Repository repository = Configuration.getConfiguration()
 				.getServiceLocator().getRepository();
@@ -212,7 +192,7 @@ public class FilesystemContentProviderTest extends TestCase {
 		assertEquals(4, contents.size()); */
 	}
 
-	public void testDoHousekeeping() throws IQserTechnicalException {
+	public void testDoHousekeeping() throws IQserException {
 
 		/*Repository repository = Configuration.getConfiguration()
 				.getServiceLocator().getRepository();
@@ -247,7 +227,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	}
 
 	private void testGetBinaryData(String contentUrl) throws IOException,
-			FileNotFoundException {
+	FileNotFoundException {
 		/*Content content = fscp.getContent(contentUrl);
 		byte[] binaryContent = fscp.getBinaryData(content);
 
@@ -334,7 +314,7 @@ public class FilesystemContentProviderTest extends TestCase {
 	}
 
 	public void testPerformActionStringContent() throws IOException,
-			IQserTechnicalException {
+	IQserException {
 
 		/*String contentURL, newContentURL;
 
@@ -402,11 +382,11 @@ public class FilesystemContentProviderTest extends TestCase {
 		// check if folder is empty
 		File outputFolder = new File(testDataDir + "/output");
 		assertTrue(outputFolder.list().length == 0);
-*/
+		 */
 	}
 
 	public void testPerformActionStringContentPDF() throws IOException,
-			IQserTechnicalException {
+	IQserException {
 
 		/*String contentURL, newContentURL;
 
@@ -456,5 +436,5 @@ public class FilesystemContentProviderTest extends TestCase {
 		//fscp.performAction("delete", content);
 	}
 
-	
+
 }

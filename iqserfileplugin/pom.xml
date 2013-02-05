@@ -99,7 +99,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<iqser.version>2.0.0.33-SNAPSHOT</iqser.version>
+		<iqser.version>2.0.0.35-SNAPSHOT</iqser.version>
 		<compileSource>1.6</compileSource>
 		<sourceforge.artifact>${project.build.directory}/${project.build.finalName}</sourceforge.artifact>
 		<sourceforge.upload>${sf.username},iqserfileplugin@frs.sourceforge.net:/home/pfs/project/i/iq/iqserfileplugin</sourceforge.upload>
@@ -108,7 +108,6 @@
 	<repositories>
 		<repository>
 			<id>iqser_release</id>
-			<name>Artifactory Mirror</name>
 			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
 			<releases>
 				<enabled>true</enabled>
@@ -118,7 +117,6 @@
 			</snapshots>
 		</repository>
 	</repositories>
-
 	<pluginRepositories>
 		<pluginRepository>
 			<id>iqser_release</id>
@@ -184,10 +182,6 @@
 						<property>
 							<name>testdata.dir</name>
 							<value>${basedir}/testdata</value>
-						</property>
-						<property>
-							<name>com.iqser.core.configfile</name>
-							<value>iqser-config.xml</value>
 						</property>
 					</systemProperties>
 				</configuration>
@@ -490,13 +484,6 @@
 			<version>${iqser.version}</version>
 			<type>jar</type>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.iqser.core</groupId>
-			<artifactId>iqser-test-api</artifactId>
-			<version>${iqser.version}</version>
-			<type>jar</type>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>nekohtml</groupId>

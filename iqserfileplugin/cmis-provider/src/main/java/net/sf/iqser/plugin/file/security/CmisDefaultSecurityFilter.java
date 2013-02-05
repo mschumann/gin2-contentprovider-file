@@ -2,6 +2,7 @@ package net.sf.iqser.plugin.file.security;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.apache.log4j.Logger;
 
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Content;
+import com.iqser.core.model.Result;
 import com.iqser.core.plugin.AbstractPlugin;
 import com.iqser.core.plugin.security.IQserSecurityException;
 import com.iqser.core.plugin.security.SecurityFilter;
@@ -253,30 +255,6 @@ public class CmisDefaultSecurityFilter extends AbstractPlugin implements Securit
 	}
 
 	/**
-	 * Method that checks edit permission.
-	 * 
-	 * @param user
-	 *            the user.
-	 * @param password
-	 *            the password.
-	 * @param content
-	 *            the content.
-	 * @return true if the user is allowed to edit the content, false otherwise.
-	 * @throws IQserSecurityException
-	 * @see SecurityFilter
-	 */
-	@Override
-	public boolean canEdit(String user, String password, long contentId) throws IQserSecurityException {
-		CmisObject cmisObj = getCmisObjectByContentId(user, password, contentId);
-		if (null == cmisObj) {
-			return false;
-		}
-
-		Set<Action> actions = cmisObj.getAllowableActions().getAllowableActions();
-		return actions.contains(Action.CAN_UPDATE_PROPERTIES);
-	}
-
-	/**
 	 * Method that checks execute action permission.
 	 * 
 	 * @param user
@@ -313,6 +291,20 @@ public class CmisDefaultSecurityFilter extends AbstractPlugin implements Securit
 		}
 		return false;
 
+	}
+
+	@Override
+	public Collection<Content> filterReadableContent(String userId, String password, Collection<Content> contentObjects)
+			throws IQserSecurityException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<Result> filterReadableResult(String userId, String password, Collection<Result> resultObjects)
+			throws IQserSecurityException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
