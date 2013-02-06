@@ -53,6 +53,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 */
 	private static Logger logger = Logger.getLogger(FilesystemContentProvider.class);
 
+	private static final String CONTENT_TYPE = "Content Type";
 	/**
 	 * map for new attribute---for replacing the name of the attributes.
 	 */
@@ -62,6 +63,8 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * a collection of new key attributes.
 	 */
 	private Collection<String> keyAttributesList = new ArrayList<String>();
+
+	private String contentType;
 
 	/**
 	 * get the binary data from a content.
@@ -396,11 +399,12 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		try {
 			if (inputStream != null) {
 				FileParser parser = parserFactory.getFileParser(contentUrl);
-
 				content = parser.getContent(contentUrl, inputStream);
 				content.setProvider(getName());
 				content.setContentUrl(contentUrl);
-
+				if (contentType != null && !contentType.isEmpty()) {
+					content.setType(contentType);
+				}
 				File file = getFile(contentUrl);
 
 				if (file != null) {
@@ -446,6 +450,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			try {
 				if (parser != null) {
 					content = parser.getContent(null, new ByteArrayInputStream(bytes));
+					if (contentType != null && !contentType.isEmpty()) {
+						content.setType(contentType);
+					}
 
 					content.setProvider(getName());
 
@@ -555,7 +562,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		String keyAttributes = (String) params.get("key-attributes");
 
 		keyAttributesList = extractConfigAttributes(keyAttributes);
-
+		contentType = (String) params.get(CONTENT_TYPE);
 	}
 
 	/**
@@ -579,7 +586,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		return keyAttributesList;
 	}
-
 
 	@Override
 	public void performAction(String action, Collection<Parameter> parameters, Content content) {
@@ -765,7 +771,5 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			output.write(buffer, 0, bytesRead);
 		}
 	}
-
-
 
 }
