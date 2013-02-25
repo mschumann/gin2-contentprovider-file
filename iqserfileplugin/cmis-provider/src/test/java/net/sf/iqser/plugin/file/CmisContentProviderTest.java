@@ -84,8 +84,8 @@ public class CmisContentProviderTest extends TestCase {
 		Content content = new Content();
 		content.setType("CMIS_DOCUMENT");
 		content.setContentUrl("http://cmis/Shared Documents/cmis:document#1-1024");
-		content.getAttributes().add(new Attribute("hasContentStream", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
-		content.getAttributes().add(new Attribute("objectId", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
+		content.getAttributes().add(new Attribute("HASCONTENTSTREAM", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
+		content.getAttributes().add(new Attribute("OBJECTID", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
 
 		// expected doc
 		Document expectedDoc = new MockDocument();
@@ -114,8 +114,8 @@ public class CmisContentProviderTest extends TestCase {
 		Content content = new Content();
 		content.setType("CMIS_DOCUMENT");
 		content.setContentUrl("http://cmis/Shared Documents/cmis:document#1-1024");
-		content.getAttributes().add(new Attribute("hasContentStream", "false", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
-		content.getAttributes().add(new Attribute("objectId", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
+		content.getAttributes().add(new Attribute("HASCONTENTSTREAM", "false", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
+		content.getAttributes().add(new Attribute("OBJECTID", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
 
 		byte[] binaryData = ccp.getBinaryData(content);
 
@@ -492,7 +492,7 @@ public class CmisContentProviderTest extends TestCase {
 		initParams.put("ATOMPUB", atompubUrl);
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
-		initParams.put("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");
+		initParams.put("ATTRIBUTE-MAPPINGS", "[CMIS:NAME=CMIS_NAME]");
 		ccp.setInitParams(initParams);
 		try {
 			ccp.init();

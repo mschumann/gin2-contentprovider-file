@@ -475,7 +475,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		for (Attribute attr : content.getAttributes()) {
 			String newName = attributeMappings.get(attr.getName());
 			if (newName != null) {
-				attr.setName(newName);
+				attr.setName(newName.toUpperCase().replace(' ', '_'));
 			}
 		}
 	}
@@ -684,13 +684,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		handleProperties(doc, content);
 
-		content.addAttribute(new Attribute("repository", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
+		content.addAttribute(new Attribute("REPOSITORY", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		List<Folder> parents = doc.getParents();
 		if (!parents.isEmpty()) {
 			Attribute mva = new Attribute();
 			mva.setMultiValue(true);
-			mva.setName("parent");
+			mva.setName("PARENT");
 			mva.setType(Attribute.ATTRIBUTE_TYPE_TEXT);
 			content.addAttribute(mva);
 
@@ -726,7 +726,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			} catch (IOException e) {
 				logger.error("Error while parsing file content for document" + doc.getName(), e);
 			}
-			content.addAttribute(new Attribute("hasContentStream", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN, true));
+			content.addAttribute(new Attribute("HASCONTENTSTREAM", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN, true));
 		}
 
 		content.setModificationDate(doc.getLastModificationDate().getTimeInMillis());
@@ -751,7 +751,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 					type = Attribute.ATTRIBUTE_TYPE_TEXT;
 				}
 
-				content.addAttribute(new Attribute(name, value, type, true));
+				content.addAttribute(new Attribute(name.toUpperCase().replace(' ', '_'), value, type, true));
 			}
 		}
 	}
@@ -775,10 +775,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		handleProperties(folder, content);
 
-		content.addAttribute(new Attribute("repository", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
+		content.addAttribute(new Attribute("REPOSITORY", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		if (parentFolder != null) {
-			content.addAttribute(new Attribute("parent", parentFolder.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
+			content.addAttribute(new Attribute("PARENT", parentFolder.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
 		}
 
 		return content;

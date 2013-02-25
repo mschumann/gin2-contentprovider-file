@@ -62,8 +62,8 @@ public class CmisContentProviderTestIntegration extends TestCase {
 		Content content = new Content();
 		content.setType("CMIS_DOCUMENT");
 		content.setContentUrl(contentUrl);
-		content.getAttributes().add(new Attribute("hasContentStream", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
-		content.getAttributes().add(new Attribute("objectId", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
+		content.getAttributes().add(new Attribute("HASCONTENTSTREAM", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN));
+		content.getAttributes().add(new Attribute("OBJECTID", "1-1024", Attribute.ATTRIBUTE_TYPE_TEXT));
 
 		byte[] binaryData = ccp.getBinaryData(content);
 		assertNotNull(binaryData);

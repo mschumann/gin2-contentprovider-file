@@ -57,10 +57,11 @@ public class TikaFileParser implements FileParser {
 			result = tika.parseToString(inputStream, metadata);
 			content.setFulltext(result);
 			for (String name : metadata.names()) {
+				String upperCaseName = name.toUpperCase().replace(' ', '_');
 				Attribute attribute = new Attribute();
 				attribute.setKey(true);
-				if (content.getAttributeByName(name) == null && !StringUtils.isEmpty(metadata.get(name))) {
-					attribute.setName(name);
+				if (content.getAttributeByName(upperCaseName) == null && !StringUtils.isEmpty(metadata.get(name))) {
+					attribute.setName(upperCaseName);
 					attribute.setValue(metadata.get(name));
 					attribute.setType(Attribute.ATTRIBUTE_TYPE_TEXT);
 					content.addAttribute(attribute);
