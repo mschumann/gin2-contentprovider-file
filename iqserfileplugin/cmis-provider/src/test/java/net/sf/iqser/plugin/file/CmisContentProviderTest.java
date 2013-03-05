@@ -492,7 +492,7 @@ public class CmisContentProviderTest extends TestCase {
 		initParams.put("ATOMPUB", atompubUrl);
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
-		initParams.put("ATTRIBUTE-MAPPINGS", "[CMISNAME=CMIS_NAME]");
+		initParams.put("ATTRIBUTE-MAPPINGS", "[CMIS:NAME=CMIS_NAME]");
 		ccp.setInitParams(initParams);
 		try {
 			ccp.init();
