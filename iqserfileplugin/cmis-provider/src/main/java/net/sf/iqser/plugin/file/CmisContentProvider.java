@@ -750,8 +750,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 				} else {
 					type = Attribute.ATTRIBUTE_TYPE_TEXT;
 				}
-
-				content.addAttribute(new Attribute(name.toUpperCase().replace(' ', '_'), value, type, true));
+				String upperCaseName = name.toUpperCase().replace(' ', '_').replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS").replaceAll("[^A-Z\\d-_.]", "");
+				content.addAttribute(new Attribute(upperCaseName, value, type, true));
 			}
 		}
 	}

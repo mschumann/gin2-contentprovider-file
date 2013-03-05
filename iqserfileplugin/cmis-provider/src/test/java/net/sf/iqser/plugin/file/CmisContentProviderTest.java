@@ -223,8 +223,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		// expected doc
 		MockDocument expectedDoc = new MockDocument();
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:objectId", "3-1024"));
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:name", "MyFile.txt"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisobjectId", "3-1024"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisname", "MyFile.txt"));
 		expectedDoc.setContentStream(helperCreateContentStream(), true);
 
 		// expected behavior
@@ -249,8 +249,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertEquals("true", content.getAttributeByName("hasContentStream").getValue());
 
-		assertNotNull(content.getAttributeByName("cmis:objectId").getValue());
-		assertNotNull(content.getAttributeByName("cmis:name").getValue());
+		assertNotNull(content.getAttributeByName("cmisobjectId").getValue());
+		assertNotNull(content.getAttributeByName("cmisname").getValue());
 		// file parser properties
 		assertNotNull(content.getAttributeByName("FILENAME").getValue());
 		assertNotNull(content.getAttributeByName("TITLE").getValue());
@@ -262,8 +262,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		// expected doc
 		MockFolder expectedFolder = new MockFolder();
-		expectedFolder.getProperties().add(helperCreateProperty("cmis:objectId", "100"));
-		expectedFolder.getProperties().add(helperCreateProperty("cmis:name", "MyFolder"));
+		expectedFolder.getProperties().add(helperCreateProperty("cmisobjectId", "100"));
+		expectedFolder.getProperties().add(helperCreateProperty("cmisname", "MyFolder"));
 		expectedFolder.getProperties().add(helperCreateProperty("boolProp", "true", PropertyType.BOOLEAN));
 		expectedFolder.getProperties().add(helperCreateProperty("dateProp", "11/11/2011", PropertyType.DATETIME));
 		expectedFolder.getProperties().add(helperCreateProperty("intProp", "11", PropertyType.INTEGER));
@@ -289,8 +289,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertTrue(content.getAttributes().size() > 0);
 
-		assertNotNull(content.getAttributeByName("cmis:objectId").getValue());
-		assertNotNull(content.getAttributeByName("cmis:name").getValue());
+		assertNotNull(content.getAttributeByName("cmisobjectId").getValue());
+		assertNotNull(content.getAttributeByName("cmisname").getValue());
 		assertNotNull(content.getAttributeByName("boolProp").getValue());
 		assertNotNull(content.getAttributeByName("dateProp").getValue());
 		assertNotNull(content.getAttributeByName("intProp").getValue());
@@ -304,8 +304,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		// expected doc
 		MockDocument expectedDoc = new MockDocument();
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:objectId", "3-1024"));
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:name", "MyFile.txt"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisobjectId", "3-1024"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisname", "MyFile.txt"));
 		expectedDoc.getProperties().add(helperCreateProperty("Title", "The title"));
 		expectedDoc.getProperties().add(helperCreateProperty("MyData", "data value"));
 		expectedDoc.getProperties().add(helperCreateProperty("MyData2", "data value 2"));
@@ -333,8 +333,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertEquals("true", content.getAttributeByName("hasContentStream").getValue());
 
-		assertNotNull(content.getAttributeByName("cmis:objectId").getValue());
-		assertNotNull(content.getAttributeByName("cmis:name").getValue());
+		assertNotNull(content.getAttributeByName("cmisobjectId").getValue());
+		assertNotNull(content.getAttributeByName("cmisname").getValue());
 		// file parser properties
 		assertNotNull(content.getAttributeByName("FILENAME").getValue());
 		assertNotNull(content.getAttributeByName("TITLE").getValue());
@@ -355,7 +355,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
 
-		initParams.put("ATTRIBUTE-MAPPINGS", "[cmis:name=CmisName][Title=CmisTitle]");
+		initParams.put("ATTRIBUTE-MAPPINGS", "[cmisname=CmisName][Title=CmisTitle]");
 		initParams.put("KEY-ATTRIBUTES", "[CmisName][CmisTitle]");
 
 		ccp.setInitParams(initParams);
@@ -434,7 +434,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
 
-		initParams.put("ATTRIBUTE-MAPPINGS", "[cmis:name=CmisName][Title=CmisTitle]");
+		initParams.put("ATTRIBUTE-MAPPINGS", "[cmisname=CmisName][Title=CmisTitle]");
 		initParams.put("KEY-ATTRIBUTES", "[myProp]");
 
 		ccp.setInitParams(initParams);
@@ -449,8 +449,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		// expected doc
 		MockDocument expectedDoc = new MockDocument();
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:objectId", "3-1024"));
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:name", "MyFile.txt"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisobjectId", "3-1024"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisname", "MyFile.txt"));
 		expectedDoc.getProperties().add(helperCreateProperty("myProp", "myPropValue"));
 		expectedDoc.setContentStream(helperCreateContentStream(), true);
 
@@ -481,7 +481,7 @@ public class CmisContentProviderTest extends TestCase {
 	public void testAttributesMappings() {
 
 		/*
-		 * Properties prop = new Properties(); prop.setProperty("ATTRIBUTE-MAPPINGS", "[cmis:name=Cmis_Name]");
+		 * Properties prop = new Properties(); prop.setProperty("ATTRIBUTE-MAPPINGS", "[cmisname=Cmis_Name]");
 		 */
 
 		Properties initParams = new Properties();
@@ -492,7 +492,7 @@ public class CmisContentProviderTest extends TestCase {
 		initParams.put("ATOMPUB", atompubUrl);
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
-		initParams.put("ATTRIBUTE-MAPPINGS", "[CMIS:NAME=CMIS_NAME]");
+		initParams.put("ATTRIBUTE-MAPPINGS", "[CMISNAME=CMIS_NAME]");
 		ccp.setInitParams(initParams);
 		try {
 			ccp.init();
@@ -505,8 +505,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		// expected doc
 		MockDocument expectedDoc = new MockDocument();
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:objectId", "3-1024"));
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:name", "MyFile.txt"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisobjectId", "3-1024"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisname", "MyFile.txt"));
 		expectedDoc.getProperties().add(helperCreateProperty("myProp", "myPropValue"));
 		expectedDoc.setContentStream(helperCreateContentStream(), true);
 
@@ -530,10 +530,10 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertTrue(content.getAttributes().size() > 0);
 
-		assertNull(content.getAttributeByName("cmis:name"));
-		assertNotNull(content.getAttributeByName("Cmis_Name"));
+		assertNull(content.getAttributeByName("cmis_name"));
+		assertNotNull(content.getAttributeByName("CmisName"));
 		assertEquals("myPropValue", content.getAttributeByName("myProp").getValue());
-		assertEquals("MyFile.txt", content.getAttributeByName("Cmis_Name").getValue());
+		assertEquals("MyFile.txt", content.getAttributeByName("CmisName").getValue());
 
 	}
 
@@ -565,8 +565,8 @@ public class CmisContentProviderTest extends TestCase {
 
 		// expected doc
 		MockDocument expectedDoc = new MockDocument();
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:objectId", "3-1024"));
-		expectedDoc.getProperties().add(helperCreateProperty("cmis:name", "MyFile.txt"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisobjectId", "3-1024"));
+		expectedDoc.getProperties().add(helperCreateProperty("cmisname", "MyFile.txt"));
 		expectedDoc.getProperties().add(helperCreateProperty("myProp", "myPropValue"));
 		expectedDoc.setContentStream(helperCreateContentStream(), true);
 
@@ -591,7 +591,7 @@ public class CmisContentProviderTest extends TestCase {
 		assertTrue(content.getAttributes().size() > 0);
 
 		assertEquals("myPropValue", content.getAttributeByName("myProp").getValue());
-		assertEquals("MyFile.txt", content.getAttributeByName("cmis:name").getValue());
+		assertEquals("MyFile.txt", content.getAttributeByName("cmisname").getValue());
 
 	}
 
