@@ -30,7 +30,7 @@ public class FileParserFactoryTest extends TestCase {
 		FileParser parser = factory.getFileParser("sample.htm");
 		assertNotNull(parser);
 		assertTrue(parser instanceof TikaHtmlFileParser);
-		
+
 		parser = factory.getFileParser("sample.html");
 		assertNotNull(parser);
 		assertTrue(parser instanceof TikaHtmlFileParser);
@@ -42,7 +42,7 @@ public class FileParserFactoryTest extends TestCase {
 		assertNotNull(parser);
 		assertTrue(parser instanceof PdfFileParser);
 	}
-	
+
 	public void testGetWordFileParser() {
 		FileParserFactory factory = FileParserFactory.getInstance();
 		FileParser parser = factory.getFileParser("sample.doc");
@@ -57,7 +57,7 @@ public class FileParserFactoryTest extends TestCase {
 		assertNotNull(parser);
 		assertTrue(parser instanceof WordFileParser);
 	}
-	
+
 	public void testGetExcelFileParser() {
 		FileParserFactory factory = FileParserFactory.getInstance();
 		FileParser parser = factory.getFileParser("sample.xls");
@@ -72,7 +72,7 @@ public class FileParserFactoryTest extends TestCase {
 		assertNotNull(parser);
 		assertTrue(parser instanceof ExcelFileParser);
 	}
-	
+
 	public void testGetPowerPointFileParser() {
 		FileParserFactory factory = FileParserFactory.getInstance();
 		FileParser parser = factory.getFileParser("sample.ppt");
@@ -86,7 +86,7 @@ public class FileParserFactoryTest extends TestCase {
 		parser = factory.getFileParser("sample.odp");
 		assertNotNull(parser);
 		assertTrue(parser instanceof PowerPointFileParser);
-	}	
+	}
 
 	public void testGetInvalidFileParser() {
 		FileParserFactory factory = FileParserFactory.getInstance();
@@ -94,45 +94,45 @@ public class FileParserFactoryTest extends TestCase {
 		assertNotNull(parser);
 		assertTrue(parser instanceof DefaultFileParser);
 	}
-	
-	public void testGetTextFileParserMimeType(){		
+
+	public void testGetTextFileParserMimeType(){
 		testFileParserMimeType("TxtDataTest.txt", TextFileParser.class);
 	}
-	
+
 	public void testGetHtmFileParserMimeType() {
 		testFileParserMimeType("HtmlDataTest.html", TikaHtmlFileParser.class);
 	}
 
 	public void testGetPdfFileParserMimeType() {
-		testFileParserMimeType("ZimbraCommunity.pdf", PdfFileParser.class);	
+		testFileParserMimeType("ZimbraCommunity.pdf", PdfFileParser.class);
 	}
-	
-	public void testGetWordFileParserMimeType() {		
+
+	public void testGetWordFileParserMimeType() {
 		testFileParserMimeType("WordDataTest.doc", WordFileParser.class);
-		
+
 		testFileParserMimeType("ODFDataTest.odt", WordFileParser.class);
 	}
-	
+
 	public void testGetExcelFileParserMimeType() {
 		testFileParserMimeType("ExcelDataTest.xls", ExcelFileParser.class);
 	}
-	
-	public void testGetPowerPointFileParserMimeType() {		
+
+	public void testGetPowerPointFileParserMimeType() {
 		testFileParserMimeType("PowerPointTestData.ppt", PowerPointFileParser.class);
-	}	
+	}
 
 	public void testGetInvalidFileParserMimeType() {
 		//invalid stream
-		byte[] bytes = new byte[10];		
+		byte[] bytes = new byte[10];
 		InputStream is = new ByteArrayInputStream(bytes);
-		
+
 		FileParserFactory factory = FileParserFactory.getInstance();
 		FileParser parser = factory.getFileParser(is);
 		assertNotNull(parser);
 		assertEquals(TikaFileParser.class, parser.getClass());
 	}
-	
-	private void testFileParserMimeType(String fileName, Class parserClazz){
+
+	private void testFileParserMimeType(String fileName, Class<?> parserClazz){
 		FileParserFactory factory = FileParserFactory.getInstance();
 		String dataFolder = System.getProperty("testdata.dir", "../file-parser/testdata");
 		File f = new File(dataFolder + "/" + fileName);
@@ -144,7 +144,7 @@ public class FileParserFactoryTest extends TestCase {
 			assertEquals(parserClazz, parser.getClass());
 		} catch (FileNotFoundException e) {
 			fail(e.getMessage());
-		}				
-	}	
-	
+		}
+	}
+
 }

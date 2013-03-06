@@ -48,6 +48,7 @@ public class PdfFileParser implements FileParser {
 	 * @throws FileParserException
 	 *             exception
 	 */
+	@Override
 	public Content getContent(String fileName, InputStream inputStream) throws FileParserException {
 		logger.info("Parsing file " + fileName);
 
@@ -112,13 +113,21 @@ public class PdfFileParser implements FileParser {
 	 * @param doc
 	 *            A PDDocument
 	 * @return A Collection of Attribute objects
+	 * @throws IOException
 	 */
-	private void getDocumentInformation(PDDocument doc, Content content) {
+	private void getDocumentInformation(PDDocument doc, Content content) throws IOException {
 		PDDocumentInformation docInfo = doc.getDocumentInformation();
 		if (docInfo != null && !doc.isEncrypted()) {
 			if (!StringUtils.isEmpty(docInfo.getAuthor())) {
 				addOrUpdateAttribute(content, new Attribute("AUTHOR", docInfo.getAuthor(),
 						Attribute.ATTRIBUTE_TYPE_TEXT, true));
+			}
+
+			if (docInfo.getCreationDate() != null) {
+
+
+				addOrUpdateAttribute(content, new Attribute("CREATIONDATE", String.valueOf(docInfo.getCreationDate().getTimeInMillis()),
+						Attribute.ATTRIBUTE_TYPE_DATE, true));
 			}
 
 			if (!StringUtils.isEmpty(docInfo.getTitle())) {
