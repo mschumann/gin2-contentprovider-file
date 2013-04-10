@@ -742,7 +742,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	/**
 	 * Setter method for repository.
 	 * 
-	 * @param the new CMIS repository
+	 * @param repository the new CMIS repository
 	 */
 	public void setRepository(Repository repository) {
 		this.repository = repository;
@@ -755,6 +755,15 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 */
 	public Session getCmisSession() {
 		return cmisSession;
+	}
+
+	/**
+	 * Setter method for cmisSession.
+	 * 
+	 * @param  cmisSession the new cmisSession
+	 */
+	public void setCmisSession(Session cmisSession) {
+		this.cmisSession = cmisSession;
 	}
 
 	/**

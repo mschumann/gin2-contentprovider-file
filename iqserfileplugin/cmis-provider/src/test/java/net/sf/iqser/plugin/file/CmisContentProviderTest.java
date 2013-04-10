@@ -54,6 +54,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		ccp.setName("net.sf.iqser.plugin.file");
 		ccp.setRepository(mockCmisRepo);
+		ccp.setCmisSession(mockCmisSession);
 
 	}
 
