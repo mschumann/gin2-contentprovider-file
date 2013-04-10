@@ -107,7 +107,7 @@
 
 	<repositories>
 		<repository>
-			<id>iqser_release</id>
+			<id>iqser</id>
 			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
 			<releases>
 				<enabled>true</enabled>
@@ -119,7 +119,7 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>iqser_release</id>
+			<id>iqser</id>
 			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
 			<releases>
 				<enabled>true</enabled>
