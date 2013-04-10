@@ -1,13 +1,11 @@
 package net.sf.iqser.plugin.file;
 
-import java.util.Collection;
 import java.util.Properties;
 
 import junit.framework.TestCase;
 
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
-import org.apache.chemistry.opencmis.client.api.Repository;
 import org.apache.chemistry.opencmis.client.api.Session;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisRuntimeException;
 import org.apache.log4j.PropertyConfigurator;
@@ -15,13 +13,11 @@ import org.apache.log4j.PropertyConfigurator;
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Content;
 
-@SuppressWarnings("unchecked")
 public class CmisContentProviderPerformActionTestIntegration extends TestCase {
 
 	CmisContentProvider ccp;
 
 	private Folder testFolder;
-	private String CmisTestFolderId;
 
 	private Session cmisSession;
 
@@ -98,14 +94,7 @@ public class CmisContentProviderPerformActionTestIntegration extends TestCase {
 
 	}
 
-	private Session createSession(){
-		Collection<Repository> repoList = ccp.getRepositories();
-		for (Repository repository : repoList) {
-			return repository.createSession();
-		}
-		return null;
-	}
-
+	@SuppressWarnings("unused")
 	private Content createDummyContentFromUrl(String contentUrl){
 		Content content = new Content();
 		content.setProvider(ccp.getName());

@@ -11,7 +11,6 @@ import com.iqser.core.exception.IQserException;
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CmisContentProviderTestIntegration extends TestCase {
 
 	CmisContentProvider ccp;
@@ -90,7 +89,7 @@ public class CmisContentProviderTestIntegration extends TestCase {
 
 	public void testGetActionsContent() {
 
-		Collection actions = null;
+		Collection<String> actions = null;
 
 		Content content = new Content();
 

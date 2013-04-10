@@ -25,9 +25,4 @@ public class CmisDefaultSecurityFilterTestIntegration extends TestCase {
 		assertTrue(canRead);
 	}
 
-	//TODO
-	//public void testCanExecute() throws IQserSecurityException {
-	//	boolean canRead = filter.canExecuteAction(user, password, action, content.getContentId());
-	//	assertTrue(canRead);
-	//}
 }

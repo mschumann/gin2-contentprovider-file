@@ -53,7 +53,7 @@ public class CmisContentProviderTest extends TestCase {
 		ccp = new CmisContentProvider();
 
 		ccp.setName("net.sf.iqser.plugin.file");
-		ccp.getRepositories().add(mockCmisRepo);
+		ccp.setRepository(mockCmisRepo);
 
 	}
 
@@ -443,7 +443,7 @@ public class CmisContentProviderTest extends TestCase {
 			fail();
 		} catch (CmisBaseException cbe) {
 		}
-		ccp.getRepositories().add(mockCmisRepo);
+		ccp.setRepository(mockCmisRepo);
 
 		String contentUrl = "http://cmis/Shared Documents/cmis:document#3-1024";
 
@@ -499,7 +499,7 @@ public class CmisContentProviderTest extends TestCase {
 			fail();
 		} catch (CmisBaseException cbe) {
 		}
-		ccp.getRepositories().add(mockCmisRepo);
+		ccp.setRepository(mockCmisRepo);
 
 		String contentUrl = "http://cmis/Shared Documents/cmis:document#3-1024";
 
@@ -559,7 +559,7 @@ public class CmisContentProviderTest extends TestCase {
 			fail();
 		} catch (CmisBaseException cbe) {
 		}
-		ccp.getRepositories().add(mockCmisRepo);
+		ccp.setRepository(mockCmisRepo);
 
 		String contentUrl = "http://cmis/Shared Documents/cmis:document#3-1024";
 

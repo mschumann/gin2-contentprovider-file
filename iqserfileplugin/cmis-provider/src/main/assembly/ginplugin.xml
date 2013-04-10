@@ -36,8 +36,7 @@
 		</param>
 		<param name="REPOSITORY" type="String"
 			optional="true">
-			Repositories (in brackets) that will be synchronized;
-			e.g. [MyRepo1][MyRepo2]
+			Repository that will be synchronized;
 		</param>
 		<param name="CONTENT-TYPE-MAPPINGS" type="String"
 			optional="true">
@@ -55,5 +54,10 @@
 			If an attribute has been mapped in ATTRIBUTE-MAPPINGS, the new name must be placed here;
 			e.g. [attr3][new_attr2]
 		</param>
+		<param name="BASE-FOLDER" type="String"
+            optional="true">
+            The base folder to use for synchronization; if omitted root folder will be used;
+            if not present it will be created automatically by the GIN plugin
+        </param>
 	</params>
 </ginplugin>

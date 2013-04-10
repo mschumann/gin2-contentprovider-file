@@ -19,7 +19,6 @@ import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
 import com.iqser.core.model.Content;
 
-@SuppressWarnings("unchecked")
 public class CmisContentProviderPerformActionTest extends TestCase {
 
 	CmisContentProvider ccp;
@@ -40,7 +39,7 @@ public class CmisContentProviderPerformActionTest extends TestCase {
 		ccp = new CmisContentProvider();
 
 		ccp.setName("net.sf.iqser.plugin.file");
-		ccp.getRepositories().add(mockCmisRepo);
+		ccp.setRepository(mockCmisRepo);
 
 	}
 
@@ -101,6 +100,7 @@ public class CmisContentProviderPerformActionTest extends TestCase {
 		return content;
 	}
 
+	@SuppressWarnings("unused")
 	private Property<?> helperCreateProperty(String id, String value){
 		PropertyStringDefinitionImpl pd = new PropertyStringDefinitionImpl();
 		pd.setId(id);

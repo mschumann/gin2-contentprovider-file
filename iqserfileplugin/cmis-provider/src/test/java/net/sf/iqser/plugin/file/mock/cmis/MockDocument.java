@@ -29,6 +29,7 @@ import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 import org.apache.chemistry.opencmis.commons.enums.ExtensionLevel;
 import org.apache.chemistry.opencmis.commons.enums.VersioningState;
 
+@SuppressWarnings("unchecked")
 public class MockDocument implements Document, CmisObject {
 
 	ContentStream contentStream;
@@ -58,7 +59,7 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public void addToFolder(ObjectId arg0, boolean arg1) {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
@@ -68,127 +69,127 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public List<String> getPaths() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public FileableCmisObject move(ObjectId arg0, ObjectId arg1) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void removeFromFolder(ObjectId arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public Acl addAcl(List<Ace> arg0, AclPropagation arg1) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Acl applyAcl(List<Ace> arg0, List<Ace> arg1, AclPropagation arg2) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void applyPolicy(ObjectId... arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void delete(boolean arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public Acl getAcl() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public <T> T getAdapter(Class<T> arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public AllowableActions getAllowableActions() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public List<CmisExtensionElement> getExtensions(ExtensionLevel arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public List<Policy> getPolicies() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public long getRefreshTimestamp() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public List<Relationship> getRelationships() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public List<Rendition> getRenditions() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public TransientCmisObject getTransientObject() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public void refreshIfOld(long arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public Acl removeAcl(List<Ace> arg0, AclPropagation arg1) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void removePolicy(ObjectId... arg0) {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public CmisObject updateProperties(Map<String, ?> arg0) {
-		// TODO Auto-generated method stub
+		
 		return this;
 	}
 
@@ -215,19 +216,19 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public String getChangeToken() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getCreatedBy() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public GregorianCalendar getCreationDate() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -238,7 +239,7 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public String getLastModifiedBy() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -279,104 +280,104 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public ObjectType getType() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getCheckinComment() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getContentStreamFileName() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getContentStreamId() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public long getContentStreamLength() {
-		// TODO Auto-generated method stub
+		
 		return 0;
 	}
 
 	@Override
 	public String getContentStreamMimeType() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getVersionLabel() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getVersionSeriesCheckedOutBy() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getVersionSeriesCheckedOutId() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public String getVersionSeriesId() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Boolean isImmutable() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Boolean isLatestMajorVersion() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Boolean isLatestVersion() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Boolean isMajorVersion() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Boolean isVersionSeriesCheckedOut() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void cancelCheckOut() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public ObjectId checkIn(boolean arg0, Map<String, ?> arg1,
 			ContentStream arg2, String arg3) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -384,7 +385,7 @@ public class MockDocument implements Document, CmisObject {
 	public ObjectId checkIn(boolean arg0, Map<String, ?> arg1,
 			ContentStream arg2, String arg3, List<Policy> arg4, List<Ace> arg5,
 			List<Ace> arg6) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -395,7 +396,7 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public Document copy(ObjectId arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -403,25 +404,25 @@ public class MockDocument implements Document, CmisObject {
 	public Document copy(ObjectId arg0, Map<String, ?> arg1,
 			VersioningState arg2, List<Policy> arg3, List<Ace> arg4,
 			List<Ace> arg5, OperationContext arg6) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public void deleteAllVersions() {
-		// TODO Auto-generated method stub
+		
 
 	}
 
 	@Override
 	public Document deleteContentStream() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public ObjectId deleteContentStream(boolean arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -432,7 +433,7 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public List<Document> getAllVersions(OperationContext arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -448,19 +449,19 @@ public class MockDocument implements Document, CmisObject {
 
 	@Override
 	public Document getObjectOfLatestVersion(boolean arg0) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public Document getObjectOfLatestVersion(boolean arg0, OperationContext arg1) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
 	@Override
 	public TransientDocument getTransientDocument() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

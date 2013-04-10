@@ -229,7 +229,6 @@ public class CmisDefaultSecurityFilter extends AbstractPlugin implements Securit
 		try {
 			content = getContent(contentId);
 		} catch (IQserException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -296,14 +295,12 @@ public class CmisDefaultSecurityFilter extends AbstractPlugin implements Securit
 	@Override
 	public Collection<Content> filterReadableContent(String userId, String password, Collection<Content> contentObjects)
 			throws IQserSecurityException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public Collection<Result> filterReadableResult(String userId, String password, Collection<Result> resultObjects)
 			throws IQserSecurityException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
