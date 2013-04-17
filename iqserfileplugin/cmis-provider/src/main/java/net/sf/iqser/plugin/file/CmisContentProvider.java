@@ -673,7 +673,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			} catch (IOException e) {
 				logger.error("Error while parsing file content for document" + doc.getName(), e);
 			}
-			content.addAttribute(new Attribute("HASCONTENTSTREAM", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN, true));
+			content.addAttribute(new Attribute("HASCONTENTSTREAM", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN, false));
 		}
 
 		content.setModificationDate(doc.getLastModificationDate().getTimeInMillis());
