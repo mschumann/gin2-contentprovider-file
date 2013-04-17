@@ -436,7 +436,7 @@ public class CmisContentProviderTest extends TestCase {
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
 
 		initParams.put("ATTRIBUTE-MAPPINGS", "[cmisname=CmisName][Title=CmisTitle]");
-		initParams.put("KEY-ATTRIBUTES", "[myProp]");
+		initParams.put("KEY-ATTRIBUTES", "[MYPROP]");
 
 		ccp.setInitParams(initParams);
 		try {
@@ -475,7 +475,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertTrue(content.getAttributes().size() > 0);
 
-		assertTrue(content.getAttributeByName("myProp").isKey());
+		assertTrue(content.getAttributeByName("MYPROP").isKey());
 
 	}
 

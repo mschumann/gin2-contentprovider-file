@@ -127,6 +127,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * Base folder for synchronization
 	 */
 	private Folder baseFolder;
+	/**
+	 * Include folders
+	 */
+	private boolean includeFolder;
 
 	/**
 	 * Initialization method.
@@ -272,28 +276,34 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		// synch Folder
 		Content folderContent = createFolderContent(repo, root, parent);
-		boolean isExistingContent;
-		try {
-			isExistingContent = isExistingContent(folderContent.getContentUrl());
-			if (isExistingContent) {
-				try {
-					updateContent(folderContent);
-				} catch (Throwable t) {
-					// Make sure to catch everthing to continue
-					// with next Content
-					logger.error("Could not update content.", t);
+		boolean isExistingContent = false;
+
+		if (includeFolder) {
+			try {
+				isExistingContent = isExistingContent(folderContent
+						.getContentUrl());
+				if (isExistingContent) {
+					try {
+						updateContent(folderContent);
+					} catch (Throwable t) {
+						// Make sure to catch everthing to continue
+						// with next Content
+						logger.error("Could not update content.", t);
+					}
+				} else {
+					try {
+						addContent(folderContent);
+					} catch (Throwable t) {
+						// Make sure to catch everthing to continue
+						// with next Content
+						logger.error("Could not update content.", t);
+					}
 				}
-			} else {
-				try {
-					addContent(folderContent);
-				} catch (Throwable t) {
-					// Make sure to catch everthing to continue
-					// with next Content
-					logger.error("Could not update content.", t);
-				}
+			} catch (IQserException e) {
+				logger.error(
+						"Exception for content "
+								+ folderContent.getContentUrl(), e);
 			}
-		} catch (IQserException e) {
-			logger.error("Exception for content " + folderContent.getContentUrl(), e);
 		}
 
 		// synch documents in folder
@@ -687,7 +697,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 					type = Attribute.ATTRIBUTE_TYPE_TEXT;
 				}
 				String upperCaseName = name.toUpperCase().replace(' ', '_').replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS").replaceAll("[^A-Z\\d-_.]", "");
-				content.addAttribute(new Attribute(upperCaseName, value, type, true));
+				if(keyAttributeNames.contains(upperCaseName)){
+					content.addAttribute(new Attribute(upperCaseName, value, type, true));
+				}else
+				{
+					content.addAttribute(new Attribute(upperCaseName, value, type, false));
+					
+				}
 			}
 		}
 	}
@@ -788,7 +804,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	
 	private void initPluginConfiguration() {
 		Properties initParams = getInitParams();
-
+		
 		// key attributes
 		String keyAttrInitParam = initParams.getProperty("KEY-ATTRIBUTES");
 		keyAttributeNames = CmisUtils.parseInitParam(keyAttrInitParam);
@@ -844,6 +860,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 			}
 		}
 		
+		//include folders
+		includeFolder = "true".equalsIgnoreCase(initParams.getProperty("INCLUDE-FOLDER"));
+
 		baseFolderRelativePath = initParams.getProperty("BASE-FOLDER");
 		if(repository != null) {
 			cmisSession = repository.createSession();

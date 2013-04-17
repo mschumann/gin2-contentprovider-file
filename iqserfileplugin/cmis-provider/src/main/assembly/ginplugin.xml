@@ -59,5 +59,10 @@
             The base folder to use for synchronization; if omitted root folder will be used;
             if not present it will be created automatically by the GIN plugin
         </param>
+		<param name="INCLUDE-FOLDER" type="Boolean"
+            optional="true">
+            Set to true if folders should be create a content object too, otherwise only documents will be created.
+            Default is false.
+        </param>
 	</params>
 </ginplugin>
