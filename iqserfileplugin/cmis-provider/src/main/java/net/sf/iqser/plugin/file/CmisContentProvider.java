@@ -660,6 +660,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				IOUtils.copy(inputStream, baos);
 				Content fileContent = fileParser.getContent(fileName, new ByteArrayInputStream(baos.toByteArray()));
+				content.setType(fileContent.getType());
 				content.getAttributes().addAll(fileContent.getAttributes());
 
 				// fulltext

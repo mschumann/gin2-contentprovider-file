@@ -243,7 +243,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
-		assertEquals("CMIS_DOCUMENT", content.getType());
+		assertEquals("Text Document", content.getType());
 		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
@@ -327,7 +327,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
-		assertEquals("CMIS_DOCUMENT", content.getType());
+		assertEquals("Text Document", content.getType());
 		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
@@ -470,12 +470,14 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
-		assertEquals("CMIS_DOCUMENT", content.getType());
+		assertEquals("Text Document", content.getType());
 		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
 
 		assertTrue(content.getAttributeByName("MYPROP").isKey());
+		assertFalse(content.getAttributeByName("CMISOBJECTID").isKey());
+		assertFalse(content.getAttributeByName("CMISNAME").isKey());
 
 	}
 
@@ -526,7 +528,7 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertNotNull(content);
 		assertNotNull(content.getModificationDate());
-		assertEquals("CMIS_DOCUMENT", content.getType());
+		assertEquals("Text Document", content.getType());
 		assertEquals(ccp.getName(), content.getProvider());
 
 		assertTrue(content.getAttributes().size() > 0);
@@ -553,7 +555,7 @@ public class CmisContentProviderTest extends TestCase {
 		initParams.put("ATOMPUB", atompubUrl);
 
 		initParams.put("AUTHENTICATION_PROVIDER_CLASS", "BASIC");
-		initParams.put("CONTENT-TYPE-MAPPINGS", "[CMIS_DOCUMENT=IQserDocument]");
+		initParams.put("CONTENT-TYPE-MAPPINGS", "[Text Document=IQserDocument]");
 		ccp.setInitParams(initParams);
 		try {
 			ccp.init();
