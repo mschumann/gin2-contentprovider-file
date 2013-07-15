@@ -4,24 +4,23 @@ import org.apache.log4j.Logger;
 
 import com.iqser.core.analyzer.AnalyzerTaskStarter;
 import com.iqser.core.analyzer.ContentAnalyzerJob;
-import com.iqser.core.config.Configuration;
-import com.iqser.core.exception.IQserTechnicalException;
 
 /**
  * Supports testing of classes of the iQser Web Content Provider Family.
  * 
- * @author Jšrg Wurzer
+ * @author Joerg Wurzer
  *
  */
 public class MockAnalyzerTaskStarter implements AnalyzerTaskStarter {
-	
+
 	private static Logger logger = Logger.getLogger( MockAnalyzerTaskStarter.class );
-	
+
+	@Override
 	public void startTask(ContentAnalyzerJob job) {
 		/*logger.debug("startTask() startet for " + job.getContent().getContentUrl() + " and type " + job.getJobType());
 
 		MockRepository rep = (MockRepository)Configuration.getConfiguration().getServiceLocator().getRepository();
-		
+
 		switch (job.getJobType()) {
 		case (ContentAnalyzerJob.JOB_NEW): {
 			try {

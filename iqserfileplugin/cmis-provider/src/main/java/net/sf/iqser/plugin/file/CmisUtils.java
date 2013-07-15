@@ -4,8 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.chemistry.opencmis.client.api.CmisObject;
+import org.apache.chemistry.opencmis.client.api.Folder;
+import org.apache.chemistry.opencmis.client.api.Session;
+import org.apache.chemistry.opencmis.commons.PropertyIds;
+import org.apache.chemistry.opencmis.commons.enums.BaseTypeId;
 
 /**
  * Utility class for CmisContentProvider.
@@ -107,4 +114,75 @@ public class CmisUtils {
 		
 		return null;
 	}
+	
+	/**
+	 * Parse a relative path to obtain an ordered list of folders and subfolders.
+	 * 
+	 * @param relativePath - a relative path in the form &quot;folder/sub1/sub2&quot;
+	 * @return a string representing objectId name
+	 */
+	public static List<String> parseRelativePath(String relativePath){
+		
+		if(relativePath == null || relativePath.isEmpty()) {
+			return null;
+		}
+		List<String> foldersList = new ArrayList<String>();
+		StringTokenizer folderSepTokenizer = new StringTokenizer(relativePath, "/", false);
+		while(folderSepTokenizer.hasMoreTokens()) {
+			foldersList.add(folderSepTokenizer.nextToken());
+		}
+		return foldersList;
+		
+	}
+	
+	public static Folder findOrAutocreateBaseFolder(Session session, String baseFolderPath) {
+		CmisObject baseObj = session.getObjectByPath(baseFolderPath);
+		Folder result = null;
+		if(baseObj != null) {
+			if(baseObj.getBaseTypeId().equals(BaseTypeId.CMIS_FOLDER)) {
+				result = (Folder) baseObj;
+			}
+		}
+		else {
+			// Auto-create
+			StringBuilder incrementalPath = new StringBuilder();
+			for(String folderName : CmisUtils.parseRelativePath(baseFolderPath)) {
+				Folder parent = null;
+				if(incrementalPath.length() == 0) {
+					parent = session.getRootFolder();
+				}
+				else {
+					CmisObject parentObj = session.getObjectByPath(incrementalPath.toString());
+					if(parentObj != null && parentObj.getBaseTypeId().equals(BaseTypeId.CMIS_FOLDER)) {
+						parent = (Folder) parentObj;
+					}
+				}
+				if(parent != null) {
+					CmisObject checkObj = session.getObjectByPath(incrementalPath.toString() + "/" + folderName);
+					Folder newFolder = null;
+					if(checkObj == null) {
+						Map<String, Object> folderParams = new HashMap<String, Object>();
+						folderParams.put(PropertyIds.OBJECT_TYPE_ID, BaseTypeId.CMIS_FOLDER.value());
+						folderParams.put(PropertyIds.NAME, folderName);
+					    newFolder = parent.createFolder(folderParams);
+					}
+					if(incrementalPath.length() == 0) {
+						incrementalPath.append(folderName);
+					}
+					else {
+						incrementalPath.append("/" + folderName);
+					}
+					if(incrementalPath.toString().equals(baseFolderPath)) {
+						result = newFolder;
+					}
+				}
+				else {
+					// Unable to create. Stop the cycle
+					break;
+				}
+			}
+		}
+		return result;
+	}
+
 }

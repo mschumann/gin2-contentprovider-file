@@ -48,18 +48,17 @@ import com.iqser.core.plugin.provider.AbstractContentProvider;
 
 /**
  * 
- * This module contains a ContentProvider implementation to connect CMIS ECM to
- * the iQser GIN Platform.
+ * This module contains a ContentProvider implementation to connect CMIS ECM to the iQser GIN Platform.
  * 
  * The content URL for a CMIS object is: http://cmis/repositoryName/basicType#ID
  * 
- * where - repositoryName is the name of the CMIS repository - basicType is one
- * of cmis:folder or cmis:document - ID - is the CMIS objectID For example:
- * http://cmis/repositoryName/cmis:document#14-512,
+ * where - repositoryName is the name of the CMIS repository - basicType is one of cmis:folder or cmis:document - ID -
+ * is the CMIS objectID For example: http://cmis/repositoryName/cmis:document#14-512,
  * http://cmis/repositoryName/cmis:folder#10
  * 
  * @author robert.baban
  * @modified sebastian.danninger
+ * @modified andrea.ciapetti
  * 
  */
 public class CmisContentProvider extends AbstractContentProvider {
@@ -93,9 +92,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 	private static Logger logger = Logger.getLogger(CmisContentProvider.class);
 
 	/**
-	 * a collection of CMIS repositories.
+	 * a CMIS repository.
 	 */
-	private Collection<Repository> repositories = new ArrayList<Repository>();
+	private Repository repository;
 
 	/**
 	 * map for content type---custom name for content type.
@@ -116,80 +115,44 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * last synchronization time.
 	 */
 	private long lastSynchTime = 0;
+	/**
+	 * base folder for sync (optional, if null root folder will be used instead)
+	 */
+	private String baseFolderRelativePath;
+	/**
+	 * CMIS session instance
+	 */
+	private Session cmisSession;
+	/**
+	 * Base folder for synchronization
+	 */
+	private Folder baseFolder;
+	/**
+	 * Include folders
+	 */
+	private boolean includeFolder;
 
 	/**
 	 * Initialization method.
 	 */
 	@Override
 	public void init() {
-
-		repositories = new ArrayList<Repository>();
-
-		Properties initParams = getInitParams();
-
-		// key attributes
-		String keyAttrInitParam = initParams.getProperty("KEY-ATTRIBUTES");
-		keyAttributeNames = CmisUtils.parseInitParam(keyAttrInitParam);
-		// attribute-mapping
-		String attrMappingsInitParam = initParams.getProperty("ATTRIBUTE-MAPPINGS");
-		attributeMappings = CmisUtils.parseAttributesMappings(attrMappingsInitParam);
-		// content-type-mappings
-		String attrContentTypeMappings = initParams.getProperty("CONTENT-TYPE-MAPPINGS");
-		contentTypeMappings = CmisUtils.parseAttributesMappings(attrContentTypeMappings);
-
-		// Default factory implementation of client runtime.
-		SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
-
-		Map<String, String> cmisParameters = new HashMap<String, String>();
-
-		// User credentials
-		cmisParameters.put(SessionParameter.USER, initParams.getProperty("USERNAME"));
-		cmisParameters.put(SessionParameter.PASSWORD, initParams.getProperty("PASSWORD"));
-		
-		// bind to Atompub
-		cmisParameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
-
-		
-		// CMIS Atompub Url
-		cmisParameters.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
-		
-
-		// authentication - Standard or NTLM
-		String auth = initParams.getProperty("AUTHENTICATION_PROVIDER_CLASS");
-		if ("NTLM".equalsIgnoreCase(auth)) {
-			cmisParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
-					CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
-		} else {
-			cmisParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
-					CmisBindingFactory.STANDARD_AUTHENTICATION_PROVIDER);
+		initPluginConfiguration();
+	}
+	
+	@Override
+	public void postCreateInstance() {
+		super.postCreateInstance();
+		initPluginConfiguration();
+		if(repository == null) {
+			throw new RuntimeException("CMIS Repository defined in the configuration is not found! No repository available for syncing.");
 		}
-
-		// decide which repositories to synch, default value is the first
-		// repository
-		String repositoryInitParam = initParams.getProperty("REPOSITORY");
-		List<String> repositoryNames = CmisUtils.parseInitParam(repositoryInitParam);
-
-		if (repositoryNames.isEmpty()) {
-			// default the first repository is considered
-			List<Repository> repoList = sessionFactory.getRepositories(cmisParameters);
-			if (!repoList.isEmpty()) {
-				this.repositories.add(repoList.get(0));
-			}
-		} else {
-			// obtain all repositories and filter the ones that are present in
-			// configuration file
-			List<Repository> repoList = sessionFactory.getRepositories(cmisParameters);
-			for (Repository repository : repoList) {
-				if (repositoryNames.contains(repository.getName())) {
-					this.repositories.add(repository);
-				}
-			}
+		if(cmisSession == null) {
+			throw new RuntimeException("Unable to create CMIS session!");
 		}
-
-		// cmisParameters.put(SessionParameter.REPOSITORY_ID,
-		// "db9d2cfc-2a84-4eee-b751-0aac19b50d0b");
-		// this.repositories.add(sessionFactory.getRepositories(cmisParameters).get(0));
-
+		if(baseFolder == null) {
+			throw new RuntimeException("Unable to find or auto-create the base folder for synchronization proces!");
+		}
 	}
 
 	/**
@@ -197,12 +160,14 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 */
 	@Override
 	public void destroy() {
-		repositories = null;
+		cmisSession.clear();
+		cmisSession = null;
+		repository = null;
 	}
 
 	/**
-	 * If content type is CMIS_DOCUMENT will return the binary content of the
-	 * document, if the document has associated a binary content.
+	 * If content type is CMIS_DOCUMENT will return the binary content of the document, if the document has associated a
+	 * binary content.
 	 * 
 	 * Otherwise the method will return null
 	 * 
@@ -220,16 +185,12 @@ public class CmisContentProvider extends AbstractContentProvider {
 			// stream then return the content stream
 			Attribute attr = content.getAttributeByName("hasContentStream");
 			if ("true".equalsIgnoreCase(attr.getValue())) {
-				// determine repository
-				Repository repo = getRepository(content.getContentUrl());
+				
 				String objectId = content.getAttributeByName("cmis:objectId").getValue();
 
 				try {
-					// open session on repository
-					logger.info("Repository name=" + repo.getName() + " objectId=" + objectId);
-					Session s = repo.createSession();
-					logger.info(s);
-					Document doc = (Document) s.getObject(objectId);
+					logger.info("Repository name=" + getRepository().getName() + " objectId=" + objectId);
+					Document doc = (Document) getCmisSession().getObject(objectId);
 
 					ContentStream cs = doc.getContentStream();
 					binaryData = IOUtils.toByteArray(cs.getStream());
@@ -243,10 +204,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Performs cleaning. Deletes the content objects from the object graph if
-	 * the corresponding objects are no longer on the CMS system.
+	 * Performs cleaning. Deletes the content objects from the object graph if the corresponding objects are no longer
+	 * on the CMS system.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void doHousekeeping() {
 		Collection<Content> existingContents;
@@ -276,13 +236,11 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * @return true if content exists on CMS, false otherwise
 	 */
 	protected boolean contentExistsOnSource(Content content) {
-		Repository repo = getRepository(content.getContentUrl());
 		String objectID = getObjectID(content.getContentUrl());
 
-		Session session = repo.createSession();
 		CmisObject cmisObject = null;
 		try {
-			cmisObject = session.getObject(objectID);
+			cmisObject = getCmisSession().getObject(objectID);
 		} catch (CmisObjectNotFoundException confe) {
 			// ignore it
 			cmisObject = null;
@@ -299,14 +257,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		long startLastSynchTime = new Date().getTime();
 
-		for (Repository repo : repositories) {
-			Session session = repo.createSession();
-
-			// getFolders and getDocuments
-			Folder root = session.getRootFolder();
-
-			doSynchFolder(repo, root, null);
-		}
+		doSynchFolder(getRepository(), getBaseFolder(), null);
 
 		lastSynchTime = startLastSynchTime;
 	}
@@ -325,28 +276,34 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		// synch Folder
 		Content folderContent = createFolderContent(repo, root, parent);
-		boolean isExistingContent;
-		try {
-			isExistingContent = isExistingContent(folderContent.getContentUrl());
-			if (isExistingContent) {
-				try {
-					updateContent(folderContent);
-				} catch (Throwable t) {
-					// Make sure to catch everthing to continue
-					// with next Content
-					logger.error("Could not update content.", t);
+		boolean isExistingContent = false;
+
+		if (includeFolder) {
+			try {
+				isExistingContent = isExistingContent(folderContent
+						.getContentUrl());
+				if (isExistingContent) {
+					try {
+						updateContent(folderContent);
+					} catch (Throwable t) {
+						// Make sure to catch everthing to continue
+						// with next Content
+						logger.error("Could not update content.", t);
+					}
+				} else {
+					try {
+						addContent(folderContent);
+					} catch (Throwable t) {
+						// Make sure to catch everthing to continue
+						// with next Content
+						logger.error("Could not update content.", t);
+					}
 				}
-			} else {
-				try {
-					addContent(folderContent);
-				} catch (Throwable t) {
-					// Make sure to catch everthing to continue
-					// with next Content
-					logger.error("Could not update content.", t);
-				}
+			} catch (IQserException e) {
+				logger.error(
+						"Exception for content "
+								+ folderContent.getContentUrl(), e);
 			}
-		} catch (IQserException e) {
-			logger.error("Exception for content " + folderContent.getContentUrl(), e);
 		}
 
 		// synch documents in folder
@@ -383,7 +340,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 							}
 						}
 					} catch (IQserException e) {
-						String url = this.createURL(repo.getName(), "CMIS_DOCUMENT", verDoc.getId());
+						String url = createURL(repo.getName(), "CMIS_DOCUMENT", verDoc.getId());
 						logger.error("Exception in doSynch for document " + url, e);
 					}
 				}
@@ -392,16 +349,15 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Returns the available actions for the given content. The content URL has
-	 * the following pattern: http://cmis/repositoryName/basicType#ID
+	 * Returns the available actions for the given content. The content URL has the following pattern:
+	 * http://cmis/repositoryName/basicType#ID
 	 * 
 	 * @param content
 	 *            the content
 	 * @return a collection of string representing action names
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public Collection getActions(Content content) {
+	public Collection<String> getActions(Content content) {
 		String[] actions = null;
 		if (isFolder(content)) {
 			actions = new String[] { ACTION_DELETE, ACTION_UPDATE };
@@ -414,31 +370,27 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Creates a content object based on a content URL. The content URL has the
-	 * following pattern: http://cmis/repositoryName/basicType#ID
+	 * Creates a content object based on a content URL. The content URL has the following pattern:
+	 * http://cmis/repositoryName/basicType#ID
 	 * 
 	 * @param contentUrl
 	 *            content URL
 	 * @return a content object
 	 */
 	@Override
-	public Content getContent(String contentUrl) {
-		Repository repository = getRepository(contentUrl);
+	public Content createContent(String contentUrl) {
 		String objectId = getObjectID(contentUrl);
 
 		logger.info("Repository name=" + repository.getName() + " objectId=" + objectId);
 
-		Session session = repository.createSession();
-
-		return getContent(session, contentUrl);
+		return getContent(contentUrl);
 	}
 
-	private Content getContent(Session session, String contentUrl) {
+	private Content getContent(String contentUrl) {
 
-		Repository repository = getRepository(contentUrl);
 		String objectId = getObjectID(contentUrl);
 
-		CmisObject object = session.getObject(objectId);
+		CmisObject object = getCmisSession().getObject(objectId);
 
 		logger.info("object name=" + object.getName());
 
@@ -452,7 +404,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		}
 
 		content.setContentUrl(contentUrl);
-		content.setProvider(this.getName());
+		content.setProvider(getName());
 
 		// change attribute name according to mappings
 		changeAttributeName(content);
@@ -471,7 +423,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	private void setKeyAttributes(Content content) {
 		for (Attribute attr : content.getAttributes()) {
-			if (this.keyAttributeNames.contains(attr.getName())) {
+			if (keyAttributeNames.contains(attr.getName())) {
 				attr.setKey(true);
 			}
 		}
@@ -479,9 +431,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	private void changeAttributeName(Content content) {
 		for (Attribute attr : content.getAttributes()) {
-			String newName = this.attributeMappings.get(attr.getName());
+			String newName = attributeMappings.get(attr.getName());
 			if (newName != null) {
-				attr.setName(newName);
+				attr.setName(newName.toUpperCase().replace(' ', '_'));
 			}
 		}
 	}
@@ -503,22 +455,14 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 * @return a content object
 	 */
 	@Override
-	public Content getContent(InputStream inputStream) {
+	public Content createContent(InputStream inputStream) {
 		throw new RuntimeException("NOT IMPLEMENTED");
 	}
 
-	/**
-	 * Performs an action of the given content.
-	 * 
-	 * @param action
-	 *            the action
-	 * @param content
-	 *            the content
-	 */
+
 	@Override
-	public void performAction(String action, Content content) {
-		@SuppressWarnings("rawtypes")
-		Collection availableActions = getActions(content);
+	public void performAction(String action, Collection<Parameter> parameters, Content content) {
+		Collection<String> availableActions = getActions(content);
 		if (availableActions.contains(action)) {
 			if (ACTION_DELETE.equalsIgnoreCase(action)) {
 				performActionDelete(content);
@@ -534,7 +478,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 					+ content.getContentUrl());
 		}
 
+
 	}
+
 
 	/**
 	 * Perform Update Action.
@@ -543,16 +489,13 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 *            the content
 	 */
 	protected void performActionUpdate(Content content) {
-		Repository repo = getRepository(content.getContentUrl());
 		String objectID = getObjectID(content.getContentUrl());
 
-		Session session = repo.createSession();
-
-		CmisObject cmisObject = session.getObject(objectID);
+		CmisObject cmisObject = getCmisSession().getObject(objectID);
 		Map<String, String> propMap = determineCMISUpdatableProperties(cmisObject, content);
 		cmisObject.updateProperties(propMap);
 		try {
-			this.updateContent(content);
+			updateContent(content);
 		} catch (Throwable t) {
 			// Make sure to catch everthing to continue
 			// with next Content
@@ -567,19 +510,16 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 *            the content
 	 */
 	protected void performActionDelete(Content content) {
-		Repository repo = getRepository(content.getContentUrl());
 		String objectID = getObjectID(content.getContentUrl());
 
-		Session session = repo.createSession();
-
-		CmisObject cmisObject = session.getObject(objectID);
+		CmisObject cmisObject = getCmisSession().getObject(objectID);
 
 		// delete current version
 		boolean allVersions = false;
 		cmisObject.delete(allVersions);
 
 		try {
-			this.removeContent(content.getContentUrl());
+			removeContent(content.getContentUrl());
 		} catch (IQserException e) {
 			throw new IQserRuntimeException(e);
 		}
@@ -592,12 +532,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 *            the content
 	 */
 	protected void performActionCheckOut(Content content) {
-		Repository repo = getRepository(content.getContentUrl());
 		String objectID = getObjectID(content.getContentUrl());
 
-		Session session = repo.createSession();
-
-		CmisObject cmisObject = session.getObject(objectID);
+		CmisObject cmisObject = getCmisSession().getObject(objectID);
 
 		if (BaseTypeId.CMIS_DOCUMENT == cmisObject.getBaseType().getBaseTypeId()) {
 			Document doc = (Document) cmisObject;
@@ -606,10 +543,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 			// create new content for pwc - the client will be able to find the
 			// pwc by performing a query
 			// cmis:isLatestVersion true and cmis:isLatestMajorVersion true
-			String newContentUrl = createURL(repo.getName(), CmisContentProvider.CMIS_DOCUMENT_TYPE, pwcId.getId());
-			Content newContent = this.getContent(session, newContentUrl);
+			String newContentUrl = createURL(getRepository().getName(), CmisContentProvider.CMIS_DOCUMENT_TYPE, pwcId.getId());
+			Content newContent = getContent(newContentUrl);
 			try {
-				this.addContent(newContent);
+				addContent(newContent);
 			} catch (Throwable t) {
 				// Make sure to catch everthing to continue
 				// with next Content
@@ -625,12 +562,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 	 *            the content
 	 */
 	protected void performActionCheckIn(Content content) {
-		Repository repo = getRepository(content.getContentUrl());
 		String objectID = getObjectID(content.getContentUrl());
 
-		Session session = repo.createSession();
-
-		CmisObject cmisObject = session.getObject(objectID);
+		CmisObject cmisObject = getCmisSession().getObject(objectID);
 
 		if (BaseTypeId.CMIS_DOCUMENT == cmisObject.getBaseType().getBaseTypeId()) {
 			Document doc = (Document) cmisObject;
@@ -691,18 +625,18 @@ public class CmisContentProvider extends AbstractContentProvider {
 	protected Content createDocumentContent(Repository repository, Document doc) {
 		Content content = new Content();
 		content.setContentUrl(createURL(repository.getName(), CMIS_DOCUMENT_TYPE, doc.getId()));
-		content.setProvider(this.getName());
+		content.setProvider(getName());
 		content.setType(CMIS_DOCUMENT_TYPE);
 
 		handleProperties(doc, content);
 
-		content.addAttribute(new Attribute("repository", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
+		content.addAttribute(new Attribute("REPOSITORY", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		List<Folder> parents = doc.getParents();
 		if (!parents.isEmpty()) {
 			Attribute mva = new Attribute();
 			mva.setMultiValue(true);
-			mva.setName("parent");
+			mva.setName("PARENT");
 			mva.setType(Attribute.ATTRIBUTE_TYPE_TEXT);
 			content.addAttribute(mva);
 
@@ -726,6 +660,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				IOUtils.copy(inputStream, baos);
 				Content fileContent = fileParser.getContent(fileName, new ByteArrayInputStream(baos.toByteArray()));
+				content.setType(fileContent.getType());
 				content.getAttributes().addAll(fileContent.getAttributes());
 
 				// fulltext
@@ -738,7 +673,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			} catch (IOException e) {
 				logger.error("Error while parsing file content for document" + doc.getName(), e);
 			}
-			content.addAttribute(new Attribute("hasContentStream", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN, true));
+			content.addAttribute(new Attribute("HASCONTENTSTREAM", "true", Attribute.ATTRIBUTE_TYPE_BOOLEAN, false));
 		}
 
 		content.setModificationDate(doc.getLastModificationDate().getTimeInMillis());
@@ -762,8 +697,14 @@ public class CmisContentProvider extends AbstractContentProvider {
 				} else {
 					type = Attribute.ATTRIBUTE_TYPE_TEXT;
 				}
-
-				content.addAttribute(new Attribute(name, value, type, true));
+				String upperCaseName = name.toUpperCase().replace(' ', '_').replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS").replaceAll("[^A-Z\\d-_.]", "");
+				if(keyAttributeNames.contains(upperCaseName)){
+					content.addAttribute(new Attribute(upperCaseName, value, type, true));
+				}else
+				{
+					content.addAttribute(new Attribute(upperCaseName, value, type, false));
+					
+				}
 			}
 		}
 	}
@@ -782,30 +723,18 @@ public class CmisContentProvider extends AbstractContentProvider {
 	protected Content createFolderContent(Repository repository, Folder folder, Folder parentFolder) {
 		Content content = new Content();
 		content.setContentUrl(createURL(repository.getName(), CMIS_FOLDER_TYPE, folder.getId()));
-		content.setProvider(this.getName());
+		content.setProvider(getName());
 		content.setType(CMIS_FOLDER_TYPE);
 
 		handleProperties(folder, content);
 
-		content.addAttribute(new Attribute("repository", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
+		content.addAttribute(new Attribute("REPOSITORY", repository.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
 
 		if (parentFolder != null) {
-			content.addAttribute(new Attribute("parent", parentFolder.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
+			content.addAttribute(new Attribute("PARENT", parentFolder.getName(), Attribute.ATTRIBUTE_TYPE_TEXT, false));
 		}
 
 		return content;
-	}
-
-	private Repository getRepository(String contentUrl) {
-		String repoName = CmisUtils.getRepository(contentUrl);
-		if (repoName != null) {
-			for (Repository repo : repositories) {
-				if (repoName.equalsIgnoreCase(repo.getName())) {
-					return repo;
-				}
-			}
-		}
-		return null;
 	}
 
 	private String getObjectID(String contentUrl) {
@@ -819,12 +748,48 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Getter method for repositories.
+	 * Getter method for repository.
 	 * 
-	 * @return a collection of repositories
+	 * @return a CMIS repository
 	 */
-	public Collection<Repository> getRepositories() {
-		return repositories;
+	public Repository getRepository() {
+		return repository;
+	}
+	
+	/**
+	 * Setter method for repository.
+	 * 
+	 * @param repository the new CMIS repository
+	 */
+	public void setRepository(Repository repository) {
+		this.repository = repository;
+	}
+	
+	/**
+	 * Getter method for cmisSession.
+	 * 
+	 * @return the cmisSession
+	 */
+	public Session getCmisSession() {
+		return cmisSession;
+	}
+
+	/**
+	 * Setter method for cmisSession.
+	 * 
+	 * @param  cmisSession the new cmisSession
+	 */
+	public void setCmisSession(Session cmisSession) {
+		this.cmisSession = cmisSession;
+	}
+
+	/**
+	 * Getter method for baseFolder.
+	 * 
+	 * @return the baseFolder
+	 */
+	public Folder getBaseFolder() {
+		return baseFolder;
 	}
 
 	private boolean isFolder(Content content) {
@@ -837,10 +802,84 @@ public class CmisContentProvider extends AbstractContentProvider {
 		return type.equals(CMIS_DOCUMENT_TYPE) || type.equals(contentTypeMappings.get(CMIS_DOCUMENT_TYPE));
 	}
 
-	@Override
-	public void performAction(String arg0, Collection<Parameter> arg1, Content arg2) {
-		// TODO Auto-generated method stub
+	
+	private void initPluginConfiguration() {
+		Properties initParams = getInitParams();
+		
+		// key attributes
+		String keyAttrInitParam = initParams.getProperty("KEY-ATTRIBUTES");
+		keyAttributeNames = CmisUtils.parseInitParam(keyAttrInitParam);
+		// attribute-mapping
+		String attrMappingsInitParam = initParams.getProperty("ATTRIBUTE-MAPPINGS");
+		attributeMappings = CmisUtils.parseAttributesMappings(attrMappingsInitParam);
+		// content-type-mappings
+		String attrContentTypeMappings = initParams.getProperty("CONTENT-TYPE-MAPPINGS");
+		contentTypeMappings = CmisUtils.parseAttributesMappings(attrContentTypeMappings);
 
+		// Default factory implementation of client runtime.
+		SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
+
+		Map<String, String> cmisParameters = new HashMap<String, String>();
+
+		// User credentials
+		cmisParameters.put(SessionParameter.USER, initParams.getProperty("USERNAME"));
+		cmisParameters.put(SessionParameter.PASSWORD, initParams.getProperty("PASSWORD"));
+
+		// bind to Atompub
+		cmisParameters.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
+
+		// CMIS Atompub Url
+		cmisParameters.put(SessionParameter.ATOMPUB_URL, initParams.getProperty("ATOMPUB"));
+
+		// authentication - Standard or NTLM
+		String auth = initParams.getProperty("AUTHENTICATION_PROVIDER_CLASS");
+		if ("NTLM".equalsIgnoreCase(auth)) {
+			cmisParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
+					CmisBindingFactory.NTLM_AUTHENTICATION_PROVIDER);
+		} else {
+			cmisParameters.put(SessionParameter.AUTHENTICATION_PROVIDER_CLASS,
+					CmisBindingFactory.STANDARD_AUTHENTICATION_PROVIDER);
+		}
+
+		// decide which repository to synch, default value is the first one
+		String repositoryName = initParams.getProperty("REPOSITORY");
+
+		if (repositoryName == null || repositoryName.isEmpty()) {
+			// default the first repository is considered
+			List<Repository> repoList = sessionFactory.getRepositories(cmisParameters);
+			if (!repoList.isEmpty()) {
+				repository = repoList.get(0);
+			}
+		} else {
+			// obtain all repositories and filter the one in the configuration file
+			List<Repository> repoList = sessionFactory.getRepositories(cmisParameters);
+			for (Repository existentRepository : repoList) {
+				if (existentRepository.getName().equals(repositoryName)) {
+					repository = existentRepository;
+					break;
+				}
+			}
+		}
+		
+		//include folders
+		includeFolder = "true".equalsIgnoreCase(initParams.getProperty("INCLUDE-FOLDER"));
+
+		baseFolderRelativePath = initParams.getProperty("BASE-FOLDER");
+		if(repository != null) {
+			cmisSession = repository.createSession();
+			if(cmisSession != null) {
+				if(baseFolderRelativePath == null || baseFolderRelativePath.isEmpty()) {
+					// Use the root folder as a base folder path
+					baseFolder = cmisSession.getRootFolder();
+				}
+				else {
+					// Find or create the base folder for synchronization
+					baseFolder = CmisUtils.findOrAutocreateBaseFolder(cmisSession, baseFolderRelativePath);
+				}
+			}
+		}
 	}
+	
+
 
 }

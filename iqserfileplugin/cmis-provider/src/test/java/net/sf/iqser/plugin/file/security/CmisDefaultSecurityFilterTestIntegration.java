@@ -10,9 +10,10 @@ public class CmisDefaultSecurityFilterTestIntegration extends TestCase {
 	private CmisDefaultSecurityFilter filter;
 
 	private Content content;
-	private String user = "robert.baban";
-	private String password = "#EDCXSW@1qaz";
+	private final String user = "robert.baban";
+	private final String password = "#EDCXSW@1qaz";
 
+	@Override
 	public void setUp() {
 		filter = new CmisDefaultSecurityFilter();
 		content = new Content();
@@ -21,14 +22,7 @@ public class CmisDefaultSecurityFilterTestIntegration extends TestCase {
 
 	public void testCanRead() throws IQserSecurityException {
 		boolean canRead = filter.canRead(user, password, content.getContentId());
-
 		assertTrue(canRead);
-	}
-
-	public void testCanEdit() throws IQserSecurityException {
-		boolean canEdit = filter.canEdit(user, password, content.getContentId());
-
-		assertTrue(canEdit);
 	}
 
 }

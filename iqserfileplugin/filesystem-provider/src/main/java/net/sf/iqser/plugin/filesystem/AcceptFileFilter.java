@@ -2,7 +2,6 @@ package net.sf.iqser.plugin.filesystem;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +18,7 @@ public class AcceptFileFilter implements FileFilter {
 	private static Logger logger = Logger.getLogger(AcceptFileFilter.class);
 
 	/** A List of all accepted Filetypes. */
-	private List accptedFiletypes = null;
+	private List<String> accptedFiletypes = null;
 
 	/** Minimum length of the extention. */
 	private int minLength = 1;
@@ -28,7 +27,7 @@ public class AcceptFileFilter implements FileFilter {
 	 * Constructor.
 	 */
 	public AcceptFileFilter() {
-		accptedFiletypes = new LinkedList();
+		accptedFiletypes = new LinkedList<String>();
 	}
 
 	/**
@@ -37,7 +36,7 @@ public class AcceptFileFilter implements FileFilter {
 	 * @param accptedFiletypes
 	 *            List of Filetypes
 	 */
-	public AcceptFileFilter(List accptedFiletypes) {
+	public AcceptFileFilter(List<String> accptedFiletypes) {
 		this.accptedFiletypes = accptedFiletypes;
 	}
 
@@ -49,41 +48,37 @@ public class AcceptFileFilter implements FileFilter {
 	 * @return boolean
 	 * @see java.io.FileFilter#accept(java.io.File)
 	 */
+	@Override
 	public boolean accept(File file) {
 		logger.debug("accept(File file=" + file + ") - start");
 
 		if (file == null) {
-			logger.debug("accept(File file=" + file + ") - end - return value="
-					+ false);
+			logger.debug("accept(File file=" + file + ") - end - return value=" + false);
 			return false;
 		}
 
 		if (file.isHidden()) {
-			logger.debug("accept(File file=" + file + ") - end - return value="
-					+ false);
+			logger.debug("accept(File file=" + file + ") - end - return value=" + false);
 			return false;
 		}
 
 		if (file.isDirectory()) {
-			logger.debug("accept(File file=" + file + ") - end - return value="
-					+ false);
+			logger.debug("accept(File file=" + file + ") - end - return value=" + false);
 			return false;
 		}
 
 		if (accptedFiletypes != null) {
-			for (Iterator i = accptedFiletypes.iterator(); i.hasNext();) {
-				String accept = (String) i.next();
+			for (String string : accptedFiletypes) {
+				String accept = string;
 
 				if (file.getName().endsWith(accept)) {
-					logger.debug("accept(File file=" + file
-							+ ") - end - return value=" + true);
+					logger.debug("accept(File file=" + file + ") - end - return value=" + true);
 					return true;
 				}
 			}
 		}
 
-		logger.debug("accept(File file=" + file + ") - end - return value="
-				+ false);
+		logger.debug("accept(File file=" + file + ") - end - return value=" + false);
 		return false;
 	}
 

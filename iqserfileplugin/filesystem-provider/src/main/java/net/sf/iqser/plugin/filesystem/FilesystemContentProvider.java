@@ -53,11 +53,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 */
 	private static Logger logger = Logger.getLogger(FilesystemContentProvider.class);
 
-	/**
-	 * UID.
-	 */
-	private static final long serialVersionUID = 6781181225882526721L;
-
+	private static final String CONTENT_TYPE = "Content Type";
 	/**
 	 * map for new attribute---for replacing the name of the attributes.
 	 */
@@ -67,6 +63,8 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * a collection of new key attributes.
 	 */
 	private Collection<String> keyAttributesList = new ArrayList<String>();
+
+	private String contentType;
 
 	/**
 	 * get the binary data from a content.
@@ -81,10 +79,11 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		try {
 			String contentURL = content.getContentUrl();
-			if (contentURL.startsWith("zip://"))
+			if (contentURL.startsWith("zip://")) {
 				return extractBinaryPackedFiles(content);
-			else if (getFile(contentURL) != null)
+			} else if (getFile(contentURL) != null) {
 				return extractBinaryUnpackedFiles(content);
+			}
 		} catch (IOException ioe) {
 			throw new IQserRuntimeException(ioe);
 		}
@@ -177,8 +176,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * erases the content objects from the object graph if the corresponding
-	 * files are no longer on the file system.
+	 * erases the content objects from the object graph if the corresponding files are no longer on the file system.
 	 */
 	@Override
 	public void doHousekeeping() {
@@ -195,8 +193,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			for (Content content : existingContents) {
 				try {
 					String contentUrl = content.getContentUrl();
-					if (!sourceContentUrls.contains(contentUrl))
+					if (!sourceContentUrls.contains(contentUrl)) {
 						removeContent(content.getContentUrl());
+					}
 				} catch (IQserException e) {
 					logger.error("Error while doing Housekeeping: ", e);
 				}
@@ -205,18 +204,15 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * adds or updates the content of the object graph when a file is added or
-	 * modified.
+	 * adds or updates the content of the object graph when a file is added or modified.
 	 */
 	@Override
 	public void doSynchronization() {
 
 		/**
-		 * synchronize file system against the object graph - if a file is new
-		 * INSERT in Object Graph - if a file has been modified ( see file
-		 * LAST_MODIFIED), UPDATE Object Graph - the Content Object from
-		 * ObjectGraph that do not have a coresponding file in the file system
-		 * will be DELETE from the Object Graph
+		 * synchronize file system against the object graph - if a file is new INSERT in Object Graph - if a file has
+		 * been modified ( see file LAST_MODIFIED), UPDATE Object Graph - the Content Object from ObjectGraph that do
+		 * not have a coresponding file in the file system will be DELETE from the Object Graph
 		 */
 
 		// get the object graph content URLs
@@ -239,14 +235,14 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		Collection<String> sourceContentUrls = getContentUrls();
 
 		// handle new files
-		Collection newSourceContentUrls = new ArrayList();
+		Collection<String> newSourceContentUrls = new ArrayList<String>();
 		newSourceContentUrls.addAll(sourceContentUrls);
 		newSourceContentUrls.removeAll(objectGraphContentUrls);
 
 		for (Object contentUrl : newSourceContentUrls) {
 			logger.info("Synch - add conntent " + contentUrl);
 			try {
-				addContent(getContent((String) contentUrl));
+				addContent(createContent((String) contentUrl));
 			} catch (Throwable t) {
 				// Make sure to catch everthing to continue with next Content
 				logger.error("Could not add content.", t);
@@ -272,7 +268,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 							if (lastModified > contentLastModified) {
 								logger.info("Synch - delete update " + contentUrl);
 								try {
-									updateContent(getContent(file.getAbsolutePath()));
+									updateContent(createContent(file.getAbsolutePath()));
 								} catch (Throwable t) {
 									// Make sure to catch everthing to continue
 									// with next Content
@@ -285,7 +281,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 							boolean isModified = zfm.getZipEntry().getTime() > content.getModificationDate();
 							if (isModified) {
 								try {
-									updateContent(getContent(contentUrl));
+									updateContent(createContent(contentUrl));
 								} catch (Throwable t) {
 									// Make sure to catch everthing to continue
 									// with next Content
@@ -313,7 +309,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * @return a collection of String actions
 	 */
 	@Override
-	public Collection getActions(Content content) {
+	public Collection<String> getActions(Content content) {
 		String[] actions = new String[] { "delete", "save" };
 		return Arrays.asList(actions);
 	}
@@ -366,8 +362,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			zfm.setZipEntry(entry);
 
 			return zfm;
-		} else
+		} else {
 			throw new IQserRuntimeException("Invalid zip url");
+		}
 	}
 
 	/**
@@ -378,7 +375,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * @return the created content
 	 */
 	@Override
-	public Content getContent(String contentUrl) {
+	public Content createContent(String contentUrl) {
 
 		Content content = null;
 
@@ -388,9 +385,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		InputStream inputStream = null;
 
-		if (contentUrl.contains(".zip") && !contentUrl.endsWith(".zip"))
+		if (contentUrl.contains(".zip") && !contentUrl.endsWith(".zip")) {
 			inputStream = getInputStreamForZipContent(contentUrl);
-		else if (new File(contentUrl).exists()) {
+		} else if (new File(contentUrl).exists()) {
 			try {
 				inputStream = new FileInputStream(contentUrl);
 			} catch (IOException e1) {
@@ -402,11 +399,12 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		try {
 			if (inputStream != null) {
 				FileParser parser = parserFactory.getFileParser(contentUrl);
-
 				content = parser.getContent(contentUrl, inputStream);
-				content.setProvider(this.getName());
+				content.setProvider(getName());
 				content.setContentUrl(contentUrl);
-
+				if (contentType != null && !contentType.isEmpty()) {
+					content.setType(contentType);
+				}
 				File file = getFile(contentUrl);
 
 				if (file != null) {
@@ -415,8 +413,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 				}
 				cu.updateAttributes(content, attributeMappings);
 				cu.updateKeyAttributes(content, keyAttributesList);
-			} else
+			} else {
 				throw new IQserRuntimeException("Input stream from file " + contentUrl + " is null");
+			}
 		} catch (FileParserException e) {
 			throw new IQserRuntimeException(e);
 		}
@@ -433,7 +432,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * @return content the created content
 	 */
 	@Override
-	public Content getContent(InputStream inputStream) {
+	public Content createContent(InputStream inputStream) {
 
 		FileParserFactory parserFactory = FileParserFactory.getInstance();
 
@@ -451,15 +450,19 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			try {
 				if (parser != null) {
 					content = parser.getContent(null, new ByteArrayInputStream(bytes));
+					if (contentType != null && !contentType.isEmpty()) {
+						content.setType(contentType);
+					}
 
-					content.setProvider(this.getName());
+					content.setProvider(getName());
 
 					// update the attributes with the ones from the
 					// initialization parameters
 					cu.updateAttributes(content, attributeMappings);
 					cu.updateKeyAttributes(content, keyAttributesList);
-				} else
+				} else {
 					throw new IQserRuntimeException("There are no parsers for zip archives.");
+				}
 
 			} catch (FileParserException e) {
 				throw new IQserRuntimeException(e);
@@ -475,29 +478,31 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 * 
 	 * @return a collection of string representing the urls of the files
 	 */
-	public Collection getContentUrls() {
+	public Collection<String> getContentUrls() {
 
 		Properties params = getInitParams();
 		// get the filters from the initialization parameters
 		String filter = (String) params.get("filter-pattern");
-		Collection filterFileTypes = extractConfigAttributes(filter);
+		Collection<String> filterFileTypes = extractConfigAttributes(filter);
 
 		String filterFolderInclude = (String) params.get("filter-folder-include");
-		Collection includedFolders = null;
-		if (filterFolderInclude != null)
+		Collection<String> includedFolders = null;
+		if (filterFolderInclude != null) {
 			includedFolders = extractConfigAttributes(filterFolderInclude);
-		else
-			includedFolders = Collections.EMPTY_LIST;
+		} else {
+			includedFolders = Collections.emptyList();
+		}
 
 		String filterFolderExclude = (String) params.get("filter-folder-exclude");
-		Collection excludedFolders = null;
-		if (filterFolderExclude != null)
+		Collection<String> excludedFolders = null;
+		if (filterFolderExclude != null) {
 			excludedFolders = extractConfigAttributes(filterFolderExclude);
-		else
-			excludedFolders = Collections.EMPTY_LIST;
+		} else {
+			excludedFolders = Collections.emptyList();
+		}
 
 		String folder = (String) params.get("folder");
-		Collection folders = extractConfigAttributes(folder);
+		Collection<String> folders = extractConfigAttributes(folder);
 
 		// create path filter
 		AcceptedPathFilter apf = new AcceptedPathFilter();
@@ -519,7 +524,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		}
 
 		// get all the files that are valid using the filter
-		Collection files = fs.scanFiles(aff);
+		Collection<String> files = fs.scanFiles(aff);
 
 		return files;
 	}
@@ -541,9 +546,10 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			throw new IQserRuntimeException(e);
 		}
 
-		Iterator keys = json.keys();
+		@SuppressWarnings("unchecked")
+		Iterator<String> keys = json.keys();
 		while (keys.hasNext()) {
-			String key = (String) keys.next();
+			String key = keys.next();
 			try {
 				String value = (String) json.get(key);
 				attributeMappings.put(key, value);
@@ -556,7 +562,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		String keyAttributes = (String) params.get("key-attributes");
 
 		keyAttributesList = extractConfigAttributes(keyAttributes);
-
+		contentType = (String) params.get(CONTENT_TYPE);
 	}
 
 	/**
@@ -566,33 +572,24 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	 *            a string of the form [keyAttr1][keyAttr2]
 	 * @return a collection of the new key attributes
 	 */
-	private Collection extractConfigAttributes(String keyAttributes) {
+	private Collection<String> extractConfigAttributes(String keyAttributes) {
 
 		String regex = "\\s*\\]\\s*\\[\\s*|\\s*\\[\\s*|\\s*\\]\\s*";
 		String[] keyAttrs = keyAttributes.trim().split(regex);
 
 		List<String> keyAttributesList = new ArrayList<String>();
 		for (String key : keyAttrs) {
-			if (key.trim().length() > 0)
+			if (key.trim().length() > 0) {
 				keyAttributesList.add(key);
+			}
 		}
 
 		return keyAttributesList;
 	}
 
-	/**
-	 * perform save or delete action on the object graph and also on the file
-	 * system.
-	 * 
-	 * @param action
-	 *            the type of action which can be delete of save
-	 * @param content
-	 *            the content that is deleted or saved
-	 */
 	@Override
-	public void performAction(String action, Content content) {
-
-		Collection<String> actions = this.getActions(content);
+	public void performAction(String action, Collection<Parameter> parameters, Content content) {
+		Collection<String> actions = getActions(content);
 		if (actions.contains(action)) {
 			if (action.equalsIgnoreCase("delete")) {
 				performDeleteAction(content);
@@ -600,13 +597,11 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 				performSaveAction(content);
 			}
 		}
-
 	}
 
 	/**
-	 * perform save action on a content object a save action saves the file on
-	 * the file system if it is a text document or a text document in a zip
-	 * file.
+	 * perform save action on a content object a save action saves the file on the file system if it is a text document
+	 * or a text document in a zip file.
 	 * 
 	 * @param content
 	 *            the content that is saved
@@ -615,8 +610,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		String contentUrl = content.getContentUrl();
 
-		if (contentUrl == null || contentUrl.trim().length() == 0)
+		if (contentUrl == null || contentUrl.trim().length() == 0) {
 			throw new IQserRuntimeException("Content " + content.getContentId() + " does not have url");
+		}
 		if (content.getType().equalsIgnoreCase("Text Document")) {
 			if (contentUrl.startsWith("zip://")) {
 				int zipFileIndexEnd = contentUrl.indexOf(".zip") + 4;
@@ -641,10 +637,11 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			}
 		}
 		try {
-			if (isExistingContent(contentUrl))
+			if (isExistingContent(contentUrl)) {
 				updateContent(content);
-			else
+			} else {
 				addContent(content);
+			}
 		} catch (IQserException e) {
 			throw new IQserRuntimeException(e);
 		}
@@ -652,8 +649,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 	}
 
 	/**
-	 * deletes a content object from the object graph and also from the file
-	 * system.
+	 * deletes a content object from the object graph and also from the file system.
 	 * 
 	 * @param content
 	 *            the content that is deleted
@@ -662,8 +658,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		String contentUrl = content.getContentUrl();
 
-		if (contentUrl == null || contentUrl.trim().length() == 0)
+		if (contentUrl == null || contentUrl.trim().length() == 0) {
 			throw new IQserRuntimeException("Content " + content.getContentId() + " does not have url");
+		}
 		// if zip file
 		if (contentUrl.startsWith("zip://")) {
 			int zipFileIndexEnd = contentUrl.indexOf(".zip") + 4;
@@ -773,12 +770,6 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		while ((bytesRead = input.read(buffer)) != -1) {
 			output.write(buffer, 0, bytesRead);
 		}
-	}
-
-	@Override
-	public void performAction(String arg0, Collection<Parameter> arg1, Content arg2) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -20,10 +19,10 @@ public class AcceptedPathFilter implements FileFilter {
 	private static Logger logger = Logger.getLogger(AcceptedPathFilter.class);
 
 	/** List of path names that will be included. */
-	private List acceptedPath = new ArrayList();
+	private final List<String> acceptedPath = new ArrayList<String>();
 
 	/** List of path names that will be ignored. */
-	private List deniedPath = new ArrayList();
+	private final List<String> deniedPath = new ArrayList<String>();
 
 	/**
 	 * Interface implementation.
@@ -33,6 +32,7 @@ public class AcceptedPathFilter implements FileFilter {
 	 * @return boolean
 	 * @see java.io.FileFilter#accept(java.io.File)
 	 */
+	@Override
 	public boolean accept(File file) {
 		logger.debug("accept(File file=" + file + ") - start");
 
@@ -44,14 +44,14 @@ public class AcceptedPathFilter implements FileFilter {
 
 		if (!acceptedPath.isEmpty()){
 			// Is Path explizit accepted?
-			for (Iterator i = acceptedPath.iterator(); i.hasNext();) {
-				File compare = new File((String) i.next());
-	
+			for (String path : acceptedPath) {
+				File compare = new File(path);
+
 				if (file.getAbsolutePath().startsWith(compare.getAbsolutePath())) {
 					// Is Path sub dir of a accepted dir and explict denied?
-					for (Iterator x = deniedPath.iterator(); x.hasNext();) {
-						compare = new File((String) x.next());
-	
+					for (Object element2 : deniedPath) {
+						compare = new File((String) element2);
+
 						if (file.getAbsolutePath().startsWith(
 								compare.getAbsolutePath())) {
 							logger.debug("accept(File file=" + file
@@ -59,16 +59,16 @@ public class AcceptedPathFilter implements FileFilter {
 							return false;
 						}
 					}
-	
+
 					logger.debug("accept(File file=" + file
 							+ ") - end - return value=" + true);
 					return true;
 				}
 			}
-		}else{			
+		}else{
 			// Is Path sub dir of a accepted dir and explict denied?
-			for (Iterator x = deniedPath.iterator(); x.hasNext();) {
-				File compare = new File((String) x.next());
+			for (Object element : deniedPath) {
+				File compare = new File((String) element);
 
 				if (file.getAbsolutePath().startsWith(
 						compare.getAbsolutePath())) {
@@ -77,7 +77,7 @@ public class AcceptedPathFilter implements FileFilter {
 					return false;
 				}
 			}
-			return true;			
+			return true;
 		}
 		logger.debug("accept(File file=" + file + ") - end - return value="
 				+ false);
@@ -90,13 +90,13 @@ public class AcceptedPathFilter implements FileFilter {
 	 * @param accepted
 	 *            A Collection of Pathnames (String)
 	 */
-	public void addAccepted(Collection accepted) {
+	public void addAccepted(Collection<String> accepted) {
 		logger.debug("addAccepted(Collection accepted=" + accepted
 				+ ") - start");
 
 		if (accepted != null) {
-			for (Iterator iter = accepted.iterator(); iter.hasNext();) {
-				String s = (String) iter.next();
+			for (String string : accepted) {
+				String s = string;
 				addAcceptedPath(s);
 			}
 		}
@@ -126,12 +126,12 @@ public class AcceptedPathFilter implements FileFilter {
 	 * @param denied
 	 *            A Collection of Pathnames (String)
 	 */
-	public void addDenied(Collection denied) {
+	public void addDenied(Collection<String> denied) {
 		logger.debug("addDenied(Collection denied=" + denied + ") - start");
 
 		if (denied != null) {
-			for (Iterator iter = denied.iterator(); iter.hasNext();) {
-				String s = (String) iter.next();
+			for (String string : denied) {
+				String s = string;
 				addDeniedPath(s);
 			}
 		}

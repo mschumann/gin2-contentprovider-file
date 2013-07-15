@@ -18,6 +18,7 @@ import org.easymock.EasyMock;
 import com.iqser.core.model.Content;
 import com.iqser.core.plugin.security.IQserSecurityException;
 
+@SuppressWarnings({"unused", "unchecked"})
 public class CmisDefaultSecurityFilterTest extends TestCase {
 
 	private CmisDefaultSecurityFilter filter;

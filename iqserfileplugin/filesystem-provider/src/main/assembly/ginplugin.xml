@@ -5,7 +5,7 @@
 
 	<name>Filesystem Content Provider</name>
 	<vendor>iQser GmbH</vendor>
-	<version>2.0-SNAPSHOT</version>
+	<version>###VERSION###</version>
 
 	<description>
 		This ContentProvider plugin is able to scan the filesystem for files 
@@ -26,6 +26,7 @@
 			One or more file extension ins brackets; 
 			e.g. [pdf][doc][docx][xls][xlsx][ppt][pptx][txt]
 		</param>
+		<param name="Content Type" type="String" optional="true" />
 		<param name="filter-folder-include" type="String" optional="true">
 			If set, only these sub-folders are taken in consideration.
 		</param>
