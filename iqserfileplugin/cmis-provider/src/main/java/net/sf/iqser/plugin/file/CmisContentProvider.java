@@ -186,7 +186,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			Attribute attr = content.getAttributeByName("hasContentStream");
 			if ("true".equalsIgnoreCase(attr.getValue())) {
 				
-				String objectId = content.getAttributeByName("cmis:objectId").getValue();
+				String objectId = content.getAttributeByName("objectId").getValue();
 
 				try {
 					logger.info("Repository name=" + getRepository().getName() + " objectId=" + objectId);
