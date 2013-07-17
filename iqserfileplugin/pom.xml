@@ -107,7 +107,7 @@
 
 	<repositories>
 		<repository>
-			<id>iqser</id>
+			<id>iqser_release</id>
 			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
 			<releases>
 				<enabled>true</enabled>
@@ -119,7 +119,7 @@
 	</repositories>
 	<pluginRepositories>
 		<pluginRepository>
-			<id>iqser</id>
+			<id>iqser_release</id>
 			<url>http://nexus.iqser.com/nexus/content/groups/repo</url>
 			<releases>
 				<enabled>true</enabled>
@@ -137,7 +137,7 @@
 			<url>sftp://${username}@web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2</url>
 		</repository>
 		<snapshotRepository>
-			<id>iqserfileplugin-repo-snap</id>
+			<id>iqserfileplugin-repo-snapshot</id>
 			<name>iQserFileContentProvider-Snapshot-Repository</name>
 			<url>sftp://${username}@web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2-snap</url>
 			<uniqueVersion>false</uniqueVersion>
