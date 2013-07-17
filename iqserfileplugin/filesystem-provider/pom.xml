@@ -3,7 +3,7 @@
 	<parent>
 		<artifactId>iqserfileplugin</artifactId>
 		<groupId>net.sf.iqser.plugin.file</groupId>
-		<version>2.0.1-SNAPSHOT</version>
+		<version>2.0-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>filesystem-provider</artifactId>
@@ -23,6 +23,16 @@
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
+
+<!-- copy from parent TODO:Check and remove? (dbruhn) -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<iqser.version>2.0</iqser.version>
+		<compileSource>1.6</compileSource>
+		<sourceforge.artifact>${project.build.directory}/${project.build.finalName}</sourceforge.artifact>
+		<sourceforge.upload>frs.sourceforge.net:/home/pfs/project/i/iq/iqserfileplugin</sourceforge.upload>
+	</properties>
+
 
 	<build>
 		<plugins>
@@ -56,9 +66,7 @@
 						<phase>package</phase>
 						<configuration>
 							<target>
-								<copy
-									file="${project.build.directory}/${project.build.finalName}.zip"
-									tofile="${project.build.directory}/${project.build.finalName}.gin" />
+								<copy file="${project.build.directory}/${project.build.finalName}.zip" tofile="${project.build.directory}/${project.build.finalName}.gin" />
 							</target>
 						</configuration>
 						<goals>
@@ -74,10 +82,42 @@
 						<configuration>
 							<target>
 								<echo message="Preparing ginplugin.xml" />
-								<copy failonerror="true"
-									file="${basedir}/src/main/assembly/ginplugin.xml" tofile="${basedir}/target/generated-resources/ginplugin.xml" />
-								<replace file="${basedir}/target/generated-resources/ginplugin.xml"
-									token="###VERSION###" value="${project.version}" />
+								<copy failonerror="true" file="${basedir}/src/main/assembly/ginplugin.xml" tofile="${basedir}/target/generated-resources/ginplugin.xml" />
+								<replace file="${basedir}/target/generated-resources/ginplugin.xml" token="###VERSION###" value="${project.version}" />
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-jsch</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+					<dependency>
+						<groupId>jsch</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.25</version>
+					</dependency>
+				</dependencies>
+				<executions>
+					<execution>
+						<id>publish_jar</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<!-- <scp todir="${sourceforge.upload}" password="${sf.password}" trust="true"> -->
+								<scp todir="${sf.username},${project.parent.artifactId}@${sourceforge.upload}" password="${sf.password}" trust="true">
+									<fileset dir="${project.build.directory}/">
+										<include name="${project.build.finalName}*.gin" />
+									</fileset>
+								</scp>
 							</target>
 						</configuration>
 					</execution>
@@ -108,7 +148,7 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -118,12 +158,8 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-antrun-plugin
-										</artifactId>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-antrun-plugin</artifactId>
 										<versionRange>
 											[1.7,)
 										</versionRange>
@@ -181,7 +217,4 @@
 			</plugins>
 		</pluginManagement>
 	</build>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 </project>
