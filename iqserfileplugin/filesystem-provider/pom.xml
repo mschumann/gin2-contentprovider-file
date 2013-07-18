@@ -24,7 +24,7 @@
 		</dependency>
 	</dependencies>
 
-<!-- copy from parent TODO:Check and remove? (dbruhn) -->
+	<!-- copy from parent TODO:Check and remove? (dbruhn) -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<iqser.version>2.0</iqser.version>
@@ -57,6 +57,18 @@
 				</executions>
 			</plugin>
 			<plugin>
+				<dependencies>
+					<dependency>
+						<groupId>ant</groupId>
+						<artifactId>ant-jsch</artifactId>
+						<version>1.6.5</version>
+					</dependency>
+					<dependency>
+						<groupId>jsch</groupId>
+						<artifactId>jsch</artifactId>
+						<version>0.1.25</version>
+					</dependency>
+				</dependencies>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<version>1.7</version>
@@ -87,23 +99,6 @@
 							</target>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<dependencies>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-jsch</artifactId>
-						<version>1.6.5</version>
-					</dependency>
-					<dependency>
-						<groupId>jsch</groupId>
-						<artifactId>jsch</artifactId>
-						<version>0.1.25</version>
-					</dependency>
-				</dependencies>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<executions>
 					<execution>
 						<id>publish_jar</id>
 						<phase>deploy</phase>
@@ -112,7 +107,7 @@
 						</goals>
 						<configuration>
 							<target>
-							<echo message="Copy GIN Archive (${project.build.finalName}) to sourceforge with username=${sf.username}" />
+								<echo message="Copy GIN Archive (${project.build.finalName}) to sourceforge with username=${sf.username}" />
 								<scp todir="${sf.username},${project.parent.artifactId}@${sourceforge.upload}" password="${sf.password}" trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}*.gin" />
@@ -121,6 +116,12 @@
 							</target>
 						</configuration>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
 				</executions>
 			</plugin>
 			<plugin>
@@ -160,9 +161,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.apache.maven.plugins</groupId>
 										<artifactId>maven-antrun-plugin</artifactId>
-										<versionRange>
-											[1.7,)
-										</versionRange>
+										<versionRange>[1.7,)</versionRange>
 										<goals>
 											<goal>run</goal>
 										</goals>
@@ -173,15 +172,9 @@
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-checkstyle-plugin
-										</artifactId>
-										<versionRange>
-											[2.3,)
-										</versionRange>
+										<groupId>org.apache.maven.plugins</groupId>
+										<artifactId>maven-checkstyle-plugin</artifactId>
+										<versionRange>[2.3,)</versionRange>
 										<goals>
 											<goal>checkstyle</goal>
 										</goals>
@@ -192,15 +185,9 @@
 								</pluginExecution>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											org.apache.maven.plugins
-										</groupId>
-										<artifactId>
-											maven-pmd-plugin
-										</artifactId>
-										<versionRange>
-											[2.7.1,)
-										</versionRange>
+										<groupId> org.apache.maven.plugins</groupId>
+										<artifactId> maven-pmd-plugin</artifactId>
+										<versionRange> [2.7.1,)</versionRange>
 										<goals>
 											<goal>check</goal>
 											<goal>cpd-check</goal>
