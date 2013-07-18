@@ -152,11 +152,6 @@
 						</configuration>
 					</execution>
 				</executions>
-				</executions>
-			</plugin>
-			<plugin>
-				
-					
 			</plugin>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
