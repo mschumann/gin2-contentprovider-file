@@ -384,6 +384,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>cobertura-maven-plugin</artifactId>
+				<version>2.5.2</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -391,10 +392,12 @@
 				<version>2.4.3</version>
 			</plugin>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<configuration>
 					<aggregate>true</aggregate>
 				</configuration>
+				<version>2.9.1</version>
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
@@ -405,15 +408,10 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>taglist-maven-plugin</artifactId>
-				<version>2.0-beta-1</version>
+				<version>2.4</version>
 				<configuration>
 					<tags>TODO, @todo, FIXME, DOCUMENT ME</tags>
 				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.7</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
