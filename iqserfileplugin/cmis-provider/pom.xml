@@ -95,18 +95,18 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<groupId>org.apache.maven.plugins</groupId>
 				<version>1.7</version>
-				<dependencies>
-					<dependency>
-						<groupId>ant</groupId>
-						<artifactId>ant-jsch</artifactId>
-						<version>1.6.5</version>
-					</dependency>
-					<dependency>
-						<groupId>jsch</groupId>
-						<artifactId>jsch</artifactId>
-						<version>0.1.25</version>
-					</dependency>
-				</dependencies>
+<!-- 				<dependencies> -->
+<!-- 					<dependency> -->
+<!-- 						<groupId>ant</groupId> -->
+<!-- 						<artifactId>ant-jsch</artifactId> -->
+<!-- 						<version>1.6.5</version> -->
+<!-- 					</dependency> -->
+<!-- 					<dependency> -->
+<!-- 						<groupId>jsch</groupId> -->
+<!-- 						<artifactId>jsch</artifactId> -->
+<!-- 						<version>0.1.25</version> -->
+<!-- 					</dependency> -->
+<!-- 				</dependencies> -->
 				<executions>
 					<execution>
 						<id>rename zip to gin</id>
@@ -134,23 +134,23 @@
 							</target>
 						</configuration>
 					</execution>
-					<execution>
-						<id>publish_jar</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-						<configuration>
-							<target>
-								<echo message="Copy GIN Archive (${project.build.finalName}) to sourceforge with username=${sf.username}" />
-								<scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">
-									<fileset dir="${project.build.directory}/">
-										<include name="${project.build.finalName}*.gin" />
-									</fileset>
-								</scp>
-							</target>
-						</configuration>
-					</execution>
+<!-- 					<execution> -->
+<!-- 						<id>publish_jar</id> -->
+<!-- 						<phase>deploy</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>run</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<target> -->
+<!-- 								<echo message="Copy GIN Archive (${project.build.finalName}) to sourceforge with username=${sf.username}" /> -->
+<!-- 								<scp todir="${sourceforge.upload}" password="${sf.password}" trust="true"> -->
+<!-- 									<fileset dir="${project.build.directory}/"> -->
+<!-- 										<include name="${project.build.finalName}*.gin" /> -->
+<!-- 									</fileset> -->
+<!-- 								</scp> -->
+<!-- 							</target> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
 				</executions>
 			</plugin>
 			<plugin>
