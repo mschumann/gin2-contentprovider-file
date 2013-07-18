@@ -146,10 +146,10 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-						<id>iqserfileplugin.sourceforge.net</id>
+<!-- 						<id>iqserfileplugin.sourceforge.net</id> -->
 							<target>
 								<!-- <scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">  TODO:Test if working, remove comment (dbruhn)-->
-								<scp todir="${username},${project.parent.artifactID}@${sourceforge.upload}" password="${password}" trust="true">
+								<scp todir="${sf.username},${project.parent.artifactID}@${sourceforge.upload}" password="${sf.password}" trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}*.gin" />
 									</fileset>
