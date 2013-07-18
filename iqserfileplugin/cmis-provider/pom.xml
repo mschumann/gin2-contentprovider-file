@@ -146,10 +146,10 @@
 							<goal>run</goal>
 						</goals>
 						<configuration>
-<!-- 						<id>iqserfileplugin.sourceforge.net</id> -->
 							<target>
-								<!-- <scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">  TODO:Test if working, remove comment (dbruhn)-->
-								<scp todir="${sf.username},${project.parent.artifactID}@${sourceforge.upload}" password="${sf.password}" trust="true">
+								<echo message="Copy GIN Archive (${project.build.finalName}) to sourceforge with username=${sf.username}" />
+								<scp todir="${sf.username},${project.parent.artifactId}@${sourceforge.upload}" password="${sf.password}"
+									trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}*.gin" />
 									</fileset>
@@ -183,4 +183,4 @@
 			</plugin>
 		</plugins>
 	</build>
-</project>
+</project> 
