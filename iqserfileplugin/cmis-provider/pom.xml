@@ -23,8 +23,7 @@
 			<id>jboss</id>
 			<url>http://repository.jboss.org/maven2/</url>
 		</repository>
-		<!-- The following file is outdated: http://repo1.maven.org/maven2/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar It's missing 
-			javax/xml/ws/soap/Addressing -->
+		<!-- The following file is outdated: http://repo1.maven.org/maven2/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar It's missing javax/xml/ws/soap/Addressing -->
 		<repository>
 			<id>maven-repository.dev.java.net</id>
 			<url>https://maven-repository.dev.java.net/repository/</url>
