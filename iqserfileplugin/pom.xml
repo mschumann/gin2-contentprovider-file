@@ -134,18 +134,18 @@
 		<repository>
 			<id>iqserfileplugin-repo</id>
 			<name>iQserFileContentProvider-Repository</name>
-			<url>sftp://web.sourceforge.net/home/project-web/${project.parent.artifactId}/htdocs/maven2</url>
+			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2</url>
 		</repository>
 		<snapshotRepository>
 			<id>iqserfileplugin-repo-snapshot</id>
 			<name>iQserFileContentProvider-Snapshot-Repository</name>
-			<url>sftp://web.sourceforge.net/home/project-web/${project.parent.artifactId}/htdocs/maven2-snap</url>
+			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2-snap</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 		<site>
 			<id>iqserfileplugin.sourceforge.net</id>
 			<name>File ContentProvider for iQser GIN</name>
-			<url>sftp://web.sourceforge.net/home/project-web/${project.parent.artifactId}/htdocs</url>
+			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs</url>
 		</site>
 	</distributionManagement>
 
