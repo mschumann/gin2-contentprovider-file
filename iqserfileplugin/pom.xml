@@ -28,12 +28,12 @@
 
 	<scm>
 		<connection>
-			scm:svn:http://iqserfileplugin.svn.sourceforge.net/viewvc/iqserfileplugin/trunk
+			scm:svn:http://${project.parent.artifactId}.svn.sourceforge.net/viewvc/${project.parent.artifactId}/trunk
 		</connection>
 		<developerConnection>
-			scm:svn:https://iqserfileplugin.svn.sourceforge.net/svnroot/iqserfileplugin/trunk
+			scm:svn:https://${project.parent.artifactId}.svn.sourceforge.net/svnroot/${project.parent.artifactId}/trunk
 		</developerConnection>
-		<url>http://iqserfileplugin.svn.sourceforge.net/viewvc/iqserfileplugin</url>
+		<url>http://${project.parent.artifactId}.svn.sourceforge.net/viewvc/${project.parent.artifactId}</url>
 	</scm>
 
 	<developers>
@@ -102,7 +102,7 @@
 		<iqser.version>2.0</iqser.version>
 		<compileSource>1.6</compileSource>
 		<sourceforge.artifact>${project.build.directory}/${project.build.finalName}</sourceforge.artifact>
-		<sourceforge.upload>${sf.username},${project.parent.artifactId}@frs.sourceforge.net:/home/pfs/project/i/iq/iqserfileplugin</sourceforge.upload>
+		<sourceforge.upload>${sf.username},${project.parent.artifactId}@frs.sourceforge.net:/home/pfs/project/i/iq/${project.parent.artifactId}</sourceforge.upload>
 	</properties>
 
 	<repositories>
@@ -134,18 +134,18 @@
 		<repository>
 			<id>iqserfileplugin-repo</id>
 			<name>iQserFileContentProvider-Repository</name>
-			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2</url>
+			<url>sftp://web.sourceforge.net/home/project-web/${project.artifactId}/htdocs/maven2</url>
 		</repository>
 		<snapshotRepository>
 			<id>iqserfileplugin-repo-snapshot</id>
 			<name>iQserFileContentProvider-Snapshot-Repository</name>
-			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs/maven2-snap</url>
+			<url>sftp://web.sourceforge.net/home/project-web/${project.artifactId}/htdocs/maven2-snap</url>
 			<uniqueVersion>false</uniqueVersion>
 		</snapshotRepository>
 		<site>
 			<id>iqserfileplugin.sourceforge.net</id>
 			<name>File ContentProvider for iQser GIN</name>
-			<url>sftp://web.sourceforge.net/home/project-web/iqserfileplugin/htdocs</url>
+			<url>sftp://web.sourceforge.net/home/project-web/${project.artifactId}/htdocs</url>
 		</site>
 	</distributionManagement>
 
@@ -280,7 +280,59 @@
 				</dependencies>
 				<executions>
 					<execution>
+						<id>publish_gin</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="Copy GIN Archive (${project.build.finalName})" />
+								<scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">
+									<fileset dir="${project.build.directory}/">
+										<include name="${project.build.finalName}*.gin" />
+									</fileset>
+								</scp>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
 						<id>publish_jar</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+<!-- [INFO] Building jar: /srv/hudson/data/jobs/File Content Provider Plugins 2.x/workspace/file-parser/target/file-parser-2.0-SNAPSHOT.jar -->
+								<echo message="Copy JAR (${project.build.finalName}) to sourceforge" />
+								<scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">
+									<fileset dir="${project.build.directory}/">
+										<include name="${project.build.finalName}*.jar" />
+									</fileset>
+								</scp>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>publish_sources</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<echo message="Copy ${project.build.finalName}-sources.jar to sourceforge" />
+								<scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">
+									<fileset dir="${project.build.directory}/">
+										<include name="${project.build.finalName}*-sources.jar" />
+									</fileset>
+								</scp>
+							</target>
+						</configuration>
+					</execution>
+					<execution>
+						<id>publish_javadoc</id>
 						<phase>deploy</phase>
 						<goals>
 							<goal>run</goal>
@@ -290,7 +342,7 @@
 								<echo message="Copy GIN Archive (${project.build.finalName}) to sourceforge with username=${sf.username}" />
 								<scp todir="${sourceforge.upload}" password="${sf.password}" trust="true">
 									<fileset dir="${project.build.directory}/">
-										<include name="${project.build.finalName}*.gin" />
+										<include name="${project.build.finalName}*-javadoc.jar" />
 									</fileset>
 								</scp>
 							</target>
