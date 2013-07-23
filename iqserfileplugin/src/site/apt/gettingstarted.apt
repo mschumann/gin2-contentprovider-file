@@ -16,7 +16,7 @@ Getting Started
 
 * CMIS Content Provider
 
- To use the File Content Provider, add the following dependecy to your POM: 
+ To use the CMIS Provider, add the following dependecy to your POM: 
  
 %{include|source=src/site/apt/snippets/pom_snippet.xml|snippet=#file_cp_dep|verbatim=true|show-gutter=false|highlight-theme=eclipse}
 
