@@ -14,6 +14,12 @@ Getting Started
  
 %{include|source=src/site/apt/snippets/pom_snippet.xml|snippet=#repo|verbatim=true|show-gutter=false|highlight-theme=eclipse}
 
+* CMIS Content Provider
+
+ To use the File Content Provider, add the following dependecy to your POM: 
+ 
+%{include|source=src/site/apt/snippets/pom_snippet.xml|snippet=#file_cp_dep|verbatim=true|show-gutter=false|highlight-theme=eclipse}
+
 * File Content Provider
 
  To use the File Content Provider, add the following dependecy to your POM: 

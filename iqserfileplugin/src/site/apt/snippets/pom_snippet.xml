@@ -45,8 +45,21 @@
 	...
 	<dependency>
 		<groupId>net.sf.iqser.plugin.file</groupId>
+		<artifactId>cmis-provider</artifactId>
+		<version>${project.version}</version>
+	</dependency>
+	...
+</dependencies>
+...
+<!-- END SNIPPET: file_cp_dep -->
+<!-- START SNIPPET: file_cp_dep -->
+...
+<dependencies>
+	...
+	<dependency>
+		<groupId>net.sf.iqser.plugin.file</groupId>
 		<artifactId>filesystem-provider</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>${project.version}</version>
 	</dependency>
 	...
 </dependencies>
@@ -59,7 +72,7 @@
 	<dependency>
 		<groupId>net.sf.iqser.plugin.file</groupId>
 		<artifactId>file-parser</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>${project.version}</version>
 	</dependency>
 	...
 </dependencies>
