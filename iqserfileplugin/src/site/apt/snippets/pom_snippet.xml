@@ -59,7 +59,7 @@
 	<dependency>
 		<groupId>net.sf.iqser.plugin.file</groupId>
 		<artifactId>filesystem-provider</artifactId>
-		<version>${project.version}</version>
+		<version>${project.parent.version}</version>
 	</dependency>
 	...
 </dependencies>
