@@ -387,12 +387,14 @@
 				</dependencies>
 				<executions>
 					<execution>
+					<id>generate_site</id>
 						<phase>generate-resources</phase>
 						<goals>
 							<goal>site</goal>
 						</goals>
 					</execution>
 					<execution>
+					<id>deploy_site</id>
 						<phase>deploy</phase>
 						<goals>
 							<goal>deploy</goal>
