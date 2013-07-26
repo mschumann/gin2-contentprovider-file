@@ -26,12 +26,8 @@
 	</issueManagement>
 
 	<scm>
-		<connection>
-			scm:svn:http://${project.parent.artifactId}.svn.sourceforge.net/viewvc/${project.parent.artifactId}/trunk
-		</connection>
-		<developerConnection>
-			scm:svn:https://${project.parent.artifactId}.svn.sourceforge.net/svnroot/${project.parent.artifactId}/trunk
-		</developerConnection>
+		<connection>scm:svn:http://${project.parent.artifactId}.svn.sourceforge.net/viewvc/${project.parent.artifactId}/trunk</connection>
+		<developerConnection>scm:svn:https://${project.parent.artifactId}.svn.sourceforge.net/svnroot/${project.parent.artifactId}/trunk</developerConnection>
 		<url>http://${project.parent.artifactId}.svn.sourceforge.net/viewvc/${project.parent.artifactId}</url>
 	</scm>
 

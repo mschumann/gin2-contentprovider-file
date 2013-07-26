@@ -18,7 +18,7 @@
 		</menu>
 
 		<menu name="Documentation">
-			<item name="Wiki" href="wiki.html"/>
+<!-- 			<item name="Wiki" href="wiki.html"/> -->
 			<item name="Getting Started" href="gettingstarted.html"/>
 			<item name="File Content Provider Configuration" href="contentProviderConfig.html"/>
 			<item name="Javadocs" href="apidocs/index.html"/>
