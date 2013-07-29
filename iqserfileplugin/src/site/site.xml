@@ -21,14 +21,14 @@
 			<!-- <item name="Wiki" href="wiki.html"/> -->
 			<item name="Getting Started" href="gettingstarted.html" />
 			<item name="File Content Provider Configuration" href="contentProviderConfig.html" />
+		</menu>
 
 			<menu name="Javadocs">
-				<item name="Javadocs" href="file-parser/apidocs/index.html" />
-				<item name="Javadocs" href="cmis-provider/apidocs/index.html" />
-				<item name="Javadocs" href="filesystem-provider/apidocs/index.html" />
+				<item name="File-Parser" href="file-parser/apidocs/index.html" />
+				<item name="CMIS-Provider" href="cmis-provider/apidocs/index.html" />
+				<item name="Filecontent-Provider" href="filesystem-provider/apidocs/index.html" />
 			</menu>
 
-		</menu>
 
 		<menu ref="modules" />
 
