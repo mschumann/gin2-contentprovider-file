@@ -22,7 +22,7 @@
 			<item name="Getting Started" href="gettingstarted.html" />
 			<item name="File Content Provider Configuration" href="contentProviderConfig.html" />
 
-			<menu nmae=Javadocs>
+			<menu name="Javadocs">
 				<item name="Javadocs" href="file-parser/apidocs/index.html" />
 				<item name="Javadocs" href="cmis-provider/apidocs/index.html" />
 				<item name="Javadocs" href="filesystem-provider/apidocs/index.html" />
