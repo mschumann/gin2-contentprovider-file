@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project name="File Plugins for iQser GIN Platform" xmlns="http://maven.apache.org/DECORATION/1.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
+<project name="File Plugins for iQser GIN Platform" xmlns="http://maven.apache.org/DECORATION/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+>
 	<body>
 		<links>
 			<item name="iQser" href="http://www.iqser.com/" />
@@ -10,22 +10,28 @@
 		</links>
 
 		<menu name="Welcome">
-			<item name="Introduction" href="index.html"/>
-			<item name="Supported Repositories" href="repositories.html"/>
-			<item name="Components" href="components.html"/>
-			<item name="Download" href="http://sourceforge.net/projects/iqserfileplugin/files/"/>
-			<item name="Join us" href="contribution.html"/>
+			<item name="Introduction" href="index.html" />
+			<item name="Supported Repositories" href="repositories.html" />
+			<item name="Components" href="components.html" />
+			<item name="Download" href="http://sourceforge.net/projects/iqserfileplugin/files/" />
+			<item name="Join us" href="contribution.html" />
 		</menu>
 
 		<menu name="Documentation">
-<!-- 			<item name="Wiki" href="wiki.html"/> -->
-			<item name="Getting Started" href="gettingstarted.html"/>
-			<item name="File Content Provider Configuration" href="contentProviderConfig.html"/>
-			<item name="Javadocs" href="apidocs/index.html"/>
+			<!-- <item name="Wiki" href="wiki.html"/> -->
+			<item name="Getting Started" href="gettingstarted.html" />
+			<item name="File Content Provider Configuration" href="contentProviderConfig.html" />
+
+			<menu nmae=Javadocs>
+				<item name="Javadocs" href="file-parser/apidocs/index.html" />
+				<item name="Javadocs" href="cmis-provider/apidocs/index.html" />
+				<item name="Javadocs" href="filesystem-provider/apidocs/index.html" />
+			</menu>
+
 		</menu>
 
 		<menu ref="modules" />
-		
+
 		<menu ref="reports" />
 
 	</body>
