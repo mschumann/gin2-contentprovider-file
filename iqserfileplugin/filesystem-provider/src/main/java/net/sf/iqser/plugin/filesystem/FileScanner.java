@@ -129,7 +129,7 @@ public class FileScanner {
 			}
 
 		}
-
+		zipFile.close();
 		return zipContent;
 	}
 

@@ -1,6 +1,6 @@
 package net.sf.iqser.plugin.filesystem;
 
-import java.io.ByteArrayInputStream;
+ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -126,6 +126,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		// if file is larger than Integer.MAX_VALUE, we are boned... :-/
 		if (length > Integer.MAX_VALUE) {
 			logger.error("File too large to handle...");
+			is.close();
 			return null;
 		}
 
@@ -140,6 +141,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		// Ensure all the bytes have been read in
 		if (offset < bytes.length) {
+			is.close();
 			throw new IQserRuntimeException("Could not completely read file " + f.getName());
 		}
 

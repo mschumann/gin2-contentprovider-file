@@ -1,20 +1,21 @@
 package net.sf.iqser.plugin.filesystem;
 
-import java.io.File;
-import java.util.Collection;
-import java.util.Properties;
-
 import junit.framework.TestCase;
-import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
-import net.sf.iqser.plugin.filesystem.test.MockRepository;
-import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.PropertyConfigurator;
-
-import com.iqser.core.config.Configuration;
-import com.iqser.core.model.Attribute;
-import com.iqser.core.model.Content;
+//import java.io.File;
+//import java.util.Collection;
+//import java.util.Properties;
+//
+//import net.sf.iqser.plugin.filesystem.test.MockAnalyzerTaskStarter;
+//import net.sf.iqser.plugin.filesystem.test.MockRepository;
+//import net.sf.iqser.plugin.filesystem.test.TestServiceLocator;
+//
+//import org.apache.commons.io.FilenameUtils;
+//import org.apache.log4j.PropertyConfigurator;
+//
+//import com.iqser.core.config.Configuration;
+//import com.iqser.core.model.Attribute;
+//import com.iqser.core.model.Content;
 
 public class FileSystemContentProviderFilenameTest extends TestCase {
 
