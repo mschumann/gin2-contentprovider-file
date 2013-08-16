@@ -139,7 +139,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	public void init() {
 		initPluginConfiguration();
 	}
-	
+
 	@Override
 	public void postCreateInstance() {
 		super.postCreateInstance();
@@ -185,7 +185,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			// stream then return the content stream
 			Attribute attr = content.getAttributeByName("hasContentStream");
 			if ("true".equalsIgnoreCase(attr.getValue())) {
-				
+
 				String objectId = content.getAttributeByName("objectId").getValue();
 
 				try {
@@ -276,44 +276,37 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 		// synch Folder
 		Content folderContent = createFolderContent(repo, root, parent);
-		boolean isExistingContent = false;
 
 		if (includeFolder) {
 			try {
-				isExistingContent = isExistingContent(folderContent
-						.getContentUrl());
-				if (isExistingContent) {
+				if (isExistingContent(folderContent.getContentUrl())) {
 					try {
 						updateContent(folderContent);
 					} catch (Throwable t) {
-						// Make sure to catch everthing to continue
-						// with next Content
-						logger.error("Could not update content.", t);
+						// Make sure to catch everything to continue with next Content
+						logger.error(String.format("Could not update content '%s'.", folderContent.getContentUrl()), t);
 					}
 				} else {
 					try {
 						addContent(folderContent);
 					} catch (Throwable t) {
-						// Make sure to catch everthing to continue
-						// with next Content
-						logger.error("Could not update content.", t);
+						// Make sure to catch everything to continue with next Content
+						logger.error(String.format("Could not add content '%s'.", folderContent.getContentUrl()), t);
 					}
 				}
 			} catch (IQserException e) {
-				logger.error(
-						"Exception for content "
-								+ folderContent.getContentUrl(), e);
+				logger.error(String.format("Exception for content '%s' ", folderContent.getContentUrl()) , e);
 			}
 		}
 
 		// synch documents in folder
 		ItemIterable<CmisObject> children = root.getChildren();
-		for (CmisObject o : children) {
-			if (o.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
-				doSynchFolder(repo, (Folder) o, root);
-			} else if (o.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
+		for (CmisObject cmis : children) {
+			if (cmis.getBaseTypeId() == BaseTypeId.CMIS_FOLDER) {
+				doSynchFolder(repo, (Folder) cmis, root);
+			} else if (cmis.getBaseTypeId() == BaseTypeId.CMIS_DOCUMENT) {
 				// synch Document
-				Document doc = (Document) o;
+				Document doc = (Document) cmis;
 				// synch all versions
 				List<Document> versions = doc.getAllVersions();
 				boolean found = true;
@@ -332,15 +325,14 @@ public class CmisContentProvider extends AbstractContentProvider {
 						long lastModDate = doc.getLastModificationDate().getTime().getTime();
 						if (lastModDate >= lastSynchTime) {
 							Content docContent = createDocumentContent(repo, verDoc);
-							isExistingContent = isExistingContent(docContent.getContentUrl());
-							if (isExistingContent) {
+							if (isExistingContent(docContent.getContentUrl())) {
 								updateContent(docContent);
 							} else {
 								addContent(docContent);
 							}
 						}
 					} catch (IQserException e) {
-						String url = createURL(repo.getName(), "CMIS_DOCUMENT", verDoc.getId());
+						String url = createURL(repo.getName(), CMIS_DOCUMENT_TYPE, verDoc.getId());
 						logger.error("Exception in doSynch for document " + url, e);
 					}
 				}
@@ -349,8 +341,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	/**
-	 * Returns the available actions for the given content. The content URL has the following pattern:
-	 * http://cmis/repositoryName/basicType#ID
+	 * Returns the available actions for the given content. 
 	 * 
 	 * @param content
 	 *            the content
@@ -371,7 +362,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	/**
 	 * Creates a content object based on a content URL. The content URL has the following pattern:
-	 * http://cmis/repositoryName/basicType#ID
+	 * cmis/repositoryName/basicType#ID
 	 * 
 	 * @param contentUrl
 	 *            content URL
@@ -407,7 +398,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		content.setProvider(getName());
 
 		// change attribute name according to mappings
-		changeAttributeName(content);
+		//		changeAttributeName(content);
 
 		// set key attributes
 		setKeyAttributes(content);
@@ -429,14 +420,15 @@ public class CmisContentProvider extends AbstractContentProvider {
 		}
 	}
 
-	private void changeAttributeName(Content content) {
-		for (Attribute attr : content.getAttributes()) {
-			String newName = attributeMappings.get(attr.getName());
-			if (newName != null) {
-				attr.setName(newName.toUpperCase().replace(' ', '_'));
-			}
-		}
-	}
+	//	private void changeAttributeName(Content content) {
+	//		for (Attribute attr : content.getAttributes()) {
+	//			String newName = attributeMappings.get(attr.getName());
+	//			if (newName != null) {
+	//				newName = newName.toUpperCase().replace(' ', '_').replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS").replaceAll("[^A-Z\\d-_.]", "");
+	//				attr.setName(newName);
+	//			}
+	//		}
+	//	}
 
 	private String findAttributeName(String name) {
 		// if attribute name has been changed using init param find the new name
@@ -497,8 +489,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		try {
 			updateContent(content);
 		} catch (Throwable t) {
-			// Make sure to catch everthing to continue
-			// with next Content
+			// Make sure to catch everything to continue with next Content
 			logger.error("Could not update content.", t);
 		}
 	}
@@ -543,7 +534,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 			// create new content for pwc - the client will be able to find the
 			// pwc by performing a query
 			// cmis:isLatestVersion true and cmis:isLatestMajorVersion true
-			String newContentUrl = createURL(getRepository().getName(), CmisContentProvider.CMIS_DOCUMENT_TYPE, pwcId.getId());
+			String newContentUrl = createURL(getRepository().getName(), CMIS_DOCUMENT_TYPE, pwcId.getId());
 			Content newContent = getContent(newContentUrl);
 			try {
 				addContent(newContent);
@@ -703,7 +694,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 				}else
 				{
 					content.addAttribute(new Attribute(upperCaseName, value, type, false));
-					
+
 				}
 			}
 		}
@@ -742,9 +733,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	private String createURL(String repoName, String cmisBaseType, String oid) {
-		// http://cmis/repositoryName/basicType#ID
-		String v = CMIS_DOCUMENT_TYPE.equalsIgnoreCase(cmisBaseType) ? "cmis:document" : "cmis:folder";
-		return "http://cmis/" + repoName + "/" + v + "#" + oid;
+		// cmis/repositoryName/basicType#ID
+		String v = CMIS_DOCUMENT_TYPE.equalsIgnoreCase(cmisBaseType) ? BaseTypeId.CMIS_DOCUMENT.value() : BaseTypeId.CMIS_FOLDER.value();
+		return "cmis/" + repoName + "/" + v + "#" + oid;
 	}
 
 	/**
@@ -755,7 +746,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	public Repository getRepository() {
 		return repository;
 	}
-	
+
 	/**
 	 * Setter method for repository.
 	 * 
@@ -764,7 +755,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	public void setRepository(Repository repository) {
 		this.repository = repository;
 	}
-	
+
 	/**
 	 * Getter method for cmisSession.
 	 * 
@@ -802,10 +793,10 @@ public class CmisContentProvider extends AbstractContentProvider {
 		return type.equals(CMIS_DOCUMENT_TYPE) || type.equals(contentTypeMappings.get(CMIS_DOCUMENT_TYPE));
 	}
 
-	
+
 	private void initPluginConfiguration() {
 		Properties initParams = getInitParams();
-		
+
 		// key attributes
 		String keyAttrInitParam = initParams.getProperty("KEY-ATTRIBUTES");
 		keyAttributeNames = CmisUtils.parseInitParam(keyAttrInitParam);
@@ -860,7 +851,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 				}
 			}
 		}
-		
+
 		//include folders
 		includeFolder = "true".equalsIgnoreCase(initParams.getProperty("INCLUDE-FOLDER"));
 
@@ -879,7 +870,5 @@ public class CmisContentProvider extends AbstractContentProvider {
 			}
 		}
 	}
-	
-
 
 }

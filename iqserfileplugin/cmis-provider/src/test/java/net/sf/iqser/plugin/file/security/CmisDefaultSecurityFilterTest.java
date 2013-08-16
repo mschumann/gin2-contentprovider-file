@@ -1,5 +1,7 @@
 package net.sf.iqser.plugin.file.security;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -18,7 +20,7 @@ import org.easymock.EasyMock;
 import com.iqser.core.model.Content;
 import com.iqser.core.plugin.security.IQserSecurityException;
 
-@SuppressWarnings({"unused", "unchecked"})
+@SuppressWarnings({ "unused", "unchecked" })
 public class CmisDefaultSecurityFilterTest extends TestCase {
 
 	private CmisDefaultSecurityFilter filter;
@@ -126,8 +128,7 @@ public class CmisDefaultSecurityFilterTest extends TestCase {
 		// assertFalse(canEdit);
 	}
 
-	private void canExecuteAction(String action, boolean expected, Set<Action> allowableActions)
-			throws IQserSecurityException {
+	private void canExecuteAction(String action, boolean expected, Set<Action> allowableActions) throws IQserSecurityException {
 		// "http://cmis/repositoryName/basicType#cmisObjectId"
 		Content content = new Content();
 		content.setContentUrl("cmis/Shared Documents/basicType#100-2");
@@ -153,6 +154,50 @@ public class CmisDefaultSecurityFilterTest extends TestCase {
 		// EasyMock.verify();
 
 		// assertEquals(expected, canExecuteAction);
+	}
+
+	public void testFilterReadableContent() throws IQserSecurityException {
+
+		Content content1 = new Content();
+		content1.setContentUrl("cmis/Shared Documents/basicType#100-1");
+
+		Content content2 = new Content();
+		content2.setContentUrl("cmis/Shared Documents/basicType#100-2");
+
+		Content content3 = new Content();
+		content3.setContentUrl("cmis/Shared Documents/basicType#100-3");
+
+		Collection<Content> expected = new ArrayList<Content>();
+		expected.add(content1);
+		expected.add(content2);
+
+		Collection<Content> contentToFilter = new ArrayList<Content>();
+		contentToFilter.add(content1);
+		contentToFilter.add(content2);
+		contentToFilter.add(content3);
+
+		// expected behavior
+		EasyMock.expect(mockFactory.createSession(EasyMock.anyObject(HashMap.class))).andReturn(mockCmisSession);
+		CmisObject cmisObject = EasyMock.createMock(CmisObject.class);
+		EasyMock.expect(mockCmisSession.getObject("100-2")).andReturn(cmisObject);
+
+		// Todo: mock or implement TestServiceLocator that returns a (mocked)
+		// RepositoryReader
+		// Collection<Content> actual =filter.filterReadableContent(user, password,
+		// contentToFilter);
+
+		// verify
+		// EasyMock.verify();
+
+		// assert(actual);
+
+		// TODO add test for filterReadableContent
+		// assertEquals(contentToFilter, actual);
+	}
+
+	public void testFilterReadableResult() throws IQserSecurityException {
+		// TODO add test for filterReadableResult
+
 	}
 
 }

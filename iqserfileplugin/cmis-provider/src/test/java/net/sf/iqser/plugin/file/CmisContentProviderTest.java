@@ -343,7 +343,6 @@ public class CmisContentProviderTest extends TestCase {
 		assertNotNull(content.getAttributeByName("Title").getValue());
 		assertNotNull(content.getAttributeByName("MyData").getValue());
 		assertNotNull(content.getAttributeByName("MyData2").getValue());
-
 	}
 
 	public void testInit() {

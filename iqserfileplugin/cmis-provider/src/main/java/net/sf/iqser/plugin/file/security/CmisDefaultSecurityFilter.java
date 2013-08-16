@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -295,13 +296,32 @@ public class CmisDefaultSecurityFilter extends AbstractPlugin implements Securit
 	@Override
 	public Collection<Content> filterReadableContent(String userId, String password, Collection<Content> contentObjects)
 			throws IQserSecurityException {
-		return null;
+
+		Iterator<Content> iter = contentObjects.iterator();
+
+		while(iter.hasNext()){
+			if (!canRead(userId, password, iter.next().getContentId())){
+				iter.remove();
+			}
+		}
+
+		return contentObjects;
 	}
 
 	@Override
 	public Collection<Result> filterReadableResult(String userId, String password, Collection<Result> resultObjects)
 			throws IQserSecurityException {
-		return null;
+
+
+		Iterator<Result> iter = resultObjects.iterator();
+
+		while(iter.hasNext()){
+			if (!canRead(userId, password, iter.next().getContentId())){
+				iter.remove();
+			}
+		}
+
+		return resultObjects;
 	}
 
 }

@@ -214,7 +214,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		/**
 		 * synchronize file system against the object graph - if a file is new INSERT in Object Graph - if a file has
 		 * been modified ( see file LAST_MODIFIED), UPDATE Object Graph - the Content Object from ObjectGraph that do
-		 * not have a coresponding file in the file system will be DELETE from the Object Graph
+		 * not have a corresponding file in the file system will be DELETE from the Object Graph
 		 */
 
 		// get the object graph content URLs
@@ -246,7 +246,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			try {
 				addContent(createContent((String) contentUrl));
 			} catch (Throwable t) {
-				// Make sure to catch everthing to continue with next Content
+				// Make sure to catch everything to continue with next Content
 				logger.error("Could not add content.", t);
 			}
 		}
@@ -272,8 +272,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 								try {
 									updateContent(createContent(file.getAbsolutePath()));
 								} catch (Throwable t) {
-									// Make sure to catch everthing to continue
-									// with next Content
+									// Make sure to catch everything to continue with next Content
 									logger.error("Could not update content.", t);
 								}
 							}
@@ -285,8 +284,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 								try {
 									updateContent(createContent(contentUrl));
 								} catch (Throwable t) {
-									// Make sure to catch everthing to continue
-									// with next Content
+									// Make sure to catch everything to continue with next Content
 									logger.error("Could not update content.", t);
 								}
 							}
