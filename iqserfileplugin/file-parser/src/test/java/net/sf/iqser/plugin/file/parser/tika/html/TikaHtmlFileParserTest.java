@@ -20,7 +20,7 @@ public class TikaHtmlFileParserTest extends TestCase{
 	public void testTikaHtmlFileParser() throws FileParserException, IOException{
 		
 		FileParser fp = new TikaHtmlFileParser();
-		URL url = new URL("http://www.iqser.com/");
+		URL url = new URL("http://www.faz.net/aktuell/politik/inland/streit-um-marburger-professor-staatsgerichtshof-cdu-weiter-gegen-spd-bewerber-12867218.html");
 		
 		
 		Content content = fp.getContent("iqser.com", url.openStream());

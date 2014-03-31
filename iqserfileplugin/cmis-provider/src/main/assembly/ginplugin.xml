@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ginplugin
-	xsi:schemaLocation="http://www.iqser.com/schema/ginplugin/2.0 http://www.iqser.com/schema/ginplugin/2.0/ginplugin.xsd"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.iqser.com/schema/ginplugin/2.0">
+<ginplugin xmlns="http://www.iqser.com/schema/ginplugin/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.iqser.com/schema/ginplugin/2.0 http://www.iqser.com/schema/ginplugin/2.0/ginplugin.xsd">
 
 	<name>CMIS Content Provider</name>
 	<vendor>iQser GmbH</vendor>
@@ -17,50 +15,44 @@
 		net.sf.iqser.plugin.file.CmisContentProvider
 	</classname>
 
+	<!--<securityFilterClassname>
+		net.sf.iqser.plugin.file.security.CmisDefaultSecurityFilter
+	</securityFilterClassname>-->
+
 	<params>
-		<param name="ATOMPUB" type="String"
-			optional="false">
+		<param name="ATOMPUB" type="String" optional="false">
 			AtomPub URL
 		</param>
-		<param name="AUTHENTICATION_PROVIDER_CLASS" type="String"
-			optional="true">
+		<param name="AUTHENTICATION_PROVIDER_CLASS" type="String" optional="true">
 			"STANDARD" or "NTLM"
 		</param>
-		<param name="USERNAME" type="String"
-			optional="false">
+		<param name="USERNAME" type="String" optional="false">
 			The username to connect to the repository.
 		</param>
-		<param name="PASSWORD" type="String"
-			optional="false">
+		<param name="PASSWORD" type="String" optional="false">
 			The password to connect to the repository.
 		</param>
-		<param name="REPOSITORY" type="String"
-			optional="true">
+		<param name="REPOSITORY" type="String" optional="true">
 			Repository that will be synchronized;
 		</param>
-		<param name="CONTENT-TYPE-MAPPINGS" type="String"
-			optional="true">
+		<param name="CONTENT-TYPE-MAPPINGS" type="String" optional="true">
 			Content type mappings to change the default content type name;
 			e.g. [CMIS_FOLDER=iQserFolder][CMIS_DOCUMENT=iQserDocument]
 		</param>
-		<param name="ATTRIBUTE-MAPPINGS" type="String"
-			optional="true">
+		<param name="ATTRIBUTE-MAPPINGS" type="String" optional="true">
 			Attribute mappings;
 			e.g. [attr1=new_attr1][attr2=new_attr2]
 		</param>
-		<param name="KEY-ATTRIBUTES" type="String"
-			optional="true">
+		<param name="KEY-ATTRIBUTES" type="String" optional="true">
 			Provide here the names of the attribute which are handled as "keys" by the platform.
 			If an attribute has been mapped in ATTRIBUTE-MAPPINGS, the new name must be placed here;
 			e.g. [attr3][new_attr2]
 		</param>
-		<param name="BASE-FOLDER" type="String"
-            optional="true">
+		<param name="BASE-FOLDER" type="String" optional="true">
             The base folder to use for synchronization; if omitted root folder will be used;
             if not present it will be created automatically by the GIN plugin
         </param>
-		<param name="INCLUDE-FOLDER" type="Boolean"
-            optional="true">
+		<param name="INCLUDE-FOLDER" type="Boolean" optional="true">
             Set to true if folders should be create a content object too, otherwise only documents will be created.
             Default is false.
         </param>
