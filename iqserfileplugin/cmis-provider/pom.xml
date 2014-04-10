@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>iqserfileplugin</artifactId>
 		<groupId>net.sf.iqser.plugin.file</groupId>
-		<version>2.0-SNAPSHOT</version>
+		<version>2.1-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>cmis-provider</artifactId>
@@ -19,15 +19,7 @@
 			<id>apache.releases</id>
 			<url>https://repository.apache.org/content/repositories/releases/</url>
 		</repository>
-		<repository>
-			<id>jboss</id>
-			<url>http://repository.jboss.org/maven2/</url>
-		</repository>
 		<!-- The following file is outdated: http://repo1.maven.org/maven2/javax/xml/ws/jaxws-api/2.1/jaxws-api-2.1.jar It's missing javax/xml/ws/soap/Addressing -->
-		<repository>
-			<id>maven-repository.dev.java.net</id>
-			<url>https://maven-repository.dev.java.net/repository/</url>
-		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -146,5 +138,40 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.7,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project> 

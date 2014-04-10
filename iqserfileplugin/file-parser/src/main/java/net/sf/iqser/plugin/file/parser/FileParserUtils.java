@@ -5,6 +5,8 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.util.XMLChar;
 
+import com.iqser.core.model.Attribute;
+
 /**
  * Util methods for all {@link FileParser}.
  * 
@@ -94,5 +96,12 @@ public class FileParserUtils {
 			}
 		}
 		return validTextBuffer.toString();
+	}
+
+	public static void transformIntoMultiValue(Attribute a, String replaceSeperator) {
+		if (null != a && StringUtils.isNotBlank(replaceSeperator)) {
+			a.setValue(a.getValue().replaceAll(replaceSeperator, Attribute.MULTIVALUE_SEPARATOR));
+			a.setMultiValue(true);
+		}
 	}
 }

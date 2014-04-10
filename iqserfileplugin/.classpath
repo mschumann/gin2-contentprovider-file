@@ -1,16 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="file-parser/src/main/java"/>
-	<classpathentry kind="src" path="file-parser/src/main/resources"/>
-	<classpathentry kind="src" path="file-parser/src/test/java"/>
-	<classpathentry kind="src" path="filesystem-provider/src/main/java"/>
-	<classpathentry kind="src" path="filesystem-provider/src/test/java"/>
-	<classpathentry kind="src" path="cmis-provider/src/main/java"/>
-	<classpathentry kind="src" path="cmis-provider/src/test/java"/>
-	<classpathentry kind="src" path="cmis-provider/src/test/resources"/>
-	<classpathentry kind="src" path="file-parser/src/test/resources"/>
-	<classpathentry kind="src" path="filesystem-provider/src/test/resources"/>
-	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER" />
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

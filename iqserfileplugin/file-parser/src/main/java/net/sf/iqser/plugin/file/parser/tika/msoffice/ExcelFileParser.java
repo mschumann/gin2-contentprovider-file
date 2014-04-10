@@ -23,6 +23,7 @@ public class ExcelFileParser extends TikaFileParser {
 	 *  @return content the content that is created
 	 *  @throws FileParserException exception
 	 */
+	@Override
 	public Content getContent(String fileName, InputStream inputStream)
 			throws FileParserException {
 

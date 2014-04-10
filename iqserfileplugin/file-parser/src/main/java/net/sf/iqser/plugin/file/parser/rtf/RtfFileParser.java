@@ -48,6 +48,7 @@ public class RtfFileParser implements FileParser {
 	 *              the content object  
 	 * @throws FileParserException exception
 	 */
+	@Override
 	public Content getContent(String fileName, InputStream inputStream)
 			throws FileParserException {
 		logger.info("Parsing file " + fileName);
@@ -74,6 +75,9 @@ public class RtfFileParser implements FileParser {
 			throw new FileParserException("Failed to read stream for file "
 					+ fileName, e);
 		}
+
+		Attribute keywordsAttribute = content.getAttributeByName("KEYWORDS");
+		FileParserUtils.transformIntoMultiValue(keywordsAttribute, ", ");
 
 		return content;
 	}

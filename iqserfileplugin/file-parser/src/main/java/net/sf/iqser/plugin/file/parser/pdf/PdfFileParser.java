@@ -75,6 +75,15 @@ public class PdfFileParser implements FileParser {
 			throw new FileParserException("Failed to read stream for file " + fileName, e);
 		}
 
+		Attribute keywordsAttribute = content.getAttributeByName("KEYWORDS");
+		FileParserUtils.transformIntoMultiValue(keywordsAttribute, ", ");
+
+		Attribute pdfkeywordsAttribute = content.getAttributeByName("PDFKEYWORDS");
+		FileParserUtils.transformIntoMultiValue(pdfkeywordsAttribute, ", ");
+		if (null == keywordsAttribute && null != pdfkeywordsAttribute) {
+			pdfkeywordsAttribute.setName("KEYWORDS");
+		}
+
 		return content;
 	}
 

@@ -2,11 +2,10 @@ package net.sf.iqser.plugin.file.parser.tika.html;
 
 import java.io.InputStream;
 
-import com.iqser.core.model.Attribute;
-import com.iqser.core.model.Content;
-
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.tika.TikaFileParser;
+
+import com.iqser.core.model.Content;
 
 /**
  * tika parser for html files.
@@ -26,18 +25,11 @@ public class TikaHtmlFileParser extends TikaFileParser {
 	 * @return content the new content that is created
 	 * @throws FileParserException exception
 	 */
+	@Override
 	public Content getContent(String fileName, InputStream inputStream)
 			throws FileParserException {
 
 		Content content = super.getContent(fileName, inputStream);
-		Attribute a = content.getAttributeByName("KEYWORDS");
-		
-		if (a != null) {
-			String value = a.getValue().replaceAll(", ", Attribute.MULTIVALUE_SEPARATOR);
-			a.setValue(value);
-			a.setMultiValue(true);
-		}
-		
 		content.setType("HTML Document");
 
 		return content;
