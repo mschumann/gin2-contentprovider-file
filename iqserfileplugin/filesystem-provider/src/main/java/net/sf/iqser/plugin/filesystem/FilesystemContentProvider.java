@@ -504,6 +504,9 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		String folder = (String) params.get("folder");
 		Collection<String> folders = extractConfigAttributes(folder);
 
+		String recursive = params.getProperty("recursive", Boolean.toString(true));
+		boolean recurseIntoSubs = Boolean.parseBoolean(recursive);
+		
 		// create path filter
 		AcceptedPathFilter apf = new AcceptedPathFilter();
 
@@ -515,7 +518,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			apf.addDeniedPath((String) excludedFolder);
 		}
 
-		FileScanner fs = new FileScanner(folders, apf);
+		FileScanner fs = new FileScanner(folders, apf, recurseIntoSubs);
 
 		// create file filter
 		AcceptFileFilter aff = new AcceptFileFilter();

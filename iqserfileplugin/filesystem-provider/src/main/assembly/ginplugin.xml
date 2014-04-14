@@ -41,5 +41,8 @@
 			Attribute mappings in json format: "{attr1:new_attr1,attr2:new_attr2}"; 
 			e.g. {title:NAME}
 		</param>
+		<param name="recursive" type="Boolean" optional="true">
+			If set to "true", folders are scanned recursively. Default: "true"
+		</param>
 	</params>
 </ginplugin>

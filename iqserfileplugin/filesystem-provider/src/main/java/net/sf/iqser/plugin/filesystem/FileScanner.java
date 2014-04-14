@@ -37,6 +37,8 @@ public class FileScanner {
 	 */
 	private List<String> folders;
 
+	private boolean recurseIntoSubs = true;
+
 	/**
 	 * Constructor.
 	 * 
@@ -45,10 +47,15 @@ public class FileScanner {
 	 * @param pathFilter
 	 *            A AcceptedPathFilter
 	 */
-	public FileScanner(Collection<String> roots, FileFilter pathFilter) {
+	public FileScanner(Collection<String> roots, FileFilter pathFilter, boolean recurseIntoSubs) {
 		folders = new ArrayList<String>();
 
 		this.pathFilter = pathFilter;
+		this.recurseIntoSubs = recurseIntoSubs;
+
+		if (logger.isDebugEnabled()) {
+			logger.debug("Recursive mode? " + (recurseIntoSubs ? "on" : "off"));
+		}
 
 		if (roots != null) {
 			for (Iterator<String> iter = roots.iterator(); iter.hasNext();) {
@@ -150,7 +157,7 @@ public class FileScanner {
 		if (parent != null && parent.isDirectory()) {
 			File[] subs = parent.listFiles(pathFilter);
 
-			if (subs != null) {
+			if (recurseIntoSubs && subs != null) {
 				for (int i = 0; i < subs.length; i++) {
 					list.addAll(scanFolder(subs[i]));
 				}
@@ -159,7 +166,9 @@ public class FileScanner {
 			}
 		}
 
-		logger.debug("scanFolder(File parent=" + parent + ") - end - return value=" + list);
+		if (logger.isDebugEnabled()) {
+			logger.debug("scanFolder(File parent=" + parent + ") - end - return value=" + list);
+		}
 		return list;
 	}
 

@@ -3,12 +3,11 @@ package net.sf.iqser.plugin.file.parser.tika.html;
 import java.io.IOException;
 import java.net.URL;
 
-import org.apache.log4j.Logger;
-
 import junit.framework.TestCase;
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
-import net.sf.iqser.plugin.file.parser.msoffice.PowerPointFileParserTest;
+
+import org.apache.log4j.Logger;
 
 import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
@@ -48,5 +47,13 @@ public class TikaHtmlFileParserTest extends TestCase{
 //		assertTrue(content.getAttributeByName("TITLE").isKey());
 //
 //		assertNotNull(content.getFulltext());
+	}
+
+	public void testSetLastModifiedDate() {
+		Content c = new Content();
+		c.addAttribute(new Attribute("LAST-MODIFIED", "2014-03-30T16:46:13+0200", Attribute.ATTRIBUTE_TYPE_TEXT));
+		TikaHtmlFileParser.setLastModifiedDate(c);
+		
+		assertEquals(1396190773000L, c.getModificationDate());
 	}
 }
