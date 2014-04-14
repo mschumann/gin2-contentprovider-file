@@ -407,7 +407,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 				}
 				File file = getFile(contentUrl);
 
-				if (file != null) {
+				if (file != null && 0 >= content.getModificationDate()) {
 					long lastModified = file.lastModified();
 					content.setModificationDate(lastModified);
 				}
