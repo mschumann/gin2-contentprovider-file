@@ -1,6 +1,6 @@
 package net.sf.iqser.plugin.filesystem;
 
- import java.io.ByteArrayInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -14,10 +14,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -29,12 +31,14 @@ import net.sf.iqser.plugin.file.parser.zip.ZipFileModel;
 import net.sf.iqser.plugin.filesystem.utils.ContentUpdate;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.iqser.core.exception.IQserException;
 import com.iqser.core.exception.IQserRuntimeException;
+import com.iqser.core.model.Attribute;
 import com.iqser.core.model.Content;
 import com.iqser.core.model.Parameter;
 import com.iqser.core.plugin.provider.AbstractContentProvider;
@@ -420,8 +424,58 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			throw new IQserRuntimeException(e);
 		}
 
-		return content;
+		return cleanUpCharacters(content);
 
+	}
+
+	private Content cleanUpCharacters(Content c) {
+		c.setContentUrl(stripNonValidXMLCharacters(c.getContentUrl()));
+		c.setType(stripNonValidXMLCharacters(c.getType()));
+		c.setFulltext(stripNonValidXMLCharacters(c.getFulltext()));
+
+		Set<Attribute> cleanAttributes = new HashSet<Attribute>();
+		for (Attribute a : c.getAttributes()) {
+			Attribute cleanAttribute = new Attribute();
+			cleanAttribute.setName(stripNonValidXMLCharacters(a.getName()));
+			cleanAttribute.setKey(a.isKey());
+			cleanAttribute.setMultiValue(a.isMultiValue());
+			for (String value : a.getValues()) {
+				cleanAttribute.addValue(stripNonValidXMLCharacters(value));
+			}
+
+			if (StringUtils.isNotEmpty(cleanAttribute.getValue())) {
+				cleanAttributes.add(cleanAttribute);
+			}
+		}
+		c.setAttributes(cleanAttributes);
+
+		return c;
+	}
+
+	/**
+	 * This method ensures that the output String has only valid XML unicode characters as specified by the XML 1.0
+	 * standard. For reference, please see <a href="http://www.w3.org/TR/2000/REC-xml-20001006#NT-Char">the
+	 * standard</a>. This method will return an empty String if the input is null or empty.
+	 * 
+	 * @param in
+	 *            The String whose non-valid characters we want to remove.
+	 * @return The in String, stripped of non-valid characters.
+	 */
+	public String stripNonValidXMLCharacters(String in) {
+		StringBuffer out = new StringBuffer(); // Used to hold the output.
+		char current; // Used to reference the current character.
+
+		if (StringUtils.isEmpty(in)) {
+			return in; // vacancy test.
+		}
+
+		for (int i = 0; i < in.length(); i++) {
+			current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
+			if ((current == 0x9) || (current == 0xA) || (current == 0xD) || ((current >= 0x20) && (current <= 0xD7FF))
+					|| ((current >= 0xE000) && (current <= 0xFFFD)) || ((current >= 0x10000) && (current <= 0x10FFFF)))
+				out.append(current);
+		}
+		return out.toString();
 	}
 
 	/**
@@ -506,7 +560,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 
 		String recursive = params.getProperty("recursive", Boolean.toString(true));
 		boolean recurseIntoSubs = Boolean.parseBoolean(recursive);
-		
+
 		// create path filter
 		AcceptedPathFilter apf = new AcceptedPathFilter();
 
