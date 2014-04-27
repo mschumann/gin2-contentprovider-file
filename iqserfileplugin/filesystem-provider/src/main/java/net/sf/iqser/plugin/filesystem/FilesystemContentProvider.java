@@ -439,6 +439,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 			cleanAttribute.setName(stripNonValidXMLCharacters(a.getName()));
 			cleanAttribute.setKey(a.isKey());
 			cleanAttribute.setMultiValue(a.isMultiValue());
+			cleanAttribute.setType(a.getType());
 			for (String value : a.getValues()) {
 				cleanAttribute.addValue(stripNonValidXMLCharacters(value));
 			}
