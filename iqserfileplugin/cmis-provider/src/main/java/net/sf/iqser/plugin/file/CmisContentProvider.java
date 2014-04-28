@@ -789,8 +789,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 	}
 
 	private boolean isDocument(Content content) {
-		String type = content.getType();
-		return type.equals(CMIS_DOCUMENT_TYPE) || type.equals(contentTypeMappings.get(CMIS_DOCUMENT_TYPE));
+		return ! isFolder(content);
 	}
 
 
