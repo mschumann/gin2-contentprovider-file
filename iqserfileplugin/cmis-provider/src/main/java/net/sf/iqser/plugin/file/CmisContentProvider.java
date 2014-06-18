@@ -186,8 +186,15 @@ public class CmisContentProvider extends AbstractContentProvider {
 			Attribute attr = content.getAttributeByName("hasContentStream");
 			if ("true".equalsIgnoreCase(attr.getValue())) {
 
-				String objectId = content.getAttributeByName("objectId").getValue();
-
+				String objectId = null;
+				if (content.getContentUrl()!=null){
+					objectId = getObjectID(content.getContentUrl());
+				}else if (content.getAttributeByName("objectId") != null){
+					objectId = content.getAttributeByName("objectId").getValue();
+				}else if (content.getAttributeByName("cmisobjectId") != null){
+					objectId = content.getAttributeByName("cmisobjectId").getValue();
+				}
+				
 				try {
 					logger.info("Repository name=" + getRepository().getName() + " objectId=" + objectId);
 					Document doc = (Document) getCmisSession().getObject(objectId);
@@ -672,7 +679,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 
 	private void handleProperties(CmisObject doc, Content content) {
 		for (Property<?> prop : doc.getProperties()) {
-			String name = prop.getId();
+			String name = prop.getId();			
 			String value = prop.getValueAsString();
 			// check for non empty attributes
 			if (!StringUtils.isEmpty(value)) {
@@ -686,14 +693,9 @@ public class CmisContentProvider extends AbstractContentProvider {
 				} else {
 					type = Attribute.ATTRIBUTE_TYPE_TEXT;
 				}
-				String upperCaseName = name.toUpperCase().replace(' ', '_').replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS").replaceAll("[^A-Z\\d-_.]", "");
-				if(keyAttributeNames.contains(upperCaseName)){
-					content.addAttribute(new Attribute(upperCaseName, value, type, true));
-				}else
-				{
-					content.addAttribute(new Attribute(upperCaseName, value, type, false));
-
-				}
+				String attributeName = name.toUpperCase().replace("CMIS:","").replace(' ', '_').replace("Ä", "AE").replace("Ö", "OE").replace("Ü", "UE").replace("ß", "SS").replaceAll("[^A-Z\\d-_.]", "");
+				boolean isKey = keyAttributeNames.contains(attributeName);
+				content.addAttribute(new Attribute(attributeName, value, type, isKey));
 			}
 		}
 	}
