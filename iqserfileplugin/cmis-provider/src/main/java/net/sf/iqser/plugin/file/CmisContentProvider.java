@@ -352,10 +352,8 @@ public class CmisContentProvider extends AbstractContentProvider {
 		String[] actions = null;
 		if (isFolder(content)) {
 			actions = new String[] { ACTION_DELETE, ACTION_UPDATE };
-		} else if (isDocument(content)) {
-			actions = new String[] { ACTION_DELETE, ACTION_UPDATE, ACTION_CHECK_OUT, ACTION_CHECK_IN };
 		} else {
-			actions = new String[0];
+			actions = new String[] { ACTION_DELETE, ACTION_UPDATE, ACTION_CHECK_OUT, ACTION_CHECK_IN };
 		}
 		return Arrays.asList(actions);
 	}

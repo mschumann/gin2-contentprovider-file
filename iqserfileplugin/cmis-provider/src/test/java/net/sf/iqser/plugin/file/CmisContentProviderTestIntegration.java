@@ -93,9 +93,6 @@ public class CmisContentProviderTestIntegration extends TestCase {
 
 		Content content = new Content();
 
-		actions = ccp.getActions(content);
-		assertTrue(actions.size() == 0);
-
 		content.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
 		actions = ccp.getActions(content);
 		assertTrue(actions.size() == 4);

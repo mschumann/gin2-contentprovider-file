@@ -196,10 +196,6 @@ public class CmisContentProviderTest extends TestCase {
 		Collection actions = null;
 
 		Content content = new Content();
-
-		actions = ccp.getActions(content);
-		assertTrue(actions.size() == 0);
-
 		content.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
 		actions = ccp.getActions(content);
 		assertTrue(actions.size() == 4);
@@ -389,10 +385,6 @@ public class CmisContentProviderTest extends TestCase {
 
 		Content content = new Content();
 
-		actions = ccp.getActions(content);
-
-		assertTrue(actions.size() == 0);
-
 		content.setType(CmisContentProvider.CMIS_DOCUMENT_TYPE);
 		actions = ccp.getActions(content);
 		assertTrue(actions.size() == 4);
@@ -410,13 +402,6 @@ public class CmisContentProviderTest extends TestCase {
 
 		assertTrue(actions.contains(CmisContentProvider.ACTION_DELETE));
 		assertTrue(actions.contains(CmisContentProvider.ACTION_UPDATE));
-
-		content.setType("NONE");
-
-		actions = ccp.getActions(content);
-
-		assertTrue(actions.size() == 0);
-
 	}
 
 	public void testKeyAttributes() {
