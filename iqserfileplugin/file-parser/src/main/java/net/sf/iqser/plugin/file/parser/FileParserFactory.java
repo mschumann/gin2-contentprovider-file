@@ -80,16 +80,30 @@ public class FileParserFactory {
 			throw new RuntimeException("Unable to load FileParser mappings", e);
 		}
 	}
-
+	
 	/**
-	 * Return a conctrete {@link FileParser} implementation. If there is no {@link FileParser} defined in the mappings,
+	 * Return a concrete {@link FileParser} implementation. If there is no {@link FileParser} defined in the mappings,
 	 * the {@link DefaultFileParser} is returned. You'll never get a null from this method.
 	 * 
 	 * @param fileName
-	 *            The name of the file including extention (e.q. sample.txt).
+	 *            The name of the file including extension (e.q. sample.txt).
 	 * @return A {@link FileParser} instance
 	 */
 	public FileParser getFileParser(String fileName) {
+		return getFileParser(fileName, null);
+	}
+
+	/**
+	 * Return a concrete {@link FileParser} implementation. If there is no {@link FileParser} defined in the mappings,
+	 * the {@link DefaultFileParser} is returned. You'll never get a null from this method.
+	 * 
+	 * @param fileName
+	 *            The name of the file including extension (e.q. sample.txt).
+	 * @param properties
+	 *            Additional properties, the parser might use.
+	 * @return A {@link FileParser} instance
+	 */
+	public FileParser getFileParser(String fileName, Properties properties) {
 		FileParser parser = null;
 
 		// Get FileParser from mappings
@@ -109,6 +123,9 @@ public class FileParserFactory {
 						+ ". Using DefaultFileParser as fallback.");
 				parser = new DefaultFileParser();
 			}
+		}
+		if(parser instanceof Configurable) {
+			((Configurable) parser).setProperties(properties);
 		}
 		return parser;
 	}

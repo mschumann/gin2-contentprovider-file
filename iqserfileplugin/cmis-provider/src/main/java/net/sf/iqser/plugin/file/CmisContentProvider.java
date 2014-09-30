@@ -644,7 +644,7 @@ public class CmisContentProvider extends AbstractContentProvider {
 		ContentStream cstream = doc.getContentStream();
 		if (cstream != null) {
 			String fileName = cstream.getFileName();
-			FileParser fileParser = FileParserFactory.getInstance().getFileParser(fileName);
+			FileParser fileParser = FileParserFactory.getInstance().getFileParser(fileName, initParams);
 
 			InputStream inputStream = cstream.getStream();
 

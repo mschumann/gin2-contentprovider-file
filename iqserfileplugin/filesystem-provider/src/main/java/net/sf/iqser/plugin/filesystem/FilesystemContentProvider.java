@@ -402,7 +402,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		}
 		try {
 			if (inputStream != null) {
-				FileParser parser = parserFactory.getFileParser(contentUrl);
+				FileParser parser = parserFactory.getFileParser(contentUrl, initParams);
 				content = parser.getContent(contentUrl, inputStream);
 				content.setProvider(getName());
 				content.setContentUrl(contentUrl);

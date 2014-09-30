@@ -316,7 +316,7 @@
 						<configuration>
 							<target>
 								<echo message="Copy GIN Archive (${project.build.finalName})" />
-								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase="" trust="true">
+								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase=" " trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}*.gin" />
 									</fileset>
@@ -333,7 +333,7 @@
 						<configuration>
 							<target>
 								<echo message="Copy JAR (${project.build.finalName}) to sourceforge" />
-								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase="" trust="true">
+								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase=" " trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}.jar" />
 									</fileset>
@@ -350,7 +350,7 @@
 						<configuration>
 							<target>
 								<echo message="Copy ${project.build.finalName}-sources.jar to sourceforge" />
-								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase="" trust="true">
+								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase=" " trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}-sources.jar" />
 									</fileset>
@@ -367,7 +367,7 @@
 						<configuration>
 							<target>
 								<echo message="Copy javadoc Archive (${project.build.finalName}) to sourceforge." />
-								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase="" trust="true">
+								<scp todir="${sourceforge.upload}" keyfile="${sf.keyfile}" passphrase=" " trust="true">
 									<fileset dir="${project.build.directory}/">
 										<include name="${project.build.finalName}-javadoc.jar" />
 									</fileset>

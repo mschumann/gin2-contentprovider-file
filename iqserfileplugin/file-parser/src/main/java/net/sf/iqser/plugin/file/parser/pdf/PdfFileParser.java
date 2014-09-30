@@ -2,7 +2,9 @@ package net.sf.iqser.plugin.file.parser.pdf;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Properties;
 
+import net.sf.iqser.plugin.file.parser.Configurable;
 import net.sf.iqser.plugin.file.parser.FileParser;
 import net.sf.iqser.plugin.file.parser.FileParserException;
 import net.sf.iqser.plugin.file.parser.FileParserUtils;
@@ -25,15 +27,19 @@ import com.iqser.core.model.Content;
  * @author Christian Magnus
  * 
  */
-public class PdfFileParser implements FileParser {
+public class PdfFileParser implements FileParser, Configurable {
 
 	/** Constant from the default content type for text documents. */
 	private static final String PDF_FILE_CONTENT_TYPE = "PDF Document";
+
+	private static final String PROPERTY_SORT_BY_POSITION = "PdfFileParser.sortByPosition";
 
 	/**
 	 * Default Logger for this class.
 	 */
 	private static Logger logger = Logger.getLogger(PdfFileParser.class);
+
+	private Properties properties;
 
 	/**
 	 * Method implementation from {@link FileParser} interface.
@@ -85,6 +91,15 @@ public class PdfFileParser implements FileParser {
 		}
 
 		return content;
+	}
+	
+	@Override
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+	
+	private String getPropertyValue(String name) {
+		return properties == null ? null : properties.getProperty(name);
 	}
 
 	/**
@@ -201,6 +216,8 @@ public class PdfFileParser implements FileParser {
 		String fulltext = "";
 		try {
 			PDFTextStripper stripper = new PDFTextStripper();
+			boolean sortByPosition = Boolean.parseBoolean(getPropertyValue(PROPERTY_SORT_BY_POSITION));
+			stripper.setSortByPosition(sortByPosition);
 			if (!cosdoc.isEncrypted()) {
 				try {
 					PDDocument pddoc = new PDDocument(cosdoc);
@@ -217,5 +234,4 @@ public class PdfFileParser implements FileParser {
 
 		return fulltext;
 	}
-
 }
