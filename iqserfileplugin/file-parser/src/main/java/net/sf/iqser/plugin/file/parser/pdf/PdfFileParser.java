@@ -224,6 +224,19 @@ public class PdfFileParser implements FileParser, Configurable {
 					fulltext = stripper.getText(pddoc);
 				} catch (IOException e) {
 					logger.error("Cannot extract Document", e);
+				} catch (IllegalArgumentException e) {
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////
+					// FIXME need to implement the following fall back, because PdfBox is not Java 7 compatible at the moment
+					// more info here: https://issues.apache.org/jira/browse/PDFBOX-1512
+					// catch block should be removed, when PdfBox is updated to Java 7 compatible version
+					if(sortByPosition) {
+						stripper.setSortByPosition(false);
+						PDDocument pddoc = new PDDocument(cosdoc);
+						fulltext = stripper.getText(pddoc);
+					} else {
+						throw e;
+					}
+					/////////////////////////////////////////////////////////////////////////////////////////////////////////
 				}
 			} else {
 				logger.warn("Cannot parse encrypted Document");

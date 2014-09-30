@@ -1,7 +1,7 @@
 package net.sf.iqser.plugin.file.parser.tika.html;
 
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
 
 import junit.framework.TestCase;
 import net.sf.iqser.plugin.file.parser.FileParser;
@@ -19,10 +19,9 @@ public class TikaHtmlFileParserTest extends TestCase{
 	public void testTikaHtmlFileParser() throws FileParserException, IOException{
 		
 		FileParser fp = new TikaHtmlFileParser();
-		URL url = new URL("http://www.faz.net/aktuell/politik/inland/streit-um-marburger-professor-staatsgerichtshof-cdu-weiter-gegen-spd-bewerber-12867218.html");
+		InputStream is = TikaHtmlFileParserTest.class.getResourceAsStream("/Streit-um-Marburger-Professor-FAZ.html");
 		
-		
-		Content content = fp.getContent("iqser.com", url.openStream());
+		Content content = fp.getContent("iqser.com", is);
 
 		assertNotNull(content);
 		log.debug(content.getFulltext());
