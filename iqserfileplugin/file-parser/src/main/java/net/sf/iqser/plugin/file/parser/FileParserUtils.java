@@ -1,6 +1,8 @@
 package net.sf.iqser.plugin.file.parser;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.xerces.util.XMLChar;
@@ -29,6 +31,9 @@ public class FileParserUtils {
 	 * Constant for the unknown file type.
 	 */
 	public static final String UNKNOWN_FILE_TYPE = "Unknown" + FILE_TYPE_SUFFIX;
+
+	private static final Pattern PATTERN_COMMA_SEPARATOR = Pattern.compile("\\s*,\\s*");
+	private static final Pattern PATTERN_COLON_SEPARATOR = Pattern.compile("\\s*;\\s*");
 
 	/**
 	 * Extract the title from the file name.The title of the file is the file name without the extention.
@@ -98,9 +103,17 @@ public class FileParserUtils {
 		return validTextBuffer.toString();
 	}
 
-	public static void transformIntoMultiValue(Attribute a, String replaceSeperator) {
-		if (null != a && StringUtils.isNotBlank(replaceSeperator)) {
-			a.setValue(a.getValue().replaceAll(replaceSeperator, Attribute.MULTIVALUE_SEPARATOR));
+	public static void transformIntoMultiValue(Attribute a) {
+		if(a !=  null) {
+			String value = a.getValue();
+			Matcher matcher = PATTERN_COLON_SEPARATOR.matcher(value);
+			if(matcher.find()) {
+				value = matcher.replaceAll(Attribute.MULTIVALUE_SEPARATOR);
+			} else {
+				matcher = PATTERN_COMMA_SEPARATOR.matcher(value);
+				value = matcher.replaceAll(Attribute.MULTIVALUE_SEPARATOR);
+			}
+			a.setValue(value);
 			a.setMultiValue(true);
 		}
 	}

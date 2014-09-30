@@ -601,7 +601,7 @@ public class FilesystemContentProvider extends AbstractContentProvider implement
 		try {
 			json = new JSONObject(mappings);
 		} catch (JSONException e) {
-			throw new IQserRuntimeException(e);
+			throw new IQserRuntimeException("Could not read parameter <attribute.mappings>", e);
 		}
 
 		@SuppressWarnings("unchecked")

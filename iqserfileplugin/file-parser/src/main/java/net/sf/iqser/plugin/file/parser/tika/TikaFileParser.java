@@ -77,7 +77,7 @@ public class TikaFileParser implements FileParser {
 		}
 
 		Attribute keywordsAttribute = content.getAttributeByName("KEYWORDS");
-		FileParserUtils.transformIntoMultiValue(keywordsAttribute, ", ");
+		FileParserUtils.transformIntoMultiValue(keywordsAttribute);
 
 		return content;
 

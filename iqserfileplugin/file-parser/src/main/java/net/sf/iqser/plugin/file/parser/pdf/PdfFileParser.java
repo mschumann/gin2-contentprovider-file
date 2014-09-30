@@ -82,10 +82,10 @@ public class PdfFileParser implements FileParser, Configurable {
 		}
 
 		Attribute keywordsAttribute = content.getAttributeByName("KEYWORDS");
-		FileParserUtils.transformIntoMultiValue(keywordsAttribute, ", ");
+		FileParserUtils.transformIntoMultiValue(keywordsAttribute);
 
 		Attribute pdfkeywordsAttribute = content.getAttributeByName("PDFKEYWORDS");
-		FileParserUtils.transformIntoMultiValue(pdfkeywordsAttribute, ", ");
+		FileParserUtils.transformIntoMultiValue(pdfkeywordsAttribute);
 		if (null == keywordsAttribute && null != pdfkeywordsAttribute) {
 			pdfkeywordsAttribute.setName("KEYWORDS");
 		}
